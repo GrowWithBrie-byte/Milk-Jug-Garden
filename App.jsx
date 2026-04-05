@@ -628,8 +628,7 @@ export default function App() {
             )}
           </div>
         )}
-
-      </div>
+  </div>
 
       {/* ── PLANT DETAIL OVERLAY ── */}
       {selectedPlant&&(()=>{
