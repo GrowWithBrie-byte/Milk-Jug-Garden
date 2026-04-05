@@ -809,12 +809,7 @@ const PlantCard = ({ plant }) => {
         <li><strong>1 Qt:</strong> 4 Cups</li>
         <li><strong>4 Qt:</strong> 1 Gallon (16 Cups)</li>
         <li><strong>8 Qt:</strong> 2 Gallons (32 Cups)</li>
-        <li><strong>1 $ft^3$:</strong> ~30 Quarts</li>
-      </ul>
-    </div>
-  );
-};
-            </div>
+        <SoilConverter /> 
 
             {/* Soil info card */}
             <div style={{ ...card, background:"linear-gradient(135deg,#fff3e0,#ffe0b2)", border:"1.5px solid #ff9800" }}>
@@ -998,7 +993,6 @@ const PlantCard = ({ plant }) => {
     </div>
   );
 }
-// PUT THIS AT THE VERY BOTTOM OF App.jsx
 const SoilConverter = () => {
   return (
     <div style={{ padding: '12px', backgroundColor: '#f1f8e9', borderRadius: '8px', marginTop: '10px', border: '1px solid #c8e6c9' }}>
