@@ -320,7 +320,6 @@ const detectZone = async () => {
                  <button onClick={() => deletePlant(p.id)}>
       🗑 Delete
     </button>
-
   </div>
 ))}
                   
