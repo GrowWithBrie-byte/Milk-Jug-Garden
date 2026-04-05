@@ -883,19 +883,20 @@ const PlantCard = ({ plant }) => {
           </div>
         )}
 
- {/* ... main app content ... */}
-      <SoilConverter />
-    </div> {/* This closes the main UI wrapper */}
+{/* ... main app content ... */}
+<div className="main-wrapper">
+  {/* your other content */}
+  
+  <SoilConverter />  // <-- NOW inside the main wrapper
+</div> {/* This closes the main UI wrapper */}
 
-    {/* Logic blocks must be inside the top-level wrapper or a Fragment <> */}
-    {p && (
-      <div className="overlay" style={{ position: 'fixed', top: 0, backgroundColor: 'white' }}>
-        <h2>{p.name} Care Guide</h2>
-        <button onClick={() => setSelectedPlant(null)}>Close</button>
-      </div>
-    )}
-  </> // Closing Fragment
-);
+{/* Logic blocks must be inside the top-level wrapper or a Fragment <> */}
+{p && (
+  <div className="overlay" style={{ position: 'fixed', top: 0, backgroundColor: 'white' }}>
+    <h2>{p.name} Care Guide</h2>
+    <button onClick={() => setSelectedPlant(null)}>Close</button>
+  </div>
+)}
 
      {/* ── PLANT DETAIL OVERLAY ── */}
       
