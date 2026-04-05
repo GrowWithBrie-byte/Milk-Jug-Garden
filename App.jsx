@@ -166,8 +166,23 @@ const INIT = [
 export default function App() {
   const [tab, setTab] = useState("garden");
   const [onboarding, setOnboarding] = useState(true);
-  const [myZone, setMyZone] = useState(null);
-  const [plants, setPlants] = useState(INIT);
+const detectZone = async () => {
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    const state = data.region;
+
+    const zone = ZONES.find(z =>
+      z.region.toLowerCase().includes(state.toLowerCase())
+    );
+
+    setUserZone(zone || null);
+
+  } catch (err) {
+    console.log("Zone lookup failed");
+  }
+};  const [plants, setPlants] = useState(INIT);
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
   const [customMode, setCustomMode] = useState(false);
