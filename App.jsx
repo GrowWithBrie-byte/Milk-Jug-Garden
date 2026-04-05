@@ -65,6 +65,26 @@ const ZONES = [
   {zone:"13b",temp:"60°F to 65°F+",emoji:"🌋",color:"#ce93d8",tc:"#4a148c",region:"Hottest US microclimates",plantingTime:"Year-round (shade/indoor only)",indoorStart:"N/A",plants:["Hot Peppers","Heat-Tolerant Herbs","Okra"],tips:["Indoor container gardening more practical","Self-watering systems essential"]},
 ];
 
+const [userZone, setUserZone] = useState(null);
+
+const detectZone = async () => {
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    const state = data.region;
+
+    const zone = ZONES.find(z =>
+      z.region.toLowerCase().includes(state.toLowerCase())
+    );
+
+    setUserZone(zone || null);
+
+  } catch (err) {
+    console.log("Zone lookup failed");
+  }
+};
+
 const PLANT_GUIDES = [
   { name:"Tomatoes",    emoji:"🍅", container:"5-Gal Bucket",     water:"Every 1-2 days", waterBase:1.5, sun:"Full sun",    tip:"Cut the top off a milk jug and plant deep — tomatoes love it!" },
   { name:"Lettuce",     emoji:"🥬", container:"Milk Jug",         water:"Every 2 days",   waterBase:2,   sun:"Part shade", tip:"Milk jugs are perfect! Cut the side for a window box effect." },
@@ -282,7 +302,16 @@ export default function App() {
                 <span style={{ fontSize:18 }}>🗺️</span><div><div style={{ fontWeight:800, fontSize:11, color:"#2e7d32" }}>Set your growing zone</div><div style={{ fontSize:10, color:"#888" }}>Get personalized tips & plant suggestions</div></div>
               </button>
             )}
-
+            <button onClick={detectZone}>
+🌎 Find My Growing Zone
+</button>
+{userZone && (
+  <div>
+    <h3>{userZone.emoji} Zone {userZone.zone}</h3>
+    <div>{userZone.region}</div>
+    <div>Planting: {userZone.plantingTime}</div>
+  </div>
+)}
             {transplantReady.length>0 && (
               <div style={{ ...card, background:"linear-gradient(135deg,#fff3e0,#ffe0b2)", border:"2px solid #ff9800", display:"flex", alignItems:"center", gap:9 }}>
                 <span style={{ fontSize:20 }}>🪴➡️</span>
