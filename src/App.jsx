@@ -730,8 +730,8 @@ export default function App() {
                     {SOIL_DATA[calcCont.id] && <div style={{ background:"#fff3e0", borderRadius:9, padding:"7px 9px", marginBottom:7, fontSize:10, color:"#e65100" }}>🛍️ <b>Buy:</b> {SOIL_DATA[calcCont.id].bagSize}</div>}
                     <div style={{ background:"#fff", borderRadius:9, padding:9, marginBottom:7, fontSize:10, color:"#444" }}><b>📐</b> {activePlant.spacingIn}" spacing · {activePlant.rootDepthIn}" root depth · {calcResult.vol}gal container</div>
                     <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:9, padding:"7px 9px", fontSize:10, color:"#555" }}>💡 {activePlant.notes}</div>
-                  </>
-                )}
+                 733| <div style={{ fontSize:11, color:"#1565c0", lineHeight:1.5 }}>Everything you need to know about growing in 1-gallon milk jugs — what works, what doesn't, and exactly how to care for each plant.</div>
+734| <SoilConverter />
               </div>
             )}
           </div>
