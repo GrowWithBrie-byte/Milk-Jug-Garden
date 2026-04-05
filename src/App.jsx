@@ -15,6 +15,32 @@ const TRANSPLANT_MAP = {
   "Fabric Bag":      { next:"In-Ground/Raised Bed",nextVol:"N/A",  daysMin:60, daysMax:90 },
 };
 
+// Import React if not already
+import React from "react";
+
+// --- Place this at the top of your file ---
+const SoilConverter = () => {
+  const containersWithVolume = CALC_CONTAINERS.filter(c => c.volGal);
+
+  return (
+    <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+      <h3 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>🌱 Soil Volume Reference</h3>
+      <div style={{ fontSize: 11, lineHeight: 1.5, marginBottom: 8 }}>
+        Everything you need to know about soil volumes for common containers — now in cups!
+      </div>
+      <ul style={{ margin: 0, paddingLeft: 20, fontSize: 11, lineHeight: 1.5 }}>
+        {containersWithVolume.map(container => {
+          const cups = container.volGal * 16;
+          return (
+            <li key={container.id}>
+              {container.label}: {cups} cups of soil
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+};
 const VISUAL_SIGNS = [
   { id:"roots",  label:"Roots poking out of drainage holes", icon:"🌿" },
   { id:"droop",  label:"Plant wilts quickly after watering",  icon:"😓" },
@@ -304,10 +330,6 @@ const PlantCard = ({ plant }) => {
   const otherCalcPlants = myZone ? CALC_PLANTS.filter(p=>!zonePlants.includes(p)) : CALC_PLANTS;
   const activePlant = custPlantMode ? { id:"custom", label:cpName||"My Plant", emoji:"🌱", spacingIn:parseFloat(cpSpacing)||0, rootDepthIn:parseFloat(cpDepth)||0, minVolGal:parseFloat(cpMinVol)||0, notes:"Custom plant — check seed packet." } : calcPlant;
   const calcResult = calcCont && activePlant ? calcFit(calcCont, activePlant, cVol, cDiam, cDepth) : null;
-
- const SoilConverter = () => {
-  // Conversion helper: gallons → cups (1 gal = 16 cups)
-  const galToCups = (gal) => (gal ? gal * 16 : 0);
 
   // Your container data
   const containers = [
