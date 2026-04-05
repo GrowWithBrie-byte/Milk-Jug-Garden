@@ -92,21 +92,78 @@ const WATERING_METHODS = [
     bestFor:["Milk Jug"] },
 ];
 
+// Container soil volume data
+const SOIL_DATA = {
+  "milkjug1": { soilQts:3.4,  soilCuFt:0.13, bagSize:"Small potting mix bag (8qt)" },
+  "milkjug2": { soilQts:6.8,  soilCuFt:0.27, bagSize:"Medium potting mix bag (16qt)" },
+  "cup8oz":   { soilQts:0.2,  soilCuFt:0.01, bagSize:"Just a handful of potting mix" },
+  "cup16oz":  { soilQts:0.4,  soilCuFt:0.02, bagSize:"A couple cups of potting mix" },
+  "yogurt32": { soilQts:0.85, soilCuFt:0.03, bagSize:"About 1 quart of potting mix" },
+  "can3lb":   { soilQts:1.5,  soilCuFt:0.06, bagSize:"About 1.5 quarts of potting mix" },
+  "pot3gal":  { soilQts:10.2, soilCuFt:0.40, bagSize:"Medium bag (16qt) potting mix" },
+  "pot5gal":  { soilQts:17,   soilCuFt:0.67, bagSize:"Large bag (25qt) potting mix" },
+  "fabric7":  { soilQts:23.8, soilCuFt:0.94, bagSize:"Two large bags (25qt each)" },
+};
+
+// Plant → container compatibility
+// good: works great | ok: acceptable | bad: not recommended | ugly: avoid completely
+const COMPAT = {
+  basil:      { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"good","Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
+  mint:       { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"good","Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
+  chives:     { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"good","Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
+  lettuce:    { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"ok", "Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
+  spinach:    { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"ok", "Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
+  radish:     { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"ok", "Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
+  kale:       { "Milk Jug":"ok", "Yogurt Container":"bad", "Coffee Can":"bad","Plastic Pot":"ok", "5-Gal Bucket":"good","Fabric Bag":"good" },
+  tomato:     { "Milk Jug":"bad","Yogurt Container":"ugly","Coffee Can":"ugly","Plastic Pot":"ok", "5-Gal Bucket":"good","Fabric Bag":"good" },
+  pepper:     { "Milk Jug":"ok", "Yogurt Container":"ugly","Coffee Can":"ugly","Plastic Pot":"ok", "5-Gal Bucket":"good","Fabric Bag":"good" },
+  cucumber:   { "Milk Jug":"bad","Yogurt Container":"ugly","Coffee Can":"ugly","Plastic Pot":"bad","5-Gal Bucket":"good","Fabric Bag":"good" },
+  beans:      { "Milk Jug":"ok", "Yogurt Container":"bad", "Coffee Can":"bad","Plastic Pot":"good","5-Gal Bucket":"good","Fabric Bag":"good" },
+  strawberry: { "Milk Jug":"good","Yogurt Container":"ok", "Coffee Can":"ok", "Plastic Pot":"good","5-Gal Bucket":"good","Fabric Bag":"good" },
+  carrot:     { "Milk Jug":"bad","Yogurt Container":"ugly","Coffee Can":"bad","Plastic Pot":"ok", "5-Gal Bucket":"good","Fabric Bag":"bad" },
+  micro:      { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"good","Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
+};
+
+const COMPAT_INFO = {
+  good:  { emoji:"✅", label:"Great choice!", color:"#2e7d32", bg:"#e8f5e9" },
+  ok:    { emoji:"⚠️", label:"Works, not ideal", color:"#e65100", bg:"#fff3e0" },
+  bad:   { emoji:"❌", label:"Not recommended", color:"#c62828", bg:"#ffebee" },
+  ugly:  { emoji:"🚫", label:"Avoid — won't thrive", color:"#b71c1c", bg:"#ffcdd2" },
+};
+
+// Milk Jug Mode plant data
+const JUG_PLANTS = [
+  { id:"lettuce",    label:"Lettuce",      emoji:"🥬", waterEvery:2, spacingIn:6,  soilQts:3.4, tip:"Cut side panel for a window-box style. Harvest outer leaves and it keeps growing!", compatible:true },
+  { id:"basil",      label:"Basil",        emoji:"🌿", waterEvery:2, spacingIn:6,  soilQts:3.4, tip:"One plant per jug. Keep in a sunny spot. Pinch flowers to keep it bushy.", compatible:true },
+  { id:"mint",       label:"Mint",         emoji:"🌱", waterEvery:2, spacingIn:4,  soilQts:3.4, tip:"Milk jugs keep mint from spreading. Perfect container crop!", compatible:true },
+  { id:"chives",     label:"Chives",       emoji:"🌿", waterEvery:3, spacingIn:3,  soilQts:3.4, tip:"Pack them in! Chives love milk jugs. Snip and they regrow.", compatible:true },
+  { id:"spinach",    label:"Spinach",      emoji:"🥗", waterEvery:2, spacingIn:4,  soilQts:3.4, tip:"Cut the top off the jug. Spinach loves the contained moisture.", compatible:true },
+  { id:"radish",     label:"Radishes",     emoji:"🌱", waterEvery:2, spacingIn:3,  soilQts:3.4, tip:"Fast growing — ready in 25 days! Great for beginners.", compatible:true },
+  { id:"strawberry", label:"Strawberries", emoji:"🍓", waterEvery:1, spacingIn:8,  soilQts:3.4, tip:"Poke holes in the sides for a vertical strawberry tower. 🍓", compatible:true },
+  { id:"pepper",     label:"Peppers",      emoji:"🫑", waterEvery:2, spacingIn:12, soilQts:6.8, tip:"Use a 2-gal jug for best results. One plant per jug, full sun.", compatible:"ok" },
+  { id:"micro",      label:"Microgreens",  emoji:"🌱", waterEvery:1, spacingIn:0.5,soilQts:3.4, tip:"Cut the top completely off. Sprinkle seeds, keep moist. Ready in 1 week!", compatible:true },
+  { id:"tomato",     label:"Tomatoes",     emoji:"🍅", waterEvery:2, spacingIn:18, soilQts:null,tip:"⚠️ Milk jugs are too small for most tomatoes. Use cherry tomato varieties in a 2-gal jug only.", compatible:false },
+  { id:"cucumber",   label:"Cucumbers",    emoji:"🥒", waterEvery:2, spacingIn:18, soilQts:null,tip:"🚫 Cucumbers need too much root space for milk jugs. Use a 5-gal bucket instead.", compatible:false },
+  { id:"carrot",     label:"Carrots",      emoji:"🥕", waterEvery:2, spacingIn:3,  soilQts:null,tip:"🚫 Milk jugs aren't deep enough for carrots. Try a 5-gal bucket instead.", compatible:false },
+  { id:"potato",     label:"Potatoes",     emoji:"🥔", waterEvery:3, spacingIn:12, soilQts:null,tip:"🚫 Potatoes need at least 10 gallons of space. Milk jugs won't work.", compatible:false },
+];
+
 const CALC_PLANTS = [
-  { id:"basil",      label:"Basil",           emoji:"🌿", spacingIn:6,   rootDepthIn:6,  minVolGal:0.5,  notes:"Great in milk jugs & yogurt tubs" },
-  { id:"mint",       label:"Mint",            emoji:"🌱", spacingIn:4,   rootDepthIn:6,  minVolGal:0.5,  notes:"Keep contained — spreads fast!" },
-  { id:"chives",     label:"Chives",          emoji:"🌿", spacingIn:3,   rootDepthIn:6,  minVolGal:0.21, notes:"Perfect for coffee cans & cups" },
-  { id:"lettuce",    label:"Lettuce",         emoji:"🥬", spacingIn:6,   rootDepthIn:6,  minVolGal:0.5,  notes:"Ideal for milk jugs — cut & come again" },
-  { id:"spinach",    label:"Spinach",         emoji:"🥗", spacingIn:4,   rootDepthIn:6,  minVolGal:0.21, notes:"Shallow roots — great for wide trays" },
-  { id:"radish",     label:"Radishes",        emoji:"🌱", spacingIn:3,   rootDepthIn:6,  minVolGal:0.21, notes:"Fast grower — great for cups & cans" },
-  { id:"kale",       label:"Kale",            emoji:"🥬", spacingIn:12,  rootDepthIn:12, minVolGal:2,    notes:"Needs a 5-gal bucket for best results" },
-  { id:"tomato",     label:"Tomato (Bush)",   emoji:"🍅", spacingIn:18,  rootDepthIn:12, minVolGal:5,    notes:"5-gal bucket minimum — 1 plant per container" },
-  { id:"pepper",     label:"Peppers",         emoji:"🫑", spacingIn:12,  rootDepthIn:10, minVolGal:2,    notes:"1 plant per milk jug (2-gal) works great!" },
-  { id:"cucumber",   label:"Cucumbers",       emoji:"🥒", spacingIn:18,  rootDepthIn:12, minVolGal:5,    notes:"Needs vertical support — great in 5-gal buckets" },
-  { id:"beans",      label:"Green Beans",     emoji:"🫘", spacingIn:4,   rootDepthIn:8,  minVolGal:1,    notes:"Bush variety best for containers" },
-  { id:"strawberry", label:"Strawberries",    emoji:"🍓", spacingIn:8,   rootDepthIn:8,  minVolGal:1,    notes:"1 per jug or poke holes for a strawberry tower" },
-  { id:"carrot",     label:"Carrots",         emoji:"🥕", spacingIn:3,   rootDepthIn:12, minVolGal:1,    notes:"Need deep containers — 5-gal bucket ideal" },
-  { id:"micro",      label:"Microgreens",     emoji:"🌱", spacingIn:0.5, rootDepthIn:2,  minVolGal:0.05, notes:"Perfect for seedling trays & plastic cups!" },
+  { id:"basil",      label:"Basil",           emoji:"🌿", spacingIn:6,   rootDepthIn:6,  minVolGal:0.5,  bestContainer:"Milk Jug",      notes:"Great in milk jugs & yogurt tubs" },
+  { id:"mint",       label:"Mint",            emoji:"🌱", spacingIn:4,   rootDepthIn:6,  minVolGal:0.5,  bestContainer:"Milk Jug",      notes:"Keep contained — spreads fast!" },
+  { id:"chives",     label:"Chives",          emoji:"🌿", spacingIn:3,   rootDepthIn:6,  minVolGal:0.21, bestContainer:"Coffee Can",    notes:"Perfect for coffee cans & cups" },
+  { id:"lettuce",    label:"Lettuce",         emoji:"🥬", spacingIn:6,   rootDepthIn:6,  minVolGal:0.5,  bestContainer:"Milk Jug",      notes:"Ideal for milk jugs — cut & come again" },
+  { id:"spinach",    label:"Spinach",         emoji:"🥗", spacingIn:4,   rootDepthIn:6,  minVolGal:0.21, bestContainer:"Milk Jug",      notes:"Shallow roots — great for wide trays" },
+  { id:"radish",     label:"Radishes",        emoji:"🌱", spacingIn:3,   rootDepthIn:6,  minVolGal:0.21, bestContainer:"Milk Jug",      notes:"Fast grower — great for cups & cans" },
+  { id:"kale",       label:"Kale",            emoji:"🥬", spacingIn:12,  rootDepthIn:12, minVolGal:2,    bestContainer:"5-Gal Bucket",  notes:"Needs a 5-gal bucket for best results" },
+  { id:"tomato",     label:"Tomato (Bush)",   emoji:"🍅", spacingIn:18,  rootDepthIn:12, minVolGal:5,    bestContainer:"5-Gal Bucket",  notes:"5-gal bucket minimum — 1 plant per container" },
+  { id:"pepper",     label:"Peppers",         emoji:"🫑", spacingIn:12,  rootDepthIn:10, minVolGal:2,    bestContainer:"5-Gal Bucket",  notes:"1 plant per 2-gal jug works, 5-gal is best" },
+  { id:"cucumber",   label:"Cucumbers",       emoji:"🥒", spacingIn:18,  rootDepthIn:12, minVolGal:5,    bestContainer:"5-Gal Bucket",  notes:"Needs vertical support — great in 5-gal buckets" },
+  { id:"beans",      label:"Green Beans",     emoji:"🫘", spacingIn:4,   rootDepthIn:8,  minVolGal:1,    bestContainer:"Plastic Pot",   notes:"Bush variety best for containers" },
+  { id:"strawberry", label:"Strawberries",    emoji:"🍓", spacingIn:8,   rootDepthIn:8,  minVolGal:1,    bestContainer:"Milk Jug",      notes:"1 per jug or poke holes for a strawberry tower" },
+  { id:"carrot",     label:"Carrots",         emoji:"🥕", spacingIn:3,   rootDepthIn:12, minVolGal:1,    bestContainer:"5-Gal Bucket",  notes:"Need deep containers — milk jugs too shallow!" },
+  { id:"potato",     label:"Potatoes",        emoji:"🥔", spacingIn:12,  rootDepthIn:12, minVolGal:10,   bestContainer:"Fabric Bag",    notes:"Need 10+ gallons — NOT for milk jugs!" },
+  { id:"micro",      label:"Microgreens",     emoji:"🌱", spacingIn:0.5, rootDepthIn:2,  minVolGal:0.05, bestContainer:"Milk Jug",      notes:"Perfect for seedling trays & plastic cups!" },
 ];
 
 const CALC_CONTAINERS = [
@@ -191,11 +248,29 @@ export default function App() {
   const [custPlantMode, setCustPlantMode] = useState(false);
   const [cpName, setCpName] = useState(""); const [cpSpacing, setCpSpacing] = useState(""); const [cpDepth, setCpDepth] = useState(""); const [cpMinVol, setCpMinVol] = useState("");
   const [showAllCalc, setShowAllCalc] = useState(false);
+  const [zoneDetecting, setZoneDetecting] = useState(false);
+  const [editingPlant, setEditingPlant] = useState(null);
+  const [jugPlantFilter, setJugPlantFilter] = useState("all"); // "all" | "good" | "bad"
 
   const waterPlant = id => setPlants(ps => ps.map(p => p.id === id ? { ...p, lastWatered:TODAY, health:Math.min(100, p.health+15) } : p));
   const toggleSign = (pid, sid) => setPlants(ps => ps.map(p => { if (p.id !== pid) return p; const s = p.transplantSigns||[]; return { ...p, transplantSigns: s.includes(sid) ? s.filter(x=>x!==sid) : [...s,sid] }; }));
   const markTransplanted = id => { setPlants(ps => ps.map(p => p.id!==id ? p : { ...p, planted:TODAY, transplantSigns:[], health:Math.min(100,p.health+10), notes:(p.notes?p.notes+" · ":"")+"Transplanted!" })); setSelectedPlant(null); };
   const addPlant = () => { if (!newPlant.name.trim()) return; setPlants(ps => [...ps, { ...newPlant, id:Date.now(), planted:TODAY, lastWatered:TODAY, health:100, transplantSigns:[] }]); setNewPlant({ name:"",container:"Milk Jug",waterEvery:2,emoji:"🪴",notes:"" }); setShowAdd(false); setCustomMode(false); };
+  const deletePlant = id => { if (window.confirm("🗑 Are you sure you want to delete this plant? This can't be undone.")) { setPlants(ps => ps.filter(p => p.id !== id)); setSelectedPlant(null); } };
+  const saveEdit = () => { if (!editingPlant) return; setPlants(ps => ps.map(p => p.id === editingPlant.id ? editingPlant : p)); setSelectedPlant(editingPlant); setEditingPlant(null); };
+
+  const detectZone = async () => {
+    setZoneDetecting(true);
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const data = await res.json();
+      const state = data.region || "";
+      const found = ZONES.find(z => z.region.toLowerCase().includes(state.toLowerCase()));
+      if (found) { setMyZone(found); setOnboarding(false); }
+      else alert("Couldn't detect your zone automatically. Please pick it from the list!");
+    } catch { alert("Location lookup failed. Please pick your zone from the list!"); }
+    setZoneDetecting(false);
+  };
 
   const thirstyCount = plants.filter(p=>daysSince(p.lastWatered)>=p.waterEvery).length;
   const transplantReady = plants.filter(p=>{ const ts=getTS(p,daysSince(p.planted)); return ts.urgency==="ready"||ts.urgency==="urgent"; });
@@ -220,6 +295,10 @@ export default function App() {
               <div style={{ fontSize:10, color:"#888", background:"#e8f5e9", borderRadius:8, padding:"4px 10px", display:"inline-block", marginTop:6 }}>💡 Not sure? Search "USDA zone [your zip code]"</div>
             </div>
             <div style={{ fontWeight:800, color:"#2e7d32", fontSize:12, marginBottom:8 }}>🗺️ Select Your Zone:</div>
+            <button onClick={detectZone} disabled={zoneDetecting} style={{ width:"100%", background:"linear-gradient(135deg,#43a047,#66bb6a)", color:"#fff", border:"none", borderRadius:12, padding:"12px", fontWeight:800, fontSize:13, cursor:"pointer", fontFamily:"inherit", marginBottom:12 }}>
+              {zoneDetecting ? "🔍 Detecting your location…" : "🌎 Auto-Detect My Zone"}
+            </button>
+            <div style={{ textAlign:"center", fontSize:10, color:"#aaa", marginBottom:10 }}>— or pick manually below —</div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7, marginBottom:14 }}>
               {ZONES.map(z => (
                 <button key={z.zone} onClick={()=>{setMyZone(z);setOnboarding(false);}} style={{ background:z.color, border:`2px solid ${z.tc}20`, borderRadius:12, padding:"9px 7px", textAlign:"left", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:7 }}>
@@ -256,7 +335,7 @@ export default function App() {
 
       {/* TABS */}
       <div style={{ display:"flex", background:"#fff", margin:"10px 12px 0", borderRadius:12, padding:3, boxShadow:"0 2px 8px #0001" }}>
-        {[["garden","🌱"],["guides","📖"],["zones","🗺️"],["calc","🧮"]].map(([k,l]) => (
+        {[["garden","🌱"],["guides","📖"],["zones","🗺️"],["jug","🥛"],["calc","🧮"]].map(([k,l]) => (
           <button key={k} onClick={()=>setTab(k)} style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"8px 2px", fontWeight:800, fontSize:15, cursor:"pointer", fontFamily:"inherit" }}>{l}</button>
         ))}
       </div>
@@ -604,12 +683,27 @@ export default function App() {
             {calcResult&&(
               <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#f1f8e9)", border:"2px solid #a5d6a7" }}>
                 <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", textAlign:"center", marginBottom:10 }}>{activePlant?.emoji} {activePlant?.label} in {calcCont?.label} {calcCont?.emoji}</div>
+
+                {/* Container compatibility warning */}
+                {activePlant && calcCont && COMPAT[activePlant.id] && COMPAT[activePlant.id][calcCont.label.replace(/^[12]-Gal /,"").replace("1-Gal ","").replace("2-Gal ","")] && (() => {
+                  const contName = CONTAINER_TYPES.find(ct => calcCont.label.includes(ct.split(" ")[0])) || calcCont.label;
+                  const compatKey = Object.keys(COMPAT[activePlant.id]).find(k => calcCont.label.includes(k.split(" ")[0]));
+                  const level = compatKey ? COMPAT[activePlant.id][compatKey] : null;
+                  const info = level ? COMPAT_INFO[level] : null;
+                  if (!info) return null;
+                  return <div style={{ background:info.bg, borderRadius:10, padding:"8px 10px", marginBottom:9, display:"flex", gap:7, alignItems:"center" }}>
+                    <span style={{ fontSize:18 }}>{info.emoji}</span>
+                    <div><div style={{ fontWeight:800, fontSize:11, color:info.color }}>{info.label}</div><div style={{ fontSize:10, color:"#666" }}>{activePlant.bestContainer && level !== "good" ? "Best container: "+activePlant.bestContainer : ""}</div></div>
+                  </div>;
+                })()}
+
                 {calcResult.tooShallow||calcResult.tooSmall ? (
                   <div style={{ background:"#ffebee", borderRadius:10, padding:11, textAlign:"center" }}>
                     <div style={{ fontSize:26 }}>⚠️</div>
                     <div style={{ fontWeight:900, color:"#c62828", fontSize:12, marginTop:5 }}>Container Too Small!</div>
                     {calcResult.tooShallow&&<div style={{ fontSize:11, color:"#666", marginTop:3 }}>Needs at least <b>{activePlant.rootDepthIn}"</b> depth — this is only <b>{calcResult.depth}"</b></div>}
                     {calcResult.tooSmall&&<div style={{ fontSize:11, color:"#666", marginTop:3 }}>Needs at least <b>{activePlant.minVolGal}gal</b> — this holds <b>{calcResult.vol}gal</b></div>}
+                    {activePlant.bestContainer&&<div style={{ fontSize:11, color:"#2e7d32", marginTop:5, fontWeight:700 }}>✅ Try a {activePlant.bestContainer} instead!</div>}
                   </div>
                 ):(
                   <>
@@ -620,12 +714,84 @@ export default function App() {
                         </div>
                       ))}
                     </div>
+                    {/* Soil bag recommendation */}
+                    {SOIL_DATA[calcCont.id] && <div style={{ background:"#fff3e0", borderRadius:9, padding:"7px 9px", marginBottom:7, fontSize:10, color:"#e65100" }}>🛍️ <b>Buy:</b> {SOIL_DATA[calcCont.id].bagSize}</div>}
                     <div style={{ background:"#fff", borderRadius:9, padding:9, marginBottom:7, fontSize:10, color:"#444" }}><b>📐</b> {activePlant.spacingIn}" spacing · {activePlant.rootDepthIn}" root depth · {calcResult.vol}gal container</div>
                     <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:9, padding:"7px 9px", fontSize:10, color:"#555" }}>💡 {activePlant.notes}</div>
                   </>
                 )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* ── MILK JUG MODE ── */}
+        {tab==="jug" && (
+          <div>
+            <div style={{ background:"linear-gradient(135deg,#e3f2fd,#bbdefb)", borderRadius:16, padding:14, marginBottom:12 }}>
+              <div style={{ fontWeight:900, fontSize:16, color:"#1565c0", marginBottom:3 }}>🥛 Milk Jug Mode</div>
+              <div style={{ fontSize:11, color:"#1565c0", lineHeight:1.5 }}>Everything you need to know about growing in 1-gallon milk jugs — what works, what doesn't, and exactly how to care for each plant.</div>
+            </div>
+
+            {/* Soil info card */}
+            <div style={{ ...card, background:"linear-gradient(135deg,#fff3e0,#ffe0b2)", border:"1.5px solid #ff9800" }}>
+              <div style={{ fontWeight:900, fontSize:13, color:"#e65100", marginBottom:7 }}>🪨 Soil for a 1-Gal Milk Jug</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+                {[["🛍️ How Much","~3.4 quarts"],["💰 Buy","Small 8qt bag"],["🔄 Refill","Every 1-2 seasons"],["🌱 Type","Potting mix (not garden soil)"]].map(([l,v])=>(
+                  <div key={l} style={{ background:"rgba(255,255,255,0.7)", borderRadius:9, padding:"7px 8px" }}>
+                    <div style={{ fontSize:10, color:"#e65100", fontWeight:800 }}>{l}</div>
+                    <div style={{ fontSize:11, color:"#444", marginTop:2 }}>{v}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ fontSize:10, color:"#888", marginTop:8 }}>💡 Fill to 1" below the rim so water doesn't splash out. Mix in some perlite for better drainage!</div>
+            </div>
+
+            {/* Watering for jugs */}
+            <div style={{ ...card }}>
+              <div style={{ fontWeight:900, fontSize:13, color:"#2e7d32", marginBottom:7 }}>💧 Watering Your Milk Jugs</div>
+              {[["⭐ Bottom Watering (Best!)","Set jug in a tray with 1–2\" water. Let soak 20–30 min. Roots drink from below — no overwatering!"],["🚿 Top Watering","Pour slowly at base until water drains from bottom holes. Water in morning."],["💡 Self-Watering Jug","Cut jug in half, use bottom as reservoir with a fabric wick. Set and almost forget!"]].map(([t,d])=>(
+                <div key={t} style={{ background:"#f5f5f5", borderRadius:9, padding:"8px 10px", marginBottom:6 }}>
+                  <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20" }}>{t}</div>
+                  <div style={{ fontSize:10, color:"#555", marginTop:2 }}>{d}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Filter */}
+            <div style={{ display:"flex", background:"#fff", borderRadius:10, padding:3, marginBottom:10, gap:3 }}>
+              {[["all","🌱 All Plants"],["good","✅ Works Great"],["bad","🚫 Avoid"]].map(([k,l])=>(
+                <button key={k} onClick={()=>setJugPlantFilter(k)} style={{ flex:1, background:jugPlantFilter===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:jugPlantFilter===k?"#fff":"#666", border:"none", borderRadius:8, padding:"7px 3px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit" }}>{l}</button>
+              ))}
+            </div>
+
+            {/* Plant list */}
+            {JUG_PLANTS.filter(p => jugPlantFilter==="all" ? true : jugPlantFilter==="good" ? p.compatible!==false : p.compatible===false).map(jp => (
+              <div key={jp.id} style={{ ...card, border: jp.compatible===false?"2px solid #ffcdd2":jp.compatible==="ok"?"2px solid #ffe0b2":"2px solid #c8e6c9", padding:0, overflow:"hidden" }}>
+                <div style={{ height:3, background:jp.compatible===false?"#ef9a9a":jp.compatible==="ok"?"#ffcc80":"#a5d6a7" }} />
+                <div style={{ padding:"11px 12px" }}>
+                  <div style={{ display:"flex", alignItems:"flex-start", gap:10 }}>
+                    <span style={{ fontSize:32 }}>{jp.emoji}</span>
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:"flex", alignItems:"center", gap:7, flexWrap:"wrap" }}>
+                        <span style={{ fontWeight:900, fontSize:14, color:"#1b5e20" }}>{jp.label}</span>
+                        <span style={{ ...badge(jp.compatible===false?"#ffebee":jp.compatible==="ok"?"#fff3e0":"#e8f5e9", jp.compatible===false?"#c62828":jp.compatible==="ok"?"#e65100":"#2e7d32"), fontSize:9 }}>
+                          {jp.compatible===false?"🚫 Not for jugs":jp.compatible==="ok"?"⚠️ Use 2-gal jug":"✅ Great in jugs"}
+                        </span>
+                      </div>
+                      {jp.compatible!==false && (
+                        <div style={{ display:"flex", gap:5, marginTop:5, flexWrap:"wrap" }}>
+                          <span style={badge("#e3f2fd","#1565c0")}>💧 every {jp.waterEvery}d</span>
+                          <span style={badge("#f3e5f5","#7b1fa2")}>📏 {jp.spacingIn}" apart</span>
+                          {jp.soilQts && <span style={badge("#fff3e0","#e65100")}>🪨 {jp.soilQts}qt soil</span>}
+                        </div>
+                      )}
+                      <div style={{ fontSize:10, color:"#666", marginTop:6, lineHeight:1.4 }}>{jp.tip}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
@@ -645,7 +811,8 @@ export default function App() {
               <div style={{ display:"flex", alignItems:"center", gap:9 }}>
                 <button onClick={()=>setSelectedPlant(null)} style={{ background:"rgba(255,255,255,0.25)", border:"none", borderRadius:7, padding:"4px 9px", color:"#fff", fontWeight:800, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>← Back</button>
                 <span style={{ fontSize:38 }}>{p.emoji}</span>
-                <div><div style={{ color:"#fff", fontWeight:900, fontSize:17 }}>{p.name}</div><div style={{ color:"#c8e6c9", fontSize:10 }}>📦 {p.container} · 🗓 {days} days old</div></div>
+                <div style={{ flex:1 }}><div style={{ color:"#fff", fontWeight:900, fontSize:17 }}>{p.name}</div><div style={{ color:"#c8e6c9", fontSize:10 }}>📦 {p.container} · 🗓 {days} days old</div></div>
+                <button onClick={()=>setEditingPlant({...p})} style={{ background:"rgba(255,255,255,0.25)", border:"none", borderRadius:7, padding:"4px 9px", color:"#fff", fontWeight:800, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>✏️ Edit</button>
               </div>
               <div style={{ marginTop:11 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", color:"#c8e6c9", fontSize:9, marginBottom:3 }}><span>Health</span><span>❤️ {p.health}%</span></div>
@@ -700,13 +867,49 @@ export default function App() {
                   <div style={{ fontSize:9, color:"#666", marginTop:2 }}>💡 Transplant 1–2 days after watering. Loosen roots gently.</div>
                 </div>
                 <div style={{ display:"flex", gap:7 }}>
-                  <button onClick={()=>markTransplanted(p.id)} style={{...btn("linear-gradient(135deg,#43a047,#66bb6a)"),width:"100%",padding:"9px 7px",fontSize:10}}>✅ Mark as Transplanted</button>
+                  <button onClick={()=>markTransplanted(p.id)} style={{...btn("linear-gradient(135deg,#43a047,#66bb6a)"),flex:1,padding:"9px 7px",fontSize:10}}>✅ Mark as Transplanted</button>
+                  <button onClick={()=>deletePlant(p.id)} style={{...btn("#ffebee","#c62828"),padding:"9px 10px",fontSize:10,border:"1.5px solid #ffcdd2"}}>🗑 Delete</button>
                 </div>
               </div>
             </div>
           </div>
         );
       })()}
+
+      {/* ── EDIT PLANT OVERLAY ── */}
+      {editingPlant && (
+        <div style={{ position:"fixed", inset:0, background:"#0008", zIndex:300, display:"flex", alignItems:"flex-end", justifyContent:"center" }} onClick={()=>setEditingPlant(null)}>
+          <div style={{ background:"#fff", borderRadius:"22px 22px 0 0", padding:20, width:"100%", maxWidth:480, paddingBottom:36, maxHeight:"80vh", overflowY:"auto" }} onClick={ev=>ev.stopPropagation()}>
+            <div style={{ fontWeight:900, fontSize:16, color:"#2e7d32", marginBottom:14 }}>✏️ Edit {editingPlant.name}</div>
+            <div style={{ marginBottom:10 }}>
+              <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:3 }}>Plant name</div>
+              <input value={editingPlant.name} onChange={ev=>setEditingPlant(p=>({...p,name:ev.target.value}))} style={{ width:"100%", border:"2px solid #e0e0e0", borderRadius:9, padding:"8px 9px", fontSize:13, fontFamily:"inherit", boxSizing:"border-box", outline:"none" }} />
+            </div>
+            <div style={{ marginBottom:10 }}>
+              <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:3 }}>Container</div>
+              <select value={editingPlant.container} onChange={ev=>setEditingPlant(p=>({...p,container:ev.target.value}))} style={{ width:"100%", border:"2px solid #e0e0e0", borderRadius:9, padding:"8px 9px", fontSize:13, fontFamily:"inherit", background:"#fff" }}>
+                {CONTAINER_TYPES.map(c=><option key={c}>{c}</option>)}
+              </select>
+            </div>
+            <div style={{ marginBottom:10 }}>
+              <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:3 }}>Notes</div>
+              <input value={editingPlant.notes||""} onChange={ev=>setEditingPlant(p=>({...p,notes:ev.target.value}))} placeholder="Optional notes…" style={{ width:"100%", border:"2px solid #e0e0e0", borderRadius:9, padding:"8px 9px", fontSize:13, fontFamily:"inherit", boxSizing:"border-box", outline:"none" }} />
+            </div>
+            <div style={{ marginBottom:18 }}>
+              <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:3 }}>
+                Water every <b style={{color:"#29b6f6"}}>{editingPlant.waterEvery}d</b>
+                {myZone&&(()=>{ const r=getWateringRange(editingPlant.waterEvery,myZone,editingPlant.container); return <span style={{color:myZone.tc,marginLeft:5}}> → {myZone.emoji} {wLabel(r)}</span>; })()}
+              </div>
+              <input type="range" min={1} max={7} value={editingPlant.waterEvery} onChange={ev=>setEditingPlant(p=>({...p,waterEvery:+ev.target.value}))} style={{ width:"100%", accentColor:"#29b6f6" }} />
+              <div style={{ display:"flex", justifyContent:"space-between", fontSize:9, color:"#aaa" }}><span>Daily</span><span>Weekly</span></div>
+            </div>
+            <div style={{ display:"flex", gap:8 }}>
+              <button onClick={()=>setEditingPlant(null)} style={{...btn("#f5f5f5","#666"),flex:1}}>Cancel</button>
+              <button onClick={saveEdit} style={{...btn("linear-gradient(135deg,#43a047,#66bb6a)"),flex:2}}>✅ Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');`}</style>
     </div>
