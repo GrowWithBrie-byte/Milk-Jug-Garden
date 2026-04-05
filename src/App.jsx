@@ -258,7 +258,31 @@ export default function App() {
   const addPlant = () => { if (!newPlant.name.trim()) return; setPlants(ps => [...ps, { ...newPlant, id:Date.now(), planted:TODAY, lastWatered:TODAY, health:100, transplantSigns:[] }]); setNewPlant({ name:"",container:"Milk Jug",waterEvery:2,emoji:"🪴",notes:"" }); setShowAdd(false); setCustomMode(false); };
   const deletePlant = id => { if (window.confirm("🗑 Are you sure you want to delete this plant? This can't be undone.")) { setPlants(ps => ps.filter(p => p.id !== id)); setSelectedPlant(null); } };
   const saveEdit = () => { if (!editingPlant) return; setPlants(ps => ps.map(p => p.id === editingPlant.id ? editingPlant : p)); setSelectedPlant(editingPlant); setEditingPlant(null); };
+const PlantCard = ({ plant }) => {
+  // Convert gallons to cups
+  const soilCups = plant.volGal ? plant.volGal * 16 : null;
 
+  return (
+    <div
+      style={{
+        padding: "10px",
+        borderRadius: "8px",
+        backgroundColor: "#fffde7",
+        marginBottom: "10px",
+        fontSize: "12px",
+        color: "#555",
+      }}
+    >
+      <div style={{ fontSize: "14px", fontWeight: "600" }}>
+        {plant.emoji} {plant.name}
+      </div>
+      <div>Container: {plant.container}</div>
+      {soilCups && <div>Soil Volume: {soilCups} cups</div>}
+      <div>Water: Every {plant.waterEvery} day(s)</div>
+      {plant.notes && <div>Notes: {plant.notes}</div>}
+    </div>
+  );
+};
   const detectZone = async () => {
     setZoneDetecting(true);
     try {
@@ -281,17 +305,37 @@ export default function App() {
   const activePlant = custPlantMode ? { id:"custom", label:cpName||"My Plant", emoji:"🌱", spacingIn:parseFloat(cpSpacing)||0, rootDepthIn:parseFloat(cpDepth)||0, minVolGal:parseFloat(cpMinVol)||0, notes:"Custom plant — check seed packet." } : calcPlant;
   const calcResult = calcCont && activePlant ? calcFit(calcCont, activePlant, cVol, cDiam, cDepth) : null;
 
-  const SoilConverter = () => (
-  <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginTop: '10px' }}>
-    <h3 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>🌱 Soil Volume Reference</h3>
-    <div style={{ fontSize: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-      <span><strong>1 Quart:</strong> 4 Cups</span>
-      <span><strong>4 Quarts:</strong> 1 Gallon</span>
-      <span><strong>8 Quarts:</strong> 2 Gallons</span>
-      <span><strong>1 $ft^3$:</strong> ~30 Quarts</span>
+ const SoilConverter = () => {
+  // Conversion helper: gallons → cups (1 gal = 16 cups)
+  const galToCups = (gal) => (gal ? gal * 16 : 0);
+
+  // Your container data
+  const containers = [
+    { label: "1-Gal Milk Jug", volGal: 1 },
+    { label: "2-Gal Milk Jug", volGal: 2 },
+    { label: "32oz Yogurt Tub", volGal: 0.25 },
+    { label: "3lb Coffee Can", volGal: 0.37 },
+    { label: "3-Gal Pot", volGal: 3 },
+    { label: "5-Gal Bucket", volGal: 5 },
+    { label: "7-Gal Fabric Bag", volGal: 7 },
+  ];
+
+  return (
+    <div style={{ padding: "15px", backgroundColor: "#f9f9f9", borderRadius: "8px" }}>
+      <h3 style={{ margin: "0 0 10px 0", fontSize: "14px" }}>🌱 Soil Volume Reference</h3>
+      <ul style={{ paddingLeft: "15px", fontSize: "13px", margin: 0 }}>
+        {containers.map((c) => (
+          <li key={c.label}>
+            {c.label}: {galToCups(c.volGal).toFixed(1)} cups
+          </li>
+        ))}
+      </ul>
+      <p style={{ marginTop: "10px", fontSize: "12px", color: "#555" }}>
+        Tip: 1 gallon = 16 cups
+      </p>
     </div>
-  </div>
-);
+  );
+};
 
   return (
     <div style={{ fontFamily:"'Nunito',cursive", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
