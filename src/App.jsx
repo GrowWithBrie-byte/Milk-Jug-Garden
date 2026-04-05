@@ -731,6 +731,19 @@ export default function App() {
             <div style={{ background:"linear-gradient(135deg,#e3f2fd,#bbdefb)", borderRadius:16, padding:14, marginBottom:12 }}>
               <div style={{ fontWeight:900, fontSize:16, color:"#1565c0", marginBottom:3 }}>🥛 Milk Jug Mode</div>
               <div style={{ fontSize:11, color:"#1565c0", lineHeight:1.5 }}>Everything you need to know about growing in 1-gallon milk jugs — what works, what doesn't, and exactly how to care for each plant.</div>
+           const SoilConverter = () => {
+  return (
+    <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+      <h3 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>🌱 Soil Volume Reference</h3>
+      <ul style={{ fontSize: '13px', listStyle: 'none', padding: 0 }}>
+        <li><strong>1 Qt:</strong> 4 Cups</li>
+        <li><strong>4 Qt:</strong> 1 Gallon (16 Cups)</li>
+        <li><strong>8 Qt:</strong> 2 Gallons (32 Cups)</li>
+        <li><strong>1 $ft^3$:</strong> ~30 Quarts</li>
+      </ul>
+    </div>
+  );
+};
             </div>
 
             {/* Soil info card */}
