@@ -875,15 +875,20 @@ const PlantCard = ({ plant }) => {
           </div>
         )}
 
-      </div>
-{p && (
-  <div className="overlay">
-    <h2>{p.name} Care Guide</h2>
-    <SoilConverter /> {/* You can put your new chart here too! */}
-    {/* ... rest of your UI */}
-  </div>
+ {/* ... main app content ... */}
+      <SoilConverter />
+    </div> {/* This closes the main UI wrapper */}
 
-)}
+    {/* Logic blocks must be inside the top-level wrapper or a Fragment <> */}
+    {p && (
+      <div className="overlay" style={{ position: 'fixed', top: 0, backgroundColor: 'white' }}>
+        <h2>{p.name} Care Guide</h2>
+        <button onClick={() => setSelectedPlant(null)}>Close</button>
+      </div>
+    )}
+  </> // Closing Fragment
+);
+
      {/* ── PLANT DETAIL OVERLAY ── */}
       
        {selectedPlant&&(()=>{
