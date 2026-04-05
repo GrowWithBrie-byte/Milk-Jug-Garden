@@ -315,13 +315,15 @@ const detectZone = async () => {
               const wr = getWateringRange(plant.waterEvery, myZone, plant.container);
               const ts = getTS(plant, days);
               const ur = UR[ts.urgency];
-              const thirsty = daysSince(plant.lastWatered) >= plant.waterEvery;
-              return (
-                 <button onClick={() => deletePlant(p.id)}>
+  const thirsty = daysSince(plant.lastWatered) >= plant.waterEvery;
+
+return (
+  <div key={plant.id}> 
+    <button onClick={() => deletePlant(plant.id)}>
       🗑 Delete
     </button>
   </div>
-))}
+);
                   
                 <div key={plant.id} onClick={()=>setSelectedPlant(plant)} style={{ ...card, cursor:"pointer", border: thirsty?"2px solid #ff7043":ts.urgency!=="growing"?`2px solid ${ur.border}`:"2px solid #e8f5e9", padding:0, overflow:"hidden" }}>
                   <div style={{ height:4, background:thirsty?"linear-gradient(90deg,#ff7043,#ffb74d)":`linear-gradient(90deg,#43a047,#66bb6a ${plant.health}%,#e0e0e0 ${plant.health}%)` }} />
