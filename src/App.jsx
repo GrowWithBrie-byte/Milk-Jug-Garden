@@ -1,4 +1,21 @@
 import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import ZoneSelector from "./components/ZoneSelector";
+
+export default function GardenApp() {
+  const [zone, setZone] = useState(null);
+
+  if (!zone) {
+    return <ZoneSelector onZoneSelect={setZone} />;
+  }
+
+  return (
+    <div>
+      <h1>Welcome to your {zone} Garden!</h1>
+      {/* Your existing garden app content goes here */}
+    </div>
+  );
+}
 
 // Hardcoded growing zones for simplicity
 const GROWING_ZONES = [
