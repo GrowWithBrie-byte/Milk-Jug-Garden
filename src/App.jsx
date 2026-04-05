@@ -350,7 +350,11 @@ return (
               );
             })}
 
-            {plants.length===0 && <div style={{ textAlign:"center", padding:"36px 0", color:"#aaa" }}><div style={{ fontSize:44 }}>🪴</div><div style={{ fontWeight:800, marginTop:8 }}>No plants yet! Add your first above.</div></div>}
+           {plants.length === 0 && (
+  <div style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+    <p>No plants yet! Add your first one above. 🌱</p>
+  </div>
+)}
 
             {/* ADD PLANT SHEET */}
             {showAdd && (
