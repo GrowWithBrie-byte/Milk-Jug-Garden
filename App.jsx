@@ -705,7 +705,7 @@ export default function App() {
               </div>
             </div>
           </div>
-        );
+        ); 
       })()}
 
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');`}</style>
