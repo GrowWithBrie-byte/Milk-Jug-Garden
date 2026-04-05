@@ -281,6 +281,18 @@ export default function App() {
   const activePlant = custPlantMode ? { id:"custom", label:cpName||"My Plant", emoji:"🌱", spacingIn:parseFloat(cpSpacing)||0, rootDepthIn:parseFloat(cpDepth)||0, minVolGal:parseFloat(cpMinVol)||0, notes:"Custom plant — check seed packet." } : calcPlant;
   const calcResult = calcCont && activePlant ? calcFit(calcCont, activePlant, cVol, cDiam, cDepth) : null;
 
+  const SoilConverter = () => (
+  <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '8px', marginTop: '10px' }}>
+    <h3 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>🌱 Soil Volume Reference</h3>
+    <div style={{ fontSize: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+      <span><strong>1 Quart:</strong> 4 Cups</span>
+      <span><strong>4 Quarts:</strong> 1 Gallon</span>
+      <span><strong>8 Quarts:</strong> 2 Gallons</span>
+      <span><strong>1 $ft^3$:</strong> ~30 Quarts</span>
+    </div>
+  </div>
+);
+
   return (
     <div style={{ fontFamily:"'Nunito',cursive", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
 
