@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
 import React, { useState } from "react";
 import ZoneSelector from "./components/ZoneSelector";
 
 export default function GardenApp() {
   const [zone, setZone] = useState(null);
+  const [selectedPlant, setSelectedPlant] = useState(null);
 
   if (!zone) {
     return <ZoneSelector onZoneSelect={setZone} />;
@@ -12,7 +12,7 @@ export default function GardenApp() {
   return (
     <div>
       <h1>Welcome to your {zone} Garden!</h1>
-      {/* Your existing garden app content goes here */}
+      {/* Your existing garden content goes here */}
     </div>
   );
 }
