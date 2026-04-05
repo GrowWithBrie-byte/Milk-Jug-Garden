@@ -1,5 +1,86 @@
 import React, { useState, useEffect } from "react";
 
+// Hardcoded growing zones for simplicity
+const GROWING_ZONES = [
+  "1a", "1b", "2a", "2b", "3a", "3b", "4a", "4b", 
+  "5a", "5b", "6a", "6b", "7a", "7b", "8a", "8b", 
+  "9a", "9b", "10a", "10b", "11a", "11b", "12a", "12b", "13a", "13b"
+];
+
+export default function GardenApp() {
+  const [zone, setZone] = useState("");
+  const [detected, setDetected] = useState(false);
+
+  // Try to detect location automatically
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          // Simple placeholder: you can replace with real API to get USDA zone
+          const approxZone = latitude >= 50 ? "3b" : latitude >= 40 ? "5a" : "7a";
+          setZone(approxZone);
+          setDetected(true);
+        },
+        () => {
+          console.log("User denied geolocation or unavailable");
+        }
+      );
+    }
+  }, []);
+
+  return (
+    <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
+      <h2>🌱 Welcome to Milk Jug Garden Helper!</h2>
+
+      {!zone && (
+        <>
+          <p>Select your USDA Growing Zone:</p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginTop: "10px" }}>
+            {GROWING_ZONES.map((z) => (
+              <button
+                key={z}
+                onClick={() => setZone(z)}
+                style={{
+                  padding: "8px 12px",
+                  borderRadius: "6px",
+                  border: "1px solid #ccc",
+                  cursor: "pointer",
+                  backgroundColor: "#f0f0f0",
+                  fontWeight: "bold",
+                }}
+              >
+                {z}
+              </button>
+            ))}
+          </div>
+          <p style={{ marginTop: "10px", fontSize: "12px" }}>
+            Or allow location detection to auto-select.
+          </p>
+        </>
+      )}
+
+      {zone && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>🌍 Your Growing Zone: {zone}</h3>
+          <p>All plant tips and schedules will adjust for your zone.</p>
+          <button
+            onClick={() => setZone("")}
+            style={{
+              marginTop: "10px",
+              padding: "5px 10px",
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+          >
+            Change Zone
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── UTILS ──
 const TODAY = "2026-03-31";
 const todayMs = new Date(TODAY).getTime();
