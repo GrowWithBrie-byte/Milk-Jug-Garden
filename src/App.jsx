@@ -796,23 +796,15 @@ const PlantCard = ({ plant }) => {
                     {SOIL_DATA[calcCont.id] && <div style={{ background:"#fff3e0", borderRadius:9, padding:"7px 9px", marginBottom:7, fontSize:10, color:"#e65100" }}>🛍️ <b>Buy:</b> {SOIL_DATA[calcCont.id].bagSize}</div>}
                     <div style={{ background:"#fff", borderRadius:9, padding:9, marginBottom:7, fontSize:10, color:"#444" }}><b>📐</b> {activePlant.spacingIn}" spacing · {activePlant.rootDepthIn}" root depth · {calcResult.vol}gal container</div>
                     <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:9, padding:"7px 9px", fontSize:10, color:"#555" }}>💡 {activePlant.notes}</div>
-                  <div style={{ fontSize:11, color:"#1565c0", lineHeight:1.5 }}>Everything you need to know about growing in 1-gallon milk jugs — what works, what doesn't, and exactly how to care for each plant.</div>
- <SoilConverter />
-              </div>
-            )}
-          </div>
-        )}
+                 {/* --- START OF CLEAN BLOCK --- */}
+<div style={{ fontSize:11, color:"#1565c0", lineHeight:1.5 }}>
+  Everything you need to know about growing in 1-gallon milk jugs — what works, what doesn't, and exactly how to care for each plant.
+</div>
 
-        {/* ── MILK JUG MODE ── */}
-        {tab==="jug" && (
-          <div>
-            <div style={{ background:"linear-gradient(135deg,#e3f2fd,#bbdefb)", borderRadius:16, padding:14, marginBottom:12 }}>
-              <div style={{ fontWeight:900, fontSize:16, color:"#1565c0", marginBottom:3 }}>🥛 Milk Jug Mode</div>
-              <div style={{ fontSize:11, color:"#1565c0", lineHeight:1.5 }}>Everything you need to know about growing in 1-gallon milk jugs — what works, what doesn't, and exactly how to care for each plant.</div>
-           const SoilConverter = () => {
-  return (
-    <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-      <h3 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>🌱 Soil Volume Reference</h3>
+<SoilConverter /> 
+
+{/* Ensure there are no stray </div> tags here if you aren't inside a specific container */}
+{/* --- END OF CLEAN BLOCK --- */}
       <ul style={{ fontSize: '13px', listStyle: 'none', padding: 0 }}>
         <li><strong>1 Qt:</strong> 4 Cups</li>
         <li><strong>4 Qt:</strong> 1 Gallon (16 Cups)</li>
@@ -1006,3 +998,17 @@ const PlantCard = ({ plant }) => {
     </div>
   );
 }
+// PUT THIS AT THE VERY BOTTOM OF App.jsx
+const SoilConverter = () => {
+  return (
+    <div style={{ padding: '12px', backgroundColor: '#f1f8e9', borderRadius: '8px', marginTop: '10px', border: '1px solid #c8e6c9' }}>
+      <h3 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#2e7d32' }}>🌱 Quick Soil Guide</h3>
+      <div style={{ fontSize: '11px', color: '#444', lineHeight: '1.4' }}>
+        • <b>1 Gallon Jug:</b> Needs 4 Quarts (16 Cups)<br/>
+        • <b>Small Bag (4qt):</b> Fills 1 Jug<br/>
+        • <b>Large Bag (8qt):</b> Fills 2 Jugs<br/>
+        • <b>1 Cubic Foot:</b> Fills ~7.5 Jugs
+      </div>
+    </div>
+  );
+};
