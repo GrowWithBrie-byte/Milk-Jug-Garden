@@ -205,6 +205,8 @@ const CALC_CONTAINERS = [
   { id:"custom",   label:"Custom Size",      emoji:"✏️", volGal:null, diamIn:null, depthIn:null },
 ];
 
+const p = selectedPlant ? (plants.find(pl => pl.id === selectedPlant.id) || selectedPlant) : null;
+
 function getWateringRange(waterEvery, zone, container) {
   const zn = zone ? parseFloat(zone.zone) : null;
   const zm = zn === null ? 1 : zn <= 3 ? 1.6 : zn <= 5 ? 1.3 : zn <= 7 ? 1.0 : zn <= 9 ? 0.75 : 0.55;
@@ -874,10 +876,22 @@ const PlantCard = ({ plant }) => {
         )}
 
       </div>
-
+{p && (
+  <div className="overlay">
+    <h2>{p.name} Care Guide</h2>
+    <SoilConverter /> {/* You can put your new chart here too! */}
+    {/* ... rest of your UI */}
+  </div>
+)}
       {/* ── PLANT DETAIL OVERLAY ── */}
-      {selectedPlant&&(()=>{
-        const p = plants.find(pl=>pl.id===selectedPlant.id)||selectedPlant;
+      878|        {/* ── PLANT DETAIL OVERLAY ── */}
+Expected ")" but found "{"
+876|        </div>
+877|  
+878|        {/* ── PLANT DETAIL OVERLAY ── */}
+   |        ^
+879|        {selectedPlant&&(()=>{
+880|          const p = plants.find(pl=>pl.id===selectedPlant.id)||selectedPlant;
         const days = daysSince(p.planted);
         const wr = getWateringRange(p.waterEvery, myZone, p.container);
         const ts = getTS(p, days);
