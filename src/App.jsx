@@ -882,16 +882,12 @@ const PlantCard = ({ plant }) => {
     <SoilConverter /> {/* You can put your new chart here too! */}
     {/* ... rest of your UI */}
   </div>
+
 )}
-      {/* ── PLANT DETAIL OVERLAY ── */}
-      878|        {/* ── PLANT DETAIL OVERLAY ── */}
-Expected ")" but found "{"
-876|        </div>
-877|  
-878|        {/* ── PLANT DETAIL OVERLAY ── */}
-   |        ^
-879|        {selectedPlant&&(()=>{
-880|          const p = plants.find(pl=>pl.id===selectedPlant.id)||selectedPlant;
+     {/* ── PLANT DETAIL OVERLAY ── */}
+      
+       {selectedPlant&&(()=>{
+         const p = plants.find(pl=>pl.id===selectedPlant.id)||selectedPlant;
         const days = daysSince(p.planted);
         const wr = getWateringRange(p.waterEvery, myZone, p.container);
         const ts = getTS(p, days);
