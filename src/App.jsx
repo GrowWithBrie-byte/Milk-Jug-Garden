@@ -285,11 +285,16 @@ const detectZone = async () => {
               </div>
             ) : (
               <button onClick={()=>setOnboarding(true)} style={{ ...card, width:"100%", border:"2px dashed #a5d6a7", display:"flex", alignItems:"center", gap:9, cursor:"pointer", textAlign:"left" }}>
-                <span style={{ fontSize:18 }}>🗺️</span><div><div style={{ fontWeight:800, fontSize:11, color:"#2e7d32" }}>Set your growing zone</div><div style={{ fontSize:10, color:"#888" }}>Get personalized tips & plant suggestions</div></div>
-              </button>
-            )}
-            <button onClick={detectZone}>
-🌎 Find My Growing Zone
+  <span style={{ fontSize:18 }}>🗺️</span>
+  <div>
+    <div style={{ fontWeight:800, fontSize:11, color:"#2e7d32" }}>Set your growing zone</div>
+    <div style={{ fontSize:10, color:"#888" }}>Get personalized tips & plant suggestions</div>
+  </div>
+</button>
+)}
+
+<button onClick={detectZone}>
+  🌎 Find My Growing Zone
 </button>
 {userZone && (
   <div>
