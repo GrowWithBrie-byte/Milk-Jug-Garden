@@ -3,6 +3,24 @@ import { useState, useEffect } from "react";
 const TODAY = "2026-03-31";
 const todayMs = new Date(TODAY).getTime();
 const daysSince = d => Math.max(0, Math.floor((todayMs - new Date(d).getTime()) / 86400000));
+const SoilConverter = () => {
+  const qtToCups = (qt) => qt * 4;
+  const soilVolumes = [
+    { plant: "Tomato", volumeQt: 2 },
+    { plant: "Basil", volumeQt: 1 },
+    { plant: "Marigold", volumeQt: 0.5 },
+  ];
+  return (
+    <div style={{ padding: "15px", backgroundColor: "#f9f9f9", borderRadius: "8px", marginTop: "10px" }}>
+      <h3 style={{ margin: "0 0 10px 0", fontSize: "14px" }}>🌱 Soil Volume Reference</h3>
+      {soilVolumes.map((s, i) => (
+        <div key={i} style={{ fontSize: "12px", lineHeight: 1.5, marginBottom: "5px" }}>
+          {s.plant}: {s.volumeQt} qt ({qtToCups(s.volumeQt)} cups)
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const CONTAINER_TYPES = ["Milk Jug","5-Gal Bucket","Plastic Pot","Fabric Bag","Coffee Can","Yogurt Container"];
 
@@ -18,29 +36,6 @@ const TRANSPLANT_MAP = {
 // Import React if not already
 import React from "react";
 
-// --- Place this at the top of your file ---
-const SoilConverter = () => {
-  const containersWithVolume = CALC_CONTAINERS.filter(c => c.volGal);
-
-  return (
-    <div style={{ padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-      <h3 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>🌱 Soil Volume Reference</h3>
-      <div style={{ fontSize: 11, lineHeight: 1.5, marginBottom: 8 }}>
-        Everything you need to know about soil volumes for common containers — now in cups!
-      </div>
-      <ul style={{ margin: 0, paddingLeft: 20, fontSize: 11, lineHeight: 1.5 }}>
-        {containersWithVolume.map(container => {
-          const cups = container.volGal * 16;
-          return (
-            <li key={container.id}>
-              {container.label}: {cups} cups of soil
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-};
 const VISUAL_SIGNS = [
   { id:"roots",  label:"Roots poking out of drainage holes", icon:"🌿" },
   { id:"droop",  label:"Plant wilts quickly after watering",  icon:"😓" },
@@ -535,6 +530,19 @@ const PlantCard = ({ plant }) => {
             )}
           </div>
         )}
+
+        <div> {/* MAIN APP WRAPPER */}
+  {plants.map((p, i) => (
+    <div key={i}>
+      <div style={{ fontSize: 11, color: "#1565c0" }}>
+        Everything you need to know about growing in 1-gallon milk jugs.
+      </div>
+    </div>
+  ))}
+
+  {/* Put it here, outside the map */}
+  <SoilConverter />
+</div>
 
         {/* ── GUIDES ── */}
         {tab==="guides" && !selectedGuide && !selectedWatering && (
