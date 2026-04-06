@@ -288,7 +288,15 @@ export default function App() {
       alignItems: "center",
       fontFamily: "Nunito, sans-serif",
       padding: 20
-    }}>
+     }}>
+
+      <div>
+        <h1>Select Your Growing Zone 🌱</h1>
+      </div>
+
+    </div>
+  );
+}
 
       <div style={{
         width: "100%",
