@@ -279,6 +279,8 @@ export default function App() {
   const calcResult = calcCont && activePlant ? calcFit(calcCont, activePlant, cVol, cDiam, cDepth) : null;
 if (!myZone) {
     return (
+  <> 
+    <div style={{ ... }}>
       <div style={{
         minHeight: "100vh",
         background: "linear-gradient(135deg,#c8e6c9,#e8f5e9,#fffde7)",
