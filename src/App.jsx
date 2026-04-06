@@ -108,20 +108,21 @@ const SOIL_DATA = {
 // Plant → container compatibility
 // good: works great | ok: acceptable | bad: not recommended | ugly: avoid completely
 const COMPAT = {
-  basil:      { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"good","Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
-  mint:       { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"good","Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
-  chives:     { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"good","Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
-  lettuce:    { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"ok", "Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
-  spinach:    { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"ok", "Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
-  radish:     { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"ok", "Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
-  kale:       { "Milk Jug":"ok", "Yogurt Container":"bad", "Coffee Can":"bad","Plastic Pot":"ok", "5-Gal Bucket":"good","Fabric Bag":"good" },
-  tomato:     { "Milk Jug":"bad","Yogurt Container":"ugly","Coffee Can":"ugly","Plastic Pot":"ok", "5-Gal Bucket":"good","Fabric Bag":"good" },
-  pepper:     { "Milk Jug":"ok", "Yogurt Container":"ugly","Coffee Can":"ugly","Plastic Pot":"ok", "5-Gal Bucket":"good","Fabric Bag":"good" },
-  cucumber:   { "Milk Jug":"bad","Yogurt Container":"ugly","Coffee Can":"ugly","Plastic Pot":"bad","5-Gal Bucket":"good","Fabric Bag":"good" },
-  beans:      { "Milk Jug":"ok", "Yogurt Container":"bad", "Coffee Can":"bad","Plastic Pot":"good","5-Gal Bucket":"good","Fabric Bag":"good" },
-  strawberry: { "Milk Jug":"good","Yogurt Container":"ok", "Coffee Can":"ok", "Plastic Pot":"good","5-Gal Bucket":"good","Fabric Bag":"good" },
-  carrot:     { "Milk Jug":"bad","Yogurt Container":"ugly","Coffee Can":"bad","Plastic Pot":"ok", "5-Gal Bucket":"good","Fabric Bag":"bad" },
-  micro:      { "Milk Jug":"good","Yogurt Container":"good","Coffee Can":"good","Plastic Pot":"good","5-Gal Bucket":"ok","Fabric Bag":"ok" },
+  basil:      { "Milk Jug":"good","Yogurt Tub":"good","Coffee Can":"good","Pot":"good","Bucket":"ok","Fabric Bag":"ok" },
+  mint:       { "Milk Jug":"good","Yogurt Tub":"good","Coffee Can":"good","Pot":"good","Bucket":"ok","Fabric Bag":"ok" },
+  chives:     { "Milk Jug":"good","Yogurt Tub":"good","Coffee Can":"good","Pot":"good","Bucket":"ok","Fabric Bag":"ok" },
+  lettuce:    { "Milk Jug":"good","Yogurt Tub":"good","Coffee Can":"ok", "Pot":"good","Bucket":"ok","Fabric Bag":"ok" },
+  spinach:    { "Milk Jug":"good","Yogurt Tub":"good","Coffee Can":"ok", "Pot":"good","Bucket":"ok","Fabric Bag":"ok" },
+  radish:     { "Milk Jug":"good","Yogurt Tub":"good","Coffee Can":"ok", "Pot":"good","Bucket":"ok","Fabric Bag":"ok" },
+  kale:       { "Milk Jug":"ok", "Yogurt Tub":"bad", "Coffee Can":"bad","Pot":"ok", "Bucket":"good","Fabric Bag":"good" },
+  tomato:     { "Milk Jug":"bad","Yogurt Tub":"ugly","Coffee Can":"ugly","Pot":"ok","Bucket":"good","Fabric Bag":"good" },
+  pepper:     { "Milk Jug":"ok", "Yogurt Tub":"ugly","Coffee Can":"ugly","Pot":"ok","Bucket":"good","Fabric Bag":"good" },
+  cucumber:   { "Milk Jug":"bad","Yogurt Tub":"ugly","Coffee Can":"ugly","Pot":"bad","Bucket":"good","Fabric Bag":"good" },
+  beans:      { "Milk Jug":"ok", "Yogurt Tub":"bad", "Coffee Can":"bad","Pot":"good","Bucket":"good","Fabric Bag":"good" },
+  strawberry: { "Milk Jug":"good","Yogurt Tub":"ok", "Coffee Can":"ok", "Pot":"good","Bucket":"good","Fabric Bag":"good" },
+  carrot:     { "Milk Jug":"bad","Yogurt Tub":"ugly","Coffee Can":"bad","Pot":"ok","Bucket":"good","Fabric Bag":"bad" },
+  potato:     { "Milk Jug":"ugly","Yogurt Tub":"ugly","Coffee Can":"ugly","Pot":"ugly","Bucket":"bad","Fabric Bag":"good" },
+  micro:      { "Milk Jug":"good","Yogurt Tub":"good","Coffee Can":"good","Pot":"good","Bucket":"ok","Fabric Bag":"ok" },
 };
 
 const COMPAT_INFO = {
@@ -231,6 +232,7 @@ const INIT = [
 
 export default function App() {
   const [tab, setTab] = useState("garden");
+  const [onboarding, setOnboarding] = useState(true);
   const [myZone, setMyZone] = useState(null);
   const [plants, setPlants] = useState(INIT);
   const [selectedPlant, setSelectedPlant] = useState(null);
@@ -265,9 +267,11 @@ export default function App() {
       const data = await res.json();
       const state = data.region || "";
       const found = ZONES.find(z => z.region.toLowerCase().includes(state.toLowerCase()));
-      if (found) { 
-  setMyZone(found); 
-}
+      if (found) { setMyZone(found); setOnboarding(false); }
+      else alert("Couldn't detect your zone automatically. Please pick it from the list!");
+    } catch { alert("Location lookup failed. Please pick your zone from the list!"); }
+    setZoneDetecting(false);
+  };
 
   const thirstyCount = plants.filter(p=>daysSince(p.lastWatered)>=p.waterEvery).length;
   const transplantReady = plants.filter(p=>{ const ts=getTS(p,daysSince(p.planted)); return ts.urgency==="ready"||ts.urgency==="urgent"; });
@@ -277,92 +281,8 @@ export default function App() {
   const otherCalcPlants = myZone ? CALC_PLANTS.filter(p=>!zonePlants.includes(p)) : CALC_PLANTS;
   const activePlant = custPlantMode ? { id:"custom", label:cpName||"My Plant", emoji:"🌱", spacingIn:parseFloat(cpSpacing)||0, rootDepthIn:parseFloat(cpDepth)||0, minVolGal:parseFloat(cpMinVol)||0, notes:"Custom plant — check seed packet." } : calcPlant;
   const calcResult = calcCont && activePlant ? calcFit(calcCont, activePlant, cVol, cDiam, cDepth) : null;
-if (!myZone) {
-   return (
-    <> 
-      <div style={{ width: '100%', margin: '0 auto' }}>
-        <div style={{
-          minHeight: "100vh",
-        background: "linear-gradient(135deg,#c8e6c9,#e8f5e9,#fffde7)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "Nunito, sans-serif",
-        padding: 20
-      }}>
 
-        {/* This is your Main Card Container */}
-        <div style={{
-          width: "100%",
-          maxWidth: 420,
-          background: "#ffffff",
-          borderRadius: 20,
-          padding: 25,
-          boxShadow: "0 15px 40px rgba(0,0,0,0.15)"
-        }}>
-
-          <div style={{textAlign:"center", marginBottom:20}}>
-            <div style={{fontSize:38}}>🌱</div>
-            <div style={{fontWeight:900,fontSize:22}}>
-              Container Garden Companion
-            </div>
-            <div style={{fontSize:13,color:"#666"}}>
-              Choose your growing zone
-            </div>
-          </div>
-
-          <div style={{
-            display:"grid",
-            gridTemplateColumns:"1fr 1fr",
-            gap:10,
-            maxHeight:350,
-            overflowY:"auto"
-          }}>
-            {ZONES.map(z => (
-              <button
-                key={z.zone}
-                onClick={() => setMyZone(z)}
-                style={{
-                  background:z.color,
-                  border:"none",
-                  borderRadius:12,
-                  padding:12,
-                  cursor:"pointer",
-                  textAlign:"left",
-                  boxShadow:"0 4px 10px rgba(0,0,0,0.1)"
-                }}
-              >
-                <div style={{fontSize:18}}>{z.emoji} Zone {z.zone}</div>
-                <div style={{fontSize:11, color:z.tc}}>{z.region}</div>
-                <div style={{fontSize:10, color:"#555", marginTop:3}}>{z.temp}</div>
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={() => {
-              const guess = ZONES.find(z => z.zone === "8b") || ZONES[0];
-              setMyZone(guess);
-            }}
-            style={{
-              marginTop: 18,
-              width: "100%",
-              padding: 12,
-              borderRadius: 12,
-              border: "none",
-              background: "linear-gradient(135deg,#66bb6a,#43a047)",
-              color: "#fff",
-              fontWeight: 800,
-              cursor: "pointer"
-            }}
-          >
-            📍 Auto Detect (Best Guess)
-        </button>
-          </div>
-        </div>
-      );
-    }
-return (
+  return (
     <div style={{ fontFamily:"'Nunito',cursive", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
 
       {/* ONBOARDING */}
@@ -766,16 +686,20 @@ return (
                 <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", textAlign:"center", marginBottom:10 }}>{activePlant?.emoji} {activePlant?.label} in {calcCont?.label} {calcCont?.emoji}</div>
 
                 {/* Container compatibility warning */}
-                {activePlant && calcCont && COMPAT[activePlant.id] && COMPAT[activePlant.id][calcCont.label.replace(/^[12]-Gal /,"").replace("1-Gal ","").replace("2-Gal ","")] && (() => {
-                  const contName = CONTAINER_TYPES.find(ct => calcCont.label.includes(ct.split(" ")[0])) || calcCont.label;
-                  const compatKey = Object.keys(COMPAT[activePlant.id]).find(k => calcCont.label.includes(k.split(" ")[0]));
+                {activePlant && calcCont && COMPAT[activePlant.id] && (() => {
+                  const compatKey = Object.keys(COMPAT[activePlant.id]).find(k => calcCont.label.includes(k));
                   const level = compatKey ? COMPAT[activePlant.id][compatKey] : null;
                   const info = level ? COMPAT_INFO[level] : null;
                   if (!info) return null;
-                  return <div style={{ background:info.bg, borderRadius:10, padding:"8px 10px", marginBottom:9, display:"flex", gap:7, alignItems:"center" }}>
-                    <span style={{ fontSize:18 }}>{info.emoji}</span>
-                    <div><div style={{ fontWeight:800, fontSize:11, color:info.color }}>{info.label}</div><div style={{ fontSize:10, color:"#666" }}>{activePlant.bestContainer && level !== "good" ? "Best container: "+activePlant.bestContainer : ""}</div></div>
-                  </div>;
+                  return (
+                    <div style={{ background:info.bg, borderRadius:10, padding:"8px 10px", marginBottom:9, display:"flex", gap:7, alignItems:"center" }}>
+                      <span style={{ fontSize:18 }}>{info.emoji}</span>
+                      <div>
+                        <div style={{ fontWeight:800, fontSize:11, color:info.color }}>{info.label}</div>
+                        {activePlant.bestContainer && level !== "good" && <div style={{ fontSize:10, color:"#666" }}>Best container: {activePlant.bestContainer}</div>}
+                      </div>
+                    </div>
+                  );
                 })()}
 
                 {calcResult.tooShallow||calcResult.tooSmall ? (
@@ -986,28 +910,13 @@ return (
             </div>
             <div style={{ display:"flex", gap:8 }}>
               <button onClick={()=>setEditingPlant(null)} style={{...btn("#f5f5f5","#666"),flex:1}}>Cancel</button>
-              <button onClick={saveEdit} style={{...btn("linear-gradient(135deg,#43a047,#66bb6a)"), flex:2}}>✅ Save Changes</button>
-            </div> 
-          </div> {/* Closes the white modal card */}
-        </div>   {/* Closes the dark overlay background */}
-      )}         {/* Closes the {editingPlant && ( block */}
+              <button onClick={saveEdit} style={{...btn("linear-gradient(135deg,#43a047,#66bb6a)"),flex:2}}>✅ Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* --- ADD THE SOIL CONVERTER HERE IF YOU WANT IT IN THE MAIN UI --- */}
-      <SoilConverter />
-
-    </div> {/* Closes the main scrolling container */}
-  );   {/* Closes the main return ( */}
-}      {/* Closes the GardenApp function */}
-
-// --- SOIL CONVERTER (Lives outside the main function) ---
-const SoilConverter = () => (
-  <div style={{ padding: '12px', backgroundColor: '#f1f8e9', borderRadius: '8px', marginTop: '10px', border: '1px solid #c8e6c9' }}>
-    <h3 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#2e7d32' }}>🌱 Quick Soil Guide</h3>
-    <div style={{ fontSize: '11px', color: '#444', lineHeight: '1.6' }}>
-      • <b>1 Gallon Jug:</b> 4 Quarts (16 Cups)<br/>
-      • <b>Small Bag (4qt):</b> Fills 1 Jug<br/>
-      • <b>Large Bag (8qt):</b> Fills 2 Jugs<br/>
-      • <b>1 Cubic Foot:</b> Fills ~7.5 Jugs
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');`}</style>
     </div>
-  </div>
-);
+  );
+}
