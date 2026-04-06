@@ -357,7 +357,7 @@ export default function App() {
               <AutoDetectZone onDetected={(z) => { setMyZone(z); setOnboarding(false); }} />
 
               <div style={{ fontSize:10, color:"#aaa", marginTop:8 }}>— or pick manually below —</div>
-              <div style={{ fontSize:10, color:"#888", background:"#e8f5e9", borderRadius:8, padding:"4px 10px", display:"inline-block", marginTop:4 }}>💡 Not sure? Search "USDA zone [your zip code]"</div>
+        
             </div>
             <div style={{ fontWeight:800, color:"#2e7d32", fontSize:12, marginBottom:8 }}>🗺️ Select Your Zone:</div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7, marginBottom:14 }}>
