@@ -338,28 +338,28 @@ if (!myZone) {
           </div>
 
           <button
-            onClick={()=>{
-              const guess = ZONES.find(z=>z.zone==="8b") || ZONES[0];
+            onClick={() => {
+              const guess = ZONES.find(z => z.zone === "8b") || ZONES[0];
               setMyZone(guess);
             }}
             style={{
-              marginTop:18,
-              width:"100%",
-              padding:12,
-              borderRadius:12,
-              border:"none",
-              background:"linear-gradient(135deg,#66bb6a,#43a047)",
-              color:"#fff",
-              fontWeight:800,
-              cursor:"pointer"
+              marginTop: 18,
+              width: "100%",
+              padding: 12,
+              borderRadius: 12,
+              border: "none",
+              background: "linear-gradient(135deg,#66bb6a,#43a047)",
+              color: "#fff",
+              fontWeight: 800,
+              cursor: "pointer"
             }}
           >
             📍 Auto Detect (Best Guess)
           </button>
-        </div> {/* Closes the white card */}
-      </div>   {/* Closes the background wrapper */}
-    );         // Closes the return
-  }            // Closes the 'if' statement
+        </div> {/* Closes white card */}
+      </div>   {/* Closes background wrapper */}
+    );         {/* Closes the Return ( ) */}
+  }            {/* Closes the if (!myZone) { */}
 
 return (
     <div style={{ fontFamily:"'Nunito',cursive", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
