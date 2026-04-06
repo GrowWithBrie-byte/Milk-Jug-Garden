@@ -987,9 +987,9 @@ return (
               <button onClick={saveEdit} style={{...btn("linear-gradient(135deg,#43a047,#66bb6a)"),flex:2}}>✅ Save Changes</button>
             </div>
           </div>
-     </div> {/* Closes your Main App Container */}
-    );       {/* Closes the Main Return ( */}
-  }          {/* Closes the export default function GardenApp() { */}
+    </div>
+    );
+  }
 
 // Ensure your SoilConverter is OUTSIDE the main function
 const SoilConverter = () => (
