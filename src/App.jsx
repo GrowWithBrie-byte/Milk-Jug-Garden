@@ -1000,6 +1000,7 @@ const SoilConverter = () => (
       • <b>Small Bag (4qt):</b> Fills 1 Jug<br/>
       • <b>Large Bag (8qt):</b> Fills 2 Jugs<br/>
       • <b>1 Cubic Foot:</b> Fills ~7.5 Jugs
-    </div>
-  </div>
-);
+ </div> {/* Closes the inner content wrapper */}
+    </div>   {/* Closes the main background wrapper */}
+  );         {/* Matches the 'return (' at the top */}
+}            {/* Matches the 'export default function GardenApp() {' */}
