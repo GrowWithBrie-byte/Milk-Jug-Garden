@@ -277,113 +277,89 @@ export default function App() {
   const otherCalcPlants = myZone ? CALC_PLANTS.filter(p=>!zonePlants.includes(p)) : CALC_PLANTS;
   const activePlant = custPlantMode ? { id:"custom", label:cpName||"My Plant", emoji:"🌱", spacingIn:parseFloat(cpSpacing)||0, rootDepthIn:parseFloat(cpDepth)||0, minVolGal:parseFloat(cpMinVol)||0, notes:"Custom plant — check seed packet." } : calcPlant;
   const calcResult = calcCont && activePlant ? calcFit(calcCont, activePlant, cVol, cDiam, cDepth) : null;
-
-  if (!myZone) {
-  return (
-    <div style={{
-      minHeight: "100vh",
-      background: "linear-gradient(135deg,#c8e6c9,#e8f5e9,#fffde7)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      fontFamily: "Nunito, sans-serif",
-      padding: 20
-     }}>
-
-      <div>
-        <h1>Select Your Growing Zone 🌱</h1>
-      </div>
-
-    </div>
-  );
-}
-
+if (!myZone) {
+    return (
       <div style={{
-        width: "100%",
-        maxWidth: 420,
-        background: "#ffffff",
-        borderRadius: 20,
-        padding: 25,
-        boxShadow: "0 15px 40px rgba(0,0,0,0.15)"
+        minHeight: "100vh",
+        background: "linear-gradient(135deg,#c8e6c9,#e8f5e9,#fffde7)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        fontFamily: "Nunito, sans-serif",
+        padding: 20
       }}>
 
-        <div style={{textAlign:"center", marginBottom:20}}>
-          <div style={{fontSize:38}}>🌱</div>
-          <div style={{fontWeight:900,fontSize:22}}>
-            Container Garden Companion
-          </div>
-          <div style={{fontSize:13,color:"#666"}}>
-            Choose your growing zone
-          </div>
-        </div>
-
+        {/* This is your Main Card Container */}
         <div style={{
-          display:"grid",
-          gridTemplateColumns:"1fr 1fr",
-          gap:10,
-          maxHeight:350,
-          overflowY:"auto"
+          width: "100%",
+          maxWidth: 420,
+          background: "#ffffff",
+          borderRadius: 20,
+          padding: 25,
+          boxShadow: "0 15px 40px rgba(0,0,0,0.15)"
         }}>
-          {ZONES.map(z => (
-            <button
-              key={z.zone}
-              onClick={() => setMyZone(z)}
-              style={{
-                background:z.color,
-                border:"none",
-                borderRadius:12,
-                padding:12,
-                cursor:"pointer",
-                textAlign:"left",
-                boxShadow:"0 4px 10px rgba(0,0,0,0.1)"
-              }}
-            >
-              <div style={{fontSize:18}}>
-                {z.emoji} Zone {z.zone}
-              </div>
 
-              <div style={{
-                fontSize:11,
-                color:z.tc
-              }}>
-                {z.region}
-              </div>
+          <div style={{textAlign:"center", marginBottom:20}}>
+            <div style={{fontSize:38}}>🌱</div>
+            <div style={{fontWeight:900,fontSize:22}}>
+              Container Garden Companion
+            </div>
+            <div style={{fontSize:13,color:"#666"}}>
+              Choose your growing zone
+            </div>
+          </div>
 
-              <div style={{
-                fontSize:10,
-                color:"#555",
-                marginTop:3
-              }}>
-                {z.temp}
-              </div>
-            </button>
-          ))}
-        </div>
+          <div style={{
+            display:"grid",
+            gridTemplateColumns:"1fr 1fr",
+            gap:10,
+            maxHeight:350,
+            overflowY:"auto"
+          }}>
+            {ZONES.map(z => (
+              <button
+                key={z.zone}
+                onClick={() => setMyZone(z)}
+                style={{
+                  background:z.color,
+                  border:"none",
+                  borderRadius:12,
+                  padding:12,
+                  cursor:"pointer",
+                  textAlign:"left",
+                  boxShadow:"0 4px 10px rgba(0,0,0,0.1)"
+                }}
+              >
+                <div style={{fontSize:18}}>{z.emoji} Zone {z.zone}</div>
+                <div style={{fontSize:11, color:z.tc}}>{z.region}</div>
+                <div style={{fontSize:10, color:"#555", marginTop:3}}>{z.temp}</div>
+              </button>
+            ))}
+          </div>
 
-        <button
-          onClick={()=>{
-            const guess = ZONES.find(z=>z.zone==="8b") || ZONES[0]
-            setMyZone(guess)
-          }}
-          style={{
-            marginTop:18,
-            width:"100%",
-            padding:12,
-            borderRadius:12,
-            border:"none",
-            background:"linear-gradient(135deg,#66bb6a,#43a047)",
-            color:"#fff",
-            fontWeight:800,
-            cursor:"pointer"
-          }}
-        >
-          📍 Auto Detect (Best Guess)
-        </button>
-
-           </div>
-    </div>
-  );
-}
+          <button
+            onClick={()=>{
+              const guess = ZONES.find(z=>z.zone==="8b") || ZONES[0];
+              setMyZone(guess);
+            }}
+            style={{
+              marginTop:18,
+              width:"100%",
+              padding:12,
+              borderRadius:12,
+              border:"none",
+              background:"linear-gradient(135deg,#66bb6a,#43a047)",
+              color:"#fff",
+              fontWeight:800,
+              cursor:"pointer"
+            }}
+          >
+            📍 Auto Detect (Best Guess)
+          </button>
+        </div> {/* Closes the white card */}
+      </div>   {/* Closes the background wrapper */}
+    );         // Closes the return
+  }            // Closes the 'if' statement
 
 return (
     <div style={{ fontFamily:"'Nunito',cursive", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
