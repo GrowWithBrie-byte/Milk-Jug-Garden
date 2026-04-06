@@ -991,14 +991,24 @@ return (
       </div>   {/* Closes the main container div */}
     );         {/* Closes the return( */}
   }            {/* Closes the GardenApp function { */}
+// 1. FIRST, CLOSE THE MAIN GARDEN APP PROPERLY
+      </div> 
+    </div>
+  );
+}
 
-// --- HELPER COMPONENTS (Place these AFTER the final bracket above) ---
-
+// 2. SECOND, DEFINE THE SOIL CONVERTER OUTSIDE THE MAIN APP
 const SoilConverter = () => (
   <div style={{ padding: '12px', backgroundColor: '#f1f8e9', borderRadius: '8px', marginTop: '10px', border: '1px solid #c8e6c9' }}>
     <h3 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#2e7d32' }}>🌱 Quick Soil Guide</h3>
-    </div> {/* Catch-all for any open nested div */}
-      </div>   {/* Closes your Main App Container */}
-    </>
-  );
-}
+    <div style={{ fontSize: '11px', color: '#444', lineHeight: '1.6' }}>
+      • <b>1 Gallon Jug:</b> 4 Quarts (16 Cups)<br/>
+      • <b>Small Bag (4qt):</b> Fills 1 Jug<br/>
+      • <b>Large Bag (8qt):</b> Fills 2 Jugs<br/>
+      • <b>1 Cubic Foot:</b> Fills ~7.5 Jugs
+    </div>
+  </div>
+);
+
+// 3. THIRD, ENSURE YOU EXPORT THE MAIN APP (Only if not already exported at the top)
+// export default GardenApp;
