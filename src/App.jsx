@@ -233,7 +233,6 @@ export default function App() {
   const [tab, setTab] = useState("garden");
   const [myZone, setMyZone] = useState(null);
   const [onboarding, setOnboarding] = useState(true);
-  const [myZone, setMyZone] = useState(null);
   const [plants, setPlants] = useState(INIT);
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
