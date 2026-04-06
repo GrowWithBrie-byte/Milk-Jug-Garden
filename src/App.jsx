@@ -278,11 +278,11 @@ export default function App() {
   const activePlant = custPlantMode ? { id:"custom", label:cpName||"My Plant", emoji:"🌱", spacingIn:parseFloat(cpSpacing)||0, rootDepthIn:parseFloat(cpDepth)||0, minVolGal:parseFloat(cpMinVol)||0, notes:"Custom plant — check seed packet." } : calcPlant;
   const calcResult = calcCont && activePlant ? calcFit(calcCont, activePlant, cVol, cDiam, cDepth) : null;
 if (!myZone) {
-    return (
-  <> 
-    <div style={{ ... }}>
-      <div style={{
-        minHeight: "100vh",
+   return (
+    <> 
+      <div style={{ width: '100%', margin: '0 auto' }}>
+        <div style={{
+          minHeight: "100vh",
         background: "linear-gradient(135deg,#c8e6c9,#e8f5e9,#fffde7)",
         display: "flex",
         justifyContent: "center",
