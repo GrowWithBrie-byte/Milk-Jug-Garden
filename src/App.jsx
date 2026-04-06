@@ -232,7 +232,6 @@ const INIT = [
 export default function App() {
   const [tab, setTab] = useState("garden");
   const [myZone, setMyZone] = useState(null);
-  const [onboarding, setOnboarding] = useState(true);
   const [plants, setPlants] = useState(INIT);
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [showAdd, setShowAdd] = useState(false);
@@ -266,11 +265,9 @@ export default function App() {
       const data = await res.json();
       const state = data.region || "";
       const found = ZONES.find(z => z.region.toLowerCase().includes(state.toLowerCase()));
-      if (found) { setMyZone(found); setOnboarding(false); }
-      else alert("Couldn't detect your zone automatically. Please pick it from the list!");
-    } catch { alert("Location lookup failed. Please pick your zone from the list!"); }
-    setZoneDetecting(false);
-  };
+      if (found) { 
+  setMyZone(found); 
+}
 
   const thirstyCount = plants.filter(p=>daysSince(p.lastWatered)>=p.waterEvery).length;
   const transplantReady = plants.filter(p=>{ const ts=getTS(p,daysSince(p.planted)); return ts.urgency==="ready"||ts.urgency==="urgent"; });
