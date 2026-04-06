@@ -985,13 +985,13 @@ return (
             <div style={{ display:"flex", gap:8 }}>
               <button onClick={()=>setEditingPlant(null)} style={{...btn("#f5f5f5","#666"),flex:1}}>Cancel</button>
               <button onClick={saveEdit} style={{...btn("linear-gradient(135deg,#43a047,#66bb6a)"),flex:2}}>✅ Save Changes</button>
-            </div>
-          </div>
-    </div>
-    );
-  }
+          </div> {/* Closes the inner content div */}
+      </div>   {/* Closes the main container div */}
+    );         {/* Closes the return( */}
+  }            {/* Closes the GardenApp function { */}
 
-// Ensure your SoilConverter is OUTSIDE the main function
+// --- HELPER COMPONENTS (Place these AFTER the final bracket above) ---
+
 const SoilConverter = () => (
   <div style={{ padding: '12px', backgroundColor: '#f1f8e9', borderRadius: '8px', marginTop: '10px', border: '1px solid #c8e6c9' }}>
     <h3 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#2e7d32' }}>🌱 Quick Soil Guide</h3>
