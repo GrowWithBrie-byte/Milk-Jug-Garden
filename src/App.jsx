@@ -986,18 +986,20 @@ return (
             </div>
             <div style={{ display:"flex", gap:8 }}>
               <button onClick={()=>setEditingPlant(null)} style={{...btn("#f5f5f5","#666"),flex:1}}>Cancel</button>
-              <button onClick={saveEdit} style={{...btn("linear-gradient(135deg,#43a047,#66bb6a)"),flex:2}}>✅ Save Changes</button>
-          </div> {/* Closes the inner content div */}
-      </div>   {/* Closes the main container div */}
-    );         {/* Closes the return( */}
-  }            {/* Closes the GardenApp function { */}
-// 1. FIRST, CLOSE THE MAIN GARDEN APP PROPERLY
-      </div> 
-    </div>
-  );
-}
+              <button onClick={saveEdit} style={{...btn("linear-gradient(135deg,#43a047,#66bb6a)"), flex:2}}>✅ Save Changes</button>
+            </div> 
+          </div> {/* Closes the white modal card */}
+        </div>   {/* Closes the dark overlay background */}
+      )}         {/* Closes the {editingPlant && ( block */}
 
-// 2. SECOND, DEFINE THE SOIL CONVERTER OUTSIDE THE MAIN APP
+      {/* --- ADD THE SOIL CONVERTER HERE IF YOU WANT IT IN THE MAIN UI --- */}
+      <SoilConverter />
+
+    </div> {/* Closes the main scrolling container */}
+  );   {/* Closes the main return ( */}
+}      {/* Closes the GardenApp function */}
+
+// --- SOIL CONVERTER (Lives outside the main function) ---
 const SoilConverter = () => (
   <div style={{ padding: '12px', backgroundColor: '#f1f8e9', borderRadius: '8px', marginTop: '10px', border: '1px solid #c8e6c9' }}>
     <h3 style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#2e7d32' }}>🌱 Quick Soil Guide</h3>
@@ -1009,6 +1011,3 @@ const SoilConverter = () => (
     </div>
   </div>
 );
-
-// 3. THIRD, ENSURE YOU EXPORT THE MAIN APP (Only if not already exported at the top)
-// export default GardenApp;
