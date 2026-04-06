@@ -355,12 +355,11 @@ if (!myZone) {
             }}
           >
             📍 Auto Detect (Best Guess)
-          </button>
-        </div> {/* Closes white card */}
-      </div>   {/* Closes background wrapper */}
-    );         {/* Closes the Return ( ) */}
-  }            {/* Closes the if (!myZone) { */}
-
+        </button>
+          </div>
+        </div>
+      );
+    }
 return (
     <div style={{ fontFamily:"'Nunito',cursive", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
 
