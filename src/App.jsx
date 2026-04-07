@@ -67,6 +67,8 @@ const EMOJI_PRESETS = {
   "🧄":{ name:"Garlic",      container:"5-Gal Bucket",    waterEvery:3 },
   "🧅":{ name:"Green Onions",container:"Milk Jug",        waterEvery:2 },
   "🫖":{ name:"Chamomile",   container:"Yogurt Container",waterEvery:2 },
+  "🥔":{ name:"Potatoes",    container:"Laundry Basket",  waterEvery:2 },
+  "🍠":{ name:"Sweet Potatoes",container:"5-Gal Bucket",  waterEvery:2 },
   "🪴":{ name:"",            container:"Milk Jug",        waterEvery:2 },
 };
 
@@ -111,7 +113,9 @@ const PLANT_GUIDES = [
   { name:"Dill",        emoji:"🫛", container:"Milk Jug",          water:"Every 2-3 days", waterBase:2.5, sun:"Full sun",   tip:"Gets tall! A milk jug gives it room. Plant away from fennel." },
   { name:"Chives",      emoji:"🌿", container:"Coffee Can",        water:"Every 2-3 days", waterBase:2.5, sun:"Full sun",   tip:"Almost impossible to kill. Great coffee can herb — snip & regrow!" },
   { name:"Green Onions",emoji:"🧅", container:"Milk Jug",          water:"Every 2 days",   waterBase:2,   sun:"Full sun",   tip:"Regrow from store-bought scraps in a jug of water on your windowsill!" },
-  { name:"Chamomile",   emoji:"🫖", container:"Yogurt Container",  water:"Every 2-3 days", waterBase:2.5, sun:"Full sun",   tip:"Grows easily from seed. Harvest flowers for tea — the more you pick, the more it blooms!" },
+  { name:"Chamomile",    emoji:"🫖", container:"Yogurt Container",  water:"Every 2-3 days", waterBase:2.5, sun:"Full sun",   tip:"Grows easily from seed. Harvest flowers for tea — the more you pick, the more it blooms!" },
+  { name:"Potatoes",     emoji:"🥔", container:"Laundry Basket",    water:"Every 2 days",   waterBase:2,   sun:"Full sun",   tip:"Start with 4\" of soil, place seed potato, and add more soil as vines grow — this is called 'hilling' and it's how you get more potatoes!" },
+  { name:"Sweet Potatoes",emoji:"🍠",container:"5-Gal Bucket",      water:"Every 2 days",   waterBase:2,   sun:"Full sun",   tip:"Perfect for Zone 8b — plant slips in spring and harvest in fall. They love heat and trailing vines look great spilling over containers!" },
 ];
 
 const WATERING_METHODS = [
@@ -162,6 +166,8 @@ const CALC_PLANTS = [
   { id:"cucumber",  label:"Cucumbers",     emoji:"🥒", spacingIn:18,  rootDepthIn:12, minVolGal:5,    notes:"Needs vertical support — great in 5-gal buckets" },
   { id:"beans",     label:"Green Beans",   emoji:"🫘", spacingIn:4,   rootDepthIn:8,  minVolGal:1,    notes:"Bush variety best for containers" },
   { id:"strawberry",label:"Strawberries",  emoji:"🍓", spacingIn:8,   rootDepthIn:8,  minVolGal:1,    notes:"1 per jug or poke holes for a strawberry tower" },
+  { id:"potato",     label:"Potatoes",      emoji:"🥔", spacingIn:12,  rootDepthIn:12, minVolGal:5,    notes:"Laundry basket or 5-gal bucket — hill soil up as vines grow for more potatoes!" },
+  { id:"sweetpot",   label:"Sweet Potatoes",emoji:"🍠", spacingIn:18,  rootDepthIn:12, minVolGal:5,    notes:"One slip per 5-gal bucket — loves heat, great for Zone 8b spring planting" },
   { id:"carrot",    label:"Carrots",       emoji:"🥕", spacingIn:3,   rootDepthIn:12, minVolGal:1,    notes:"Need deep containers — 5-gal bucket ideal" },
   { id:"micro",     label:"Microgreens",   emoji:"🌱", spacingIn:0.5, rootDepthIn:2,  minVolGal:0.05, notes:"Perfect for seedling trays & plastic cups!" },
 ];
@@ -175,6 +181,7 @@ const CALC_CONTAINERS = [
   { id:"can3lb",   label:"3lb Coffee Can",    emoji:"🥫", volGal:0.37, diamIn:6,  depthIn:7  },
   { id:"pot3gal",  label:"3-Gal Pot",         emoji:"🪴", volGal:3,    diamIn:10, depthIn:10 },
   { id:"pot5gal",  label:"5-Gal Bucket",      emoji:"🪣", volGal:5,    diamIn:12, depthIn:12 },
+  { id:"basket",    label:"Laundry Basket", emoji:"🧺", volGal:10,   diamIn:16, depthIn:12 },
   { id:"fabric7",  label:"7-Gal Fabric Bag",  emoji:"👜", volGal:7,    diamIn:14, depthIn:13 },
   { id:"custom",   label:"Custom Size",       emoji:"✏️", volGal:null, diamIn:null,depthIn:null },
 ];
@@ -417,6 +424,36 @@ export default function App() {
     : calcPlant;
   const calcResult = calcCont && activePlant ? calcFit(calcCont, activePlant, cVol, cDiam, cDepth) : null;
 
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const n = new Date(); return { year: n.getFullYear(), month: n.getMonth() };
+  });
+  const [calendarDay, setCalendarDay] = useState(null);
+
+  const getCalendarEvents = () => {
+    const events = {};
+    const addEvent = (dateStr, ev) => { if (!events[dateStr]) events[dateStr] = []; events[dateStr].push(ev); };
+    plants.forEach(p => {
+      const lastW = new Date(p.lastWatered);
+      for (let i = 0; i < 45; i++) {
+        const d = new Date(lastW); d.setDate(d.getDate() + p.waterEvery * (i + 1));
+        addEvent(d.toISOString().split("T")[0], { type:"water", emoji:p.emoji, name:p.name, id:p.id });
+      }
+      const td = TRANSPLANT_MAP[p.container];
+      if (td) {
+        const pd = new Date(p.planted);
+        const mn = new Date(pd); mn.setDate(mn.getDate() + td.daysMin);
+        const mx = new Date(pd); mx.setDate(mx.getDate() + td.daysMax);
+        addEvent(mn.toISOString().split("T")[0], { type:"transplant", emoji:p.emoji, name:p.name, label:"Transplant window opens", id:p.id });
+        addEvent(mx.toISOString().split("T")[0], { type:"transplant_end", emoji:p.emoji, name:p.name, label:"Transplant deadline", id:p.id });
+      }
+      addEvent(p.planted, { type:"planted", emoji:p.emoji, name:p.name, label:"Planted!", id:p.id });
+    });
+    return events;
+  };
+  const calendarEvents = getCalendarEvents();
+  const thirstyToday = plants.filter(p => daysSince(p.lastWatered) >= p.waterEvery);
+  const transplantToday = plants.filter(p => { const ts=getTS(p,daysSince(p.planted)); return ts.urgency==="ready"||ts.urgency==="urgent"; });
+
   return (
     <div style={{ fontFamily:"'Nunito',cursive", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
 
@@ -474,10 +511,10 @@ export default function App() {
 
       {/* ── TAB BAR ── */}
       <div style={{ display:"flex", background:"#fff", margin:"10px 12px 0", borderRadius:12, padding:3, boxShadow:"0 2px 8px #0001" }}>
-        {[["garden","🌱","Garden"],["guides","📖","Guides"],["zones","🗺️","Zones"],["calc","🧮","Calc"]].map(([k,icon,label]) => (
+        {[["garden","🌱","Garden"],["calendar","📅","Calendar"],["guides","📖","Guides"],["zones","🗺️","Zones"],["calc","🧮","Calc"]].map(([k,icon,label]) => (
           <button key={k} onClick={() => setTab(k)}
-            style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"6px 2px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
-            <span style={{ fontSize:16 }}>{icon}</span>
+            style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"6px 2px", fontWeight:800, fontSize:9, cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+            <span style={{ fontSize:15 }}>{icon}</span>
             <span>{label}</span>
           </button>
         ))}
@@ -489,6 +526,51 @@ export default function App() {
         {/* ══ MY GARDEN ══ */}
         {tab === "garden" && (
           <div>
+
+            {/* ── TODAY SUMMARY ── */}
+            {plants.length > 0 && (
+              <div style={{ ...card, background:"linear-gradient(135deg,#1b5e20,#2e7d32)", border:"none", marginBottom:10 }}>
+                <div style={{ color:"#a5d6a7", fontSize:10, fontWeight:700, marginBottom:6 }}>
+                  📅 {new Date().toLocaleDateString("en-US",{ weekday:"long", month:"long", day:"numeric" })}
+                </div>
+                {thirstyToday.length === 0 && transplantToday.length === 0 ? (
+                  <div style={{ color:"#c8e6c9", fontSize:12, fontWeight:700 }}>✅ All plants are happy today!</div>
+                ) : (
+                  <>
+                    {thirstyToday.length > 0 && (
+                      <div style={{ marginBottom:6 }}>
+                        <div style={{ color:"#81d4fa", fontSize:10, fontWeight:800, marginBottom:4 }}>💧 Needs water today</div>
+                        <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
+                          {thirstyToday.map(p => (
+                            <button key={p.id} onClick={() => setSelectedPlant(p)}
+                              style={{ background:"rgba(255,255,255,0.15)", border:"1.5px solid rgba(255,255,255,0.2)", borderRadius:8, padding:"3px 8px", color:"#fff", fontSize:10, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+                              {p.emoji} {p.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {transplantToday.length > 0 && (
+                      <div>
+                        <div style={{ color:"#ffcc80", fontSize:10, fontWeight:800, marginBottom:4 }}>🪴 Ready to transplant</div>
+                        <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
+                          {transplantToday.map(p => (
+                            <button key={p.id} onClick={() => setSelectedPlant(p)}
+                              style={{ background:"rgba(255,200,100,0.2)", border:"1.5px solid rgba(255,200,100,0.3)", borderRadius:8, padding:"3px 8px", color:"#ffcc80", fontSize:10, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+                              {p.emoji} {p.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+                <button onClick={() => setTab("calendar")}
+                  style={{ marginTop:8, background:"rgba(255,255,255,0.15)", border:"1.5px solid rgba(255,255,255,0.2)", borderRadius:8, padding:"4px 10px", color:"#c8e6c9", fontSize:10, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+                  📅 View full calendar →
+                </button>
+              </div>
+            )}
             {myZone ? (
               <div style={{ ...card, background:`linear-gradient(135deg,${myZone.color},white)`, border:`1.5px solid ${myZone.tc}20`, display:"flex", alignItems:"center", gap:9 }}>
                 <span style={{ fontSize:20 }}>{myZone.emoji}</span>
@@ -637,6 +719,132 @@ export default function App() {
             )}
           </div>
         )}
+
+        {/* ══ CALENDAR ══ */}
+        {tab === "calendar" && (() => {
+          const { year, month } = calendarMonth;
+          const firstDay = new Date(year, month, 1).getDay();
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const monthName = new Date(year, month).toLocaleDateString("en-US", { month:"long", year:"numeric" });
+          const todayDate = new Date(); const isToday = (d) => d === todayDate.getDate() && month === todayDate.getMonth() && year === todayDate.getFullYear();
+          const dayStr = (d) => `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+          const selectedEvents = calendarDay ? (calendarEvents[dayStr(calendarDay)] || []) : [];
+
+          const EVENT_COLORS = { water:"#29b6f6", transplant:"#ff9800", transplant_end:"#f44336", planted:"#43a047" };
+          const EVENT_LABELS = { water:"💧 Water", transplant:"🪴 Transplant window", transplant_end:"⚠️ Transplant deadline", planted:"🌱 Planted" };
+
+          return (
+            <div>
+              <div style={{ fontWeight:900, fontSize:15, color:"#2e7d32", marginBottom:2 }}>📅 Garden Calendar</div>
+              <div style={{ fontSize:11, color:"#888", marginBottom:10 }}>Tap any day to see what's happening!</div>
+
+              {/* Legend */}
+              <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:10 }}>
+                {Object.entries(EVENT_LABELS).map(([type, label]) => (
+                  <div key={type} style={{ display:"flex", alignItems:"center", gap:4, fontSize:9, color:"#555" }}>
+                    <div style={{ width:8, height:8, borderRadius:"50%", background:EVENT_COLORS[type] }} />
+                    {label}
+                  </div>
+                ))}
+              </div>
+
+              {/* Month nav */}
+              <div style={{ ...card, padding:"10px 12px" }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                  <button onClick={() => setCalendarMonth(m => { const d = new Date(m.year, m.month - 1); return { year:d.getFullYear(), month:d.getMonth() }; })}
+                    style={btn("#e8f5e9","#2e7d32",{ padding:"4px 12px" })}>‹</button>
+                  <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20" }}>{monthName}</div>
+                  <button onClick={() => setCalendarMonth(m => { const d = new Date(m.year, m.month + 1); return { year:d.getFullYear(), month:d.getMonth() }; })}
+                    style={btn("#e8f5e9","#2e7d32",{ padding:"4px 12px" })}>›</button>
+                </div>
+
+                {/* Day headers */}
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:2, marginBottom:4 }}>
+                  {["Su","Mo","Tu","We","Th","Fr","Sa"].map(d => (
+                    <div key={d} style={{ textAlign:"center", fontSize:9, fontWeight:800, color:"#aaa", padding:"2px 0" }}>{d}</div>
+                  ))}
+                </div>
+
+                {/* Calendar grid */}
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:2 }}>
+                  {Array.from({ length: firstDay }).map((_, i) => <div key={`e${i}`} />)}
+                  {Array.from({ length: daysInMonth }).map((_, i) => {
+                    const d = i + 1;
+                    const ds = dayStr(d);
+                    const evs = calendarEvents[ds] || [];
+                    const types = [...new Set(evs.map(e => e.type))];
+                    const today = isToday(d);
+                    const selected = calendarDay === d;
+                    return (
+                      <button key={d} onClick={() => setCalendarDay(calendarDay === d ? null : d)}
+                        style={{ background:selected?"linear-gradient(135deg,#43a047,#66bb6a)":today?"#e8f5e9":"transparent", border:today?"2px solid #43a047":selected?"2px solid #2e7d32":"2px solid transparent", borderRadius:8, padding:"4px 2px", cursor:"pointer", fontFamily:"inherit", textAlign:"center", minHeight:36 }}>
+                        <div style={{ fontSize:11, fontWeight:today||selected?900:500, color:selected?"#fff":today?"#2e7d32":"#444" }}>{d}</div>
+                        <div style={{ display:"flex", justifyContent:"center", gap:1, flexWrap:"wrap", marginTop:1 }}>
+                          {types.slice(0,3).map(t => (
+                            <div key={t} style={{ width:5, height:5, borderRadius:"50%", background:selected?"rgba(255,255,255,0.8)":EVENT_COLORS[t] }} />
+                          ))}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Selected day detail */}
+              {calendarDay && (
+                <div style={card}>
+                  <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20", marginBottom:8 }}>
+                    {new Date(year, month, calendarDay).toLocaleDateString("en-US",{ weekday:"long", month:"long", day:"numeric" })}
+                  </div>
+                  {selectedEvents.length === 0 ? (
+                    <div style={{ fontSize:11, color:"#aaa", textAlign:"center", padding:"10px 0" }}>Nothing scheduled — enjoy the day! 🌿</div>
+                  ) : (
+                    selectedEvents.map((ev, i) => (
+                      <button key={i} onClick={() => { const p = plants.find(pl => pl.id === ev.id); if (p) { setSelectedPlant(p); setTab("garden"); } }}
+                        style={{ display:"flex", alignItems:"center", gap:9, background:`${EVENT_COLORS[ev.type]}15`, border:`1.5px solid ${EVENT_COLORS[ev.type]}40`, borderRadius:10, padding:"8px 10px", width:"100%", marginBottom:5, cursor:"pointer", fontFamily:"inherit", textAlign:"left" }}>
+                        <span style={{ fontSize:20 }}>{ev.emoji}</span>
+                        <div>
+                          <div style={{ fontWeight:800, fontSize:11, color:"#333" }}>{ev.name}</div>
+                          <div style={{ fontSize:10, color:EVENT_COLORS[ev.type], fontWeight:700 }}>{EVENT_LABELS[ev.type]}</div>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {/* Upcoming this month */}
+              {(() => {
+                const upcoming = [];
+                for (let d = todayDate.getDate() + 1; d <= daysInMonth && upcoming.length < 8; d++) {
+                  const ds = dayStr(d);
+                  if (calendarEvents[ds]) {
+                    calendarEvents[ds].forEach(ev => {
+                      if (ev.type !== "water") upcoming.push({ d, ds, ev });
+                    });
+                  }
+                }
+                if (upcoming.length === 0) return null;
+                return (
+                  <div style={card}>
+                    <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20", marginBottom:8 }}>📌 Coming up this month</div>
+                    {upcoming.map(({ d, ev }, i) => (
+                      <div key={i} style={{ display:"flex", alignItems:"center", gap:9, padding:"6px 0", borderBottom:"1px solid #f5f5f5" }}>
+                        <div style={{ background:`${EVENT_COLORS[ev.type]}20`, borderRadius:8, padding:"4px 8px", minWidth:32, textAlign:"center" }}>
+                          <div style={{ fontWeight:900, fontSize:13, color:EVENT_COLORS[ev.type] }}>{d}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontWeight:700, fontSize:11, color:"#333" }}>{ev.emoji} {ev.name}</div>
+                          <div style={{ fontSize:10, color:EVENT_COLORS[ev.type], fontWeight:700 }}>{EVENT_LABELS[ev.type]}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          );
+        })()}
 
         {/* ══ GUIDES ══ */}
         {tab === "guides" && !selectedGuide && !selectedWatering && (
@@ -866,205 +1074,3 @@ export default function App() {
                     <button key={p.id} onClick={() => { setCalcPlant(p); setCustPlantMode(false); }}
                       style={{ background:calcPlant?.id===p.id&&!custPlantMode?"linear-gradient(135deg,#43a047,#66bb6a)":"#f5f5f5", color:calcPlant?.id===p.id&&!custPlantMode?"#fff":"#444", border:calcPlant?.id===p.id&&!custPlantMode?"2px solid #2e7d32":"2px solid #e0e0e0", borderRadius:9, padding:"5px 7px", cursor:"pointer", fontFamily:"inherit", textAlign:"center", minWidth:52 }}>
                       <div style={{ fontSize:16 }}>{p.emoji}</div>
-                      <div style={{ fontSize:8, fontWeight:800 }}>{p.label}</div>
-                    </button>
-                  ))}
-                </div>
-              )}
-              {!myZone && (
-                <div style={{ fontSize:10, color:"#2e7d32", background:"#e8f5e9", borderRadius:7, padding:"4px 7px", marginBottom:7 }}>
-                  💡 Set your zone to see climate picks first!{" "}
-                  <button onClick={() => setOnboarding(true)} style={{ background:"none", border:"none", color:"#43a047", fontWeight:800, cursor:"pointer", fontFamily:"inherit", fontSize:10 }}>Set zone →</button>
-                </div>
-              )}
-              <div style={{ borderTop:"1.5px solid #f0f0f0", paddingTop:7 }}>
-                <button onClick={() => setCustPlantMode(v => !v)}
-                  style={{ background:custPlantMode?"linear-gradient(135deg,#ff7043,#ff8a65)":"#f5f5f5", color:custPlantMode?"#fff":"#444", border:custPlantMode?"2px solid #e64a19":"2px dashed #ccc", borderRadius:9, padding:"4px 9px", cursor:"pointer", fontFamily:"inherit" }}>
-                  ✏️ <span style={{ fontSize:9, fontWeight:800 }}>Custom Plant</span>
-                </button>
-              </div>
-              {custPlantMode && (
-                <div style={{ marginTop:9, background:"#fff3e0", borderRadius:10, padding:10, border:"2px solid #ffe0b2" }}>
-                  <div style={{ marginBottom:7 }}>
-                    <div style={{ fontSize:9, fontWeight:700, color:"#888", marginBottom:2 }}>Plant name</div>
-                    <input value={cpName} onChange={ev => setCpName(ev.target.value)} placeholder="e.g. Sunflower"
-                      style={{ width:"100%", border:"2px solid #ffe0b2", borderRadius:6, padding:"6px 7px", fontSize:11, fontFamily:"inherit", boxSizing:"border-box", outline:"none" }} />
-                  </div>
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:7 }}>
-                    {[["Spacing(in)",cpSpacing,setCpSpacing],["Root depth(in)",cpDepth,setCpDepth],["Min vol(gal)",cpMinVol,setCpMinVol]].map(([l,v,s]) => (
-                      <div key={l}>
-                        <div style={{ fontSize:9, fontWeight:700, color:"#888", marginBottom:2 }}>{l}</div>
-                        <input type="number" value={v} onChange={ev => s(ev.target.value)} placeholder="0"
-                          style={{ width:"100%", border:"2px solid #ffe0b2", borderRadius:6, padding:"5px 4px", fontSize:10, fontFamily:"inherit", boxSizing:"border-box" }} />
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ fontSize:9, color:"#aaa", marginTop:5 }}>💡 Check seed packet for spacing & depth.</div>
-                </div>
-              )}
-            </div>
-            {calcResult && (
-              <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#f1f8e9)", border:"2px solid #a5d6a7" }}>
-                <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", textAlign:"center", marginBottom:10 }}>
-                  {activePlant?.emoji} {activePlant?.label} in {calcCont?.label} {calcCont?.emoji}
-                </div>
-                {calcResult.tooShallow || calcResult.tooSmall ? (
-                  <div style={{ background:"#ffebee", borderRadius:10, padding:11, textAlign:"center" }}>
-                    <div style={{ fontSize:26 }}>⚠️</div>
-                    <div style={{ fontWeight:900, color:"#c62828", fontSize:12, marginTop:5 }}>Container Too Small!</div>
-                    {calcResult.tooShallow && <div style={{ fontSize:11, color:"#666", marginTop:3 }}>Needs at least <b>{activePlant.rootDepthIn}"</b> depth — this is only <b>{calcResult.depth}"</b></div>}
-                    {calcResult.tooSmall   && <div style={{ fontSize:11, color:"#666", marginTop:3 }}>Needs at least <b>{activePlant.minVolGal}gal</b> — this holds <b>{calcResult.vol}gal</b></div>}
-                  </div>
-                ) : (
-                  <>
-                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:7, marginBottom:9 }}>
-                      {[["🌱","Plants Fit",calcResult.count,calcResult.count===1?"plant":"plants","#e8f5e9","#2e7d32"],
-                        ["🪨","Soil",calcResult.soilCups,"cups","#fff3e0","#e65100"],
-                        ["📦","Also",calcResult.soilCuFt,"cu ft","#e3f2fd","#1565c0"]].map(([em,lbl,val,unit,bg,col]) => (
-                        <div key={lbl} style={{ background:bg, borderRadius:10, padding:"9px 5px", textAlign:"center" }}>
-                          <div style={{ fontSize:18 }}>{em}</div>
-                          <div style={{ fontWeight:900, fontSize:18, color:col }}>{val}</div>
-                          <div style={{ fontSize:9, color:col, fontWeight:700 }}>{unit}</div>
-                          <div style={{ fontSize:8, color:"#888" }}>{lbl}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <div style={{ background:"#fff", borderRadius:9, padding:9, marginBottom:7, fontSize:10, color:"#444" }}>
-                      <b>📐</b> {activePlant.spacingIn}" spacing · {activePlant.rootDepthIn}" root depth · {calcResult.vol}gal container
-                    </div>
-                    <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:9, padding:"7px 9px", fontSize:10, color:"#555", marginBottom:9 }}>
-                      💡 {activePlant.notes}
-                    </div>
-                    <button
-                      onClick={() => {
-                        setNewPlant(p => ({
-                          ...p,
-                          name: activePlant.label,
-                          emoji: activePlant.emoji,
-                          container: calcCont.label.includes("Milk Jug") ? "Milk Jug"
-                            : calcCont.label.includes("Bucket") ? "5-Gal Bucket"
-                            : calcCont.label.includes("Fabric") ? "Fabric Bag"
-                            : calcCont.label.includes("Coffee") ? "Coffee Can"
-                            : calcCont.label.includes("Yogurt") ? "Yogurt Container"
-                            : "Plastic Pot",
-                        }));
-                        setTab("garden");
-                        setShowAdd(true);
-                      }}
-                      style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", fontSize:12 }}>
-                      🌱 Add this plant to My Garden
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* ══ PLANT DETAIL OVERLAY ══ */}
-      {selectedPlant && (() => {
-        const p      = plants.find(pl => pl.id === selectedPlant.id) || selectedPlant;
-        const days   = daysSince(p.planted);
-        const wr     = getWateringRange(p.waterEvery, myZone, p.container);
-        const ts     = getTS(p, days);
-        const ur     = UR[ts.urgency];
-        const thirsty= daysSince(p.lastWatered) >= p.waterEvery;
-        return (
-          <div style={{ position:"fixed", inset:0, zIndex:200, background:"linear-gradient(160deg,#e8f5e9,#fffde7)", maxWidth:480, margin:"0 auto", overflowY:"auto" }}>
-            <div style={{ background:"linear-gradient(90deg,#43a047,#66bb6a)", padding:"14px 14px 16px", borderRadius:"0 0 22px 22px", boxShadow:"0 4px 18px #43a04740" }}>
-              <div style={{ display:"flex", alignItems:"center", gap:9 }}>
-                <button onClick={() => setSelectedPlant(null)}
-                  style={{ background:"rgba(255,255,255,0.25)", border:"none", borderRadius:7, padding:"4px 9px", color:"#fff", fontWeight:800, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>← Back</button>
-                <span style={{ fontSize:38 }}>{p.emoji}</span>
-                <div>
-                  <div style={{ color:"#fff", fontWeight:900, fontSize:17 }}>{p.name}</div>
-                  <div style={{ color:"#c8e6c9", fontSize:10 }}>📦 {p.container} · 🗓 {days} days old</div>
-                </div>
-              </div>
-              <div style={{ marginTop:11 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", color:"#c8e6c9", fontSize:9, marginBottom:3 }}>
-                  <span>Health</span><span>❤️ {p.health}%</span>
-                </div>
-                <div style={{ background:"rgba(255,255,255,0.25)", borderRadius:7, height:7 }}>
-                  <div style={{ height:"100%", width:p.health+"%", background:p.health>70?"#fff":p.health>40?"#ffcc02":"#ff7043", borderRadius:7 }} />
-                </div>
-              </div>
-            </div>
-            <div style={{ padding:"12px 12px 60px" }}>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:9, marginBottom:10 }}>
-                <div style={{ ...card, background:thirsty?"linear-gradient(135deg,#fff3e0,#ffe0b2)":"#fff", border:thirsty?"2px solid #ff9800":"2px solid #e3f2fd" }}>
-                  <div style={{ fontSize:20 }}>💧</div>
-                  <div style={{ fontWeight:900, fontSize:11, color:thirsty?"#e65100":"#1565c0", marginTop:4 }}>{thirsty?"Needs water!":"Watered"}</div>
-                  <div style={{ fontSize:9, color:"#666" }}>{daysSince(p.lastWatered)}d ago</div>
-                  <div style={{ fontSize:9, color:"#888", marginTop:2 }}>Schedule: {wLabel(wr)}</div>
-                  <button onClick={() => waterPlant(p.id)} style={{ ...btn("linear-gradient(135deg,#29b6f6,#4dd0e1)"), marginTop:7, padding:"4px 9px", fontSize:10 }}>💧 Water now</button>
-                </div>
-                <div style={card}>
-                  <div style={{ fontSize:20 }}>🗓</div>
-                  <div style={{ fontWeight:900, fontSize:11, color:"#2e7d32", marginTop:4 }}>Day {days}</div>
-                  <div style={{ fontSize:9, color:"#888" }}>Since planting</div>
-                  {myZone && <div style={{ fontSize:9, color:myZone.tc, fontWeight:700, marginTop:2 }}>{myZone.emoji} Zone {myZone.zone}</div>}
-                </div>
-              </div>
-
-              {/* Container-specific watering advice */}
-              {(() => {
-                const advice = CONTAINER_WATERING_ADVICE[p.container];
-                if (!advice) return null;
-                return (
-                  <div style={{ ...card, background:"linear-gradient(135deg,#e3f2fd,#e8f5e9)", border:"2px solid #90caf9", marginBottom:9 }}>
-                    <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:8 }}>
-                      <span style={{ fontSize:22 }}>{advice.icon}</span>
-                      <div>
-                        <div style={{ fontWeight:900, fontSize:12, color:"#1565c0" }}>💧 Watering your {p.container}</div>
-                        <div style={{ fontSize:10, color:"#555" }}>{advice.method} · <b style={{ color:"#1976d2" }}>{advice.amount}</b> per session</div>
-                      </div>
-                    </div>
-                    <div style={{ background:"rgba(255,255,255,0.75)", borderRadius:9, padding:"8px 10px", fontSize:11, color:"#444", lineHeight:1.6, marginBottom:7 }}>
-                      {advice.howTo}
-                    </div>
-                    <div style={{ background:"#e8f5e9", borderRadius:8, padding:"5px 9px", fontSize:10, color:"#2e7d32", fontWeight:700 }}>
-                      {advice.checkMethod}
-                    </div>
-                  </div>
-                );
-              })()}
-
-              <div style={{ ...card, background:ur.bg, border:`2px solid ${ur.border}`, marginBottom:9 }}>
-                <div style={{ fontWeight:900, fontSize:12, color:ur.color, marginBottom:9 }}>🪴 Status: {ur.label}</div>
-                <div style={{ fontSize:10, color:"#888", marginBottom:7 }}>Check off signs you observe:</div>
-                {VISUAL_SIGNS.map(sign => {
-                  const checked = (p.transplantSigns||[]).includes(sign.id);
-                  return (
-                    <button key={sign.id} onClick={() => toggleSign(p.id, sign.id)}
-                      style={{ display:"flex", alignItems:"center", gap:7, background:checked?"#fff3e0":"rgba(255,255,255,0.8)", border:checked?"2px solid #ff9800":"2px solid #e0e0e0", borderRadius:8, padding:"6px 9px", cursor:"pointer", width:"100%", marginBottom:4 }}>
-                      <span style={{ fontSize:15 }}>{checked?"✅":"⬜"}</span>
-                      <span style={{ fontSize:10 }}>{sign.icon} {sign.label}</span>
-                    </button>
-                  );
-                })}
-                {ts.urgency !== "growing" && (
-                  <div style={{ background:"rgba(255,255,255,0.8)", borderRadius:8, padding:"7px 9px", marginTop:5, fontSize:10, color:"#555" }}>
-                    ➡️ Next: <b>{ts.next}</b> ({ts.nextVol})
-                  </div>
-                )}
-                <button onClick={() => markTransplanted(p.id)} style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", marginTop:10 }}>✅ Mark as Transplanted</button>
-              </div>
-              {p.notes ? (
-                <div style={{ ...card, fontSize:11, color:"#555" }}>
-                  <div style={{ fontWeight:800, color:"#2e7d32", marginBottom:4 }}>📝 Notes</div>
-                  {p.notes}
-                </div>
-              ) : null}
-              <button onClick={() => deletePlant(p.id)}
-                style={{ ...btn("#ffebee","#c62828"), width:"100%", marginTop:4, border:"2px solid #ffcdd2" }}>
-                🗑️ Remove Plant
-              </button>
-            </div>
-          </div>
-        );
-      })()}
-    </div>
-  );
-}
