@@ -6,12 +6,13 @@ const daysSince = d => Math.max(0, Math.floor((todayMs - new Date(d).getTime()) 
 
 const CONTAINER_TYPES = [
   "Milk Jug","5-Gal Bucket","Plastic Pot","Fabric Bag","Coffee Can","Yogurt Container",
-  "Egg Carton","Takeout Tray","Cardboard Box","Solo Cup","Plastic Bottle","Tin Can",
+  "Mason Jar","Egg Carton","Takeout Tray","Cardboard Box","Solo Cup","Plastic Bottle","Tin Can",
   "Newspaper Pot","Laundry Basket","Colander","Custom Container"
 ];
 
 // Presets for non-standard containers — watering method, drainage notes, transplant timing
 const CUSTOM_CONTAINER_PRESETS = {
+  "Mason Jar":      { emoji:"🫙", drains:false, sizeNote:"~1–3 cups soil depending on jar size", waterNote:"Mason jars have NO drainage — be very careful not to overwater! Water with just 2–3 tbsp at a time. Let soil dry out between waterings. Works best for herbs like mint, basil, and chives indoors.", checkMethod:"👆 Finger test the top — if it feels even slightly damp, wait. Overwatering is the #1 mason jar mistake.", transplantNote:"Great for windowsill herbs! Transplant when roots circle the bottom or plant gets too big.", icon:"🫙" },
   "Egg Carton":     { emoji:"🥚", drains:false, sizeNote:"~1–2 tbsp soil per cell", waterNote:"Mist only — a few sprays per cell. Egg cartons absorb water fast and can get soggy. Keep barely moist.", checkMethod:"👆 Touch the surface — if it feels damp, wait. If dry and pulling away from edges, mist now.", transplantNote:"Transplant seedlings in 1–2 weeks when they have 2 true leaves. The whole carton cell can go in the ground!", icon:"🥚" },
   "Takeout Tray":   { emoji:"🥡", drains:false, sizeNote:"~½–2 cups soil depending on size", waterNote:"Poke drainage holes first if you haven't! Water gently with ~¼ cup at a time. These are shallow so they dry out fast.", checkMethod:"👆 Finger test the center — edges dry first but roots need moisture in the middle.", transplantNote:"Great for starting seeds or growing microgreens. Transplant when plants get 2–3\" tall.", icon:"🥡" },
   "Cardboard Box":  { emoji:"📦", drains:true, sizeNote:"Varies — line with plastic if needed", waterNote:"Water slowly and evenly. Cardboard absorbs water and will eventually break down — that's okay for in-ground planting! Check daily as it can dry unevenly.", checkMethod:"🏋️ Lift test + finger test. Cardboard boxes lose water through the sides too.", transplantNote:"Plant the whole box directly in the ground when ready — cardboard will decompose naturally!", icon:"📦" },
@@ -25,7 +26,7 @@ const CUSTOM_CONTAINER_PRESETS = {
 };
 
 const TRANSPLANT_MAP = {
-  "Yogurt Container":  { next:"Milk Jug", nextVol:"1 gal", daysMin:14, daysMax:21 },
+  "Mason Jar":         { next:"Coffee Can or Yogurt Container", nextVol:"½–1 gal", daysMin:21, daysMax:42 },
   "Coffee Can":        { next:"Plastic Pot", nextVol:"1–2 gal", daysMin:21, daysMax:35 },
   "Milk Jug":          { next:"5-Gal Bucket", nextVol:"5 gal", daysMin:28, daysMax:45 },
   "Plastic Pot":       { next:"5-Gal Bucket", nextVol:"5 gal", daysMin:28, daysMax:45 },
@@ -118,7 +119,30 @@ const PLANT_GUIDES = [
   { name:"Sweet Potatoes",emoji:"🍠",container:"5-Gal Bucket",      water:"Every 2 days",   waterBase:2,   sun:"Full sun",   tip:"Perfect for Zone 8b — plant slips in spring and harvest in fall. They love heat and trailing vines look great spilling over containers!" },
 ];
 
-const WATERING_METHODS = [
+const INDOOR_GUIDES = [
+  { name:"Basil",        emoji:"🌿", container:"Mason Jar",    water:"Every 2-3 days", waterBase:2.5, sun:"Bright window (S/E facing)", allergySafe:true,  tip:"Best indoor herb! Keep on a south-facing windowsill. Pinch flowers off to keep it bushy and producing.", light:"6+ hrs direct sun", humidity:"Loves humidity — mist leaves occasionally.", growLight:"Works well under a grow light if no sunny window." },
+  { name:"Mint",         emoji:"🌱", container:"Coffee Can",   water:"Every 2 days",   waterBase:2,   sun:"Medium light",               allergySafe:true,  tip:"Almost indestructible indoors. Keep in a coffee can — it spreads so containment is key. Great for tea!", light:"4–6 hrs light", humidity:"Tolerates normal indoor humidity.", growLight:"Does fine with a basic grow light." },
+  { name:"Chives",       emoji:"🌿", container:"Mason Jar",    water:"Every 2-3 days", waterBase:2.5, sun:"Bright window",              allergySafe:true,  tip:"One of the easiest windowsill herbs. Snip and regrow endlessly. Great in mason jars on the kitchen counter!", light:"4–6 hrs light", humidity:"Not picky about humidity.", growLight:"Grows well under grow lights." },
+  { name:"Parsley",      emoji:"🫚", container:"Coffee Can",   water:"Every 2 days",   waterBase:2,   sun:"Bright window (S facing)",   allergySafe:true,  tip:"Slow to start but worth it! Deep roots need a coffee can or tall container. Flat-leaf parsley is more flavorful.", light:"6+ hrs direct sun", humidity:"Normal indoor humidity is fine.", growLight:"Needs a stronger grow light if no sunny window." },
+  { name:"Cilantro",     emoji:"🌾", container:"Yogurt Container", water:"Every 2 days", waterBase:2, sun:"Bright window",              allergySafe:true,  tip:"Bolts fast indoors too — keep it cool and harvest often. Great on a north-facing windowsill in summer.", light:"4–6 hrs light", humidity:"Keep soil evenly moist.", growLight:"Does okay under grow lights — keep cool." },
+  { name:"Thyme",        emoji:"🌱", container:"Yogurt Container", water:"Every 3 days", waterBase:3, sun:"Sunniest window you have",   allergySafe:true,  tip:"Loves to be slightly dry between waterings. Mediterranean herb — treat it like a sun-loving, drought-tolerant plant indoors.", light:"6+ hrs direct sun", humidity:"Prefers dry air — no misting.", growLight:"Needs a strong grow light to thrive indoors." },
+  { name:"Rosemary",     emoji:"🌿", container:"Coffee Can",   water:"Every 3-4 days", waterBase:3.5, sun:"Full sun window",           allergySafe:true,  tip:"Needs the sunniest spot in your home. Let it dry out between waterings. Smells amazing and looks beautiful!", light:"6+ hrs direct sun", humidity:"Prefers dry conditions.", growLight:"Needs a very strong grow light." },
+  { name:"Oregano",      emoji:"🌿", container:"Yogurt Container", water:"Every 3 days", waterBase:3, sun:"Bright window",             allergySafe:true,  tip:"Hardy and forgiving indoors. Let soil dry between waterings. Great dried or fresh — snip often to keep it bushy.", light:"6+ hrs light", humidity:"Normal indoor humidity fine.", growLight:"Does well under grow lights." },
+  { name:"Lemon Balm",   emoji:"🍋", container:"Plastic Pot",  water:"Every 2 days",   waterBase:2,   sun:"Medium to bright light",     allergySafe:true,  tip:"Smells incredible — like lemon candy! Great for tea and stress relief. Grows fast and is very forgiving for beginners.", light:"4–6 hrs light", humidity:"Likes some humidity.", growLight:"Grows well under basic grow lights." },
+  { name:"Lavender",     emoji:"💜", container:"Plastic Pot",  water:"Every 4-5 days", waterBase:4,   sun:"Sunniest window",           allergySafe:false, allergyNote:"Can trigger sensitivities in some people despite being calming for others.", tip:"Needs excellent drainage and lots of sun. Let dry completely between waterings. Smells amazing but needs dedication indoors!", light:"6+ hrs direct sun", humidity:"Prefers dry air.", growLight:"Needs a strong grow light." },
+  { name:"Microgreens",  emoji:"🌱", container:"Takeout Tray", water:"Mist daily",     waterBase:1,   sun:"Any bright light",           allergySafe:true,  tip:"The ultimate indoor crop — no sun needed, just a bright room or grow light! Ready to harvest in 7–14 days. Perfect for allergy season!", light:"Any bright indirect light", humidity:"Mist daily — don't soak.", growLight:"Thrives under any grow light." },
+  { name:"Green Onions", emoji:"🧅", container:"Mason Jar",    water:"Every 2 days",   waterBase:2,   sun:"Any light",                  allergySafe:true,  tip:"Regrow store-bought green onion scraps in a mason jar of water on your windowsill — no soil needed! Change water every 2 days.", light:"Any light — even low light!", humidity:"Just keep water fresh.", growLight:"Not needed — grows in water!" },
+];
+
+const ALLERGY_TIPS = [
+  { icon:"🤧", tip:"Keep soil surface moist to reduce dust and mold spores — dry soil kicks up particles when watered." },
+  { icon:"🪟", tip:"Garden indoors with windows closed on high pollen days. Check your local pollen count first!" },
+  { icon:"🧤", tip:"Wear gloves when handling soil — even indoors. Wash hands after tending plants." },
+  { icon:"💨", tip:"Use a HEPA air purifier near your indoor garden to catch any spores or particles." },
+  { icon:"🌱", tip:"Choose low-pollen herbs like basil, mint, and chives — they're pollinated by insects, not wind, so very little airborne pollen." },
+  { icon:"🚿", tip:"Rinse harvested herbs before using — even indoors, dust can settle on leaves." },
+  { icon:"🏠", tip:"Indoor gardening during allergy season means you control the environment — no wind, no outdoor pollen, no bees!" },
+];
   { id:"bottom", title:"Bottom Watering",        emoji:"🥛", badge:"⭐ Best for Milk Jugs",    badgeColor:"#43a047",
     desc:"Set jug in a tray with 1–2\" of water. Soil wicks up from below over 20–30 min. Encourages deep roots and keeps leaves dry.",
     steps:["Poke 4–6 drainage holes in the bottom of your jug","Set jug inside a shallow tray or second cut jug","Pour 1–2 inches of water into the tray","Let soak 20–30 min until top inch of soil feels moist","Remove and empty leftover tray water to prevent root rot"],
@@ -199,7 +223,7 @@ function getWateringRange(waterEvery, zone, container) {
 function wLabel(r) { return r.min === r.max ? `every ${r.min}d` : `every ${r.min}–${r.max}d`; }
 
 const CONTAINER_WATERING_ADVICE = {
-  "Milk Jug":         { method:"Lift test + pour through top", amount:"~1–2 cups", howTo:"Pick up the jug daily — when it feels noticeably lighter, it's time. Pour slowly through the opening until you see a few drops from the drainage holes. If your jug is sealed, watch for slight leaf droop as your other signal.", checkMethod:"🏋️ Lift test — light jug = thirsty", icon:"🥛" },
+  "Mason Jar":        { method:"Tiny careful pours only", amount:"~2–3 tbsp", howTo:"Mason jars have zero drainage so overwatering is a real risk! Use a turkey baster or small spoon to add just 2–3 tbsp at a time. Let the soil dry out between waterings. Add a layer of pebbles at the bottom to help with moisture control.", checkMethod:"👆 Finger test the very top — even slightly damp means wait. When in doubt, skip a day.", icon:"🫙" }, howTo:"Pick up the jug daily — when it feels noticeably lighter, it's time. Pour slowly through the opening until you see a few drops from the drainage holes. If your jug is sealed, watch for slight leaf droop as your other signal.", checkMethod:"🏋️ Lift test — light jug = thirsty", icon:"🥛" },
   "Yogurt Container": { method:"Bottom watering or gentle top", amount:"~½ cup", howTo:"Set in a shallow dish with ½\" of water and let it soak up for 15–20 min. These small containers dry out fast — check daily in warm weather. Finger test is easy here: just poke through the top.", checkMethod:"👆 Finger test — these are small enough!", icon:"🫙" },
   "Coffee Can":       { method:"Top water slowly", amount:"~1 cup", howTo:"Water slowly at the base until you see drainage from the bottom holes. Coffee cans hold moisture well but can get waterlogged — make sure drainage holes are clear. Finger test 1\" deep before each watering.", checkMethod:"👆 Finger test 1\" deep before watering", icon:"🥫" },
   "5-Gal Bucket":     { method:"Deep top watering", amount:"~1 gallon", howTo:"Water deeply and slowly until it drains from the bottom. Big containers hold moisture longer — don't water again until the top 2\" feel dry. Stick your whole finger in to check. In summer heat, check every day even if you don't water.", checkMethod:"👆 Finger test 2\" deep — bigger pot, deeper check", icon:"🪣" },
@@ -409,7 +433,7 @@ export default function App() {
   const addPlant      = () => {
     if (!newPlant.name.trim()) return;
     setPlants(ps => [...ps, { ...newPlant, id:Date.now(), planted:newPlant.plantedDate||TODAY, lastWatered:TODAY, health:100, transplantSigns:[] }]);
-    setNewPlant({ name:"", container:"Milk Jug", waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY });
+    setNewPlant({ name:"", container:"Milk Jug", waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY, indoor:false });
     setShowAdd(false);
   };
 
@@ -455,7 +479,7 @@ export default function App() {
   const transplantToday = plants.filter(p => { const ts=getTS(p,daysSince(p.planted)); return ts.urgency==="ready"||ts.urgency==="urgent"; });
 
   return (
-    <div style={{ fontFamily:"'Caveat',cursive", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
+    <div style={{ fontFamily:"'Quicksand',sans-serif", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
 
       {/* ── ONBOARDING ── */}
       {onboarding && (
@@ -619,7 +643,7 @@ export default function App() {
                     <span style={{ fontSize:36 }}>{plant.emoji}</span>
                     <div style={{ flex:1 }}>
                       <div style={{ fontWeight:900, fontSize:14, color:"#1b5e20" }}>{plant.name}</div>
-                      <div style={{ fontSize:10, color:"#888" }}>📦 {plant.container} · 🗓 {days}d old</div>
+                      <div style={{ fontSize:10, color:"#888" }}>📦 {plant.container} · 🗓 {days}d old{plant.indoor ? " · 🏠 Indoor" : " · 🌿 Outdoor"}</div>
                       <div style={{ display:"flex", gap:4, marginTop:4, flexWrap:"wrap" }}>
                         <span style={badge(thirsty?"#fff3e0":"#e8f5e9", thirsty?"#ff7043":"#2e7d32")}>{thirsty?"💧 Needs water!":"✅ "+daysSince(plant.lastWatered)+"d ago"}</span>
                         <span style={badge("#e3f2fd","#1565c0")}>💧 {myZone?wLabel(wr)+" (Z"+myZone.zone+")":"every "+plant.waterEvery+"d"}</span>
@@ -709,6 +733,23 @@ export default function App() {
                     <input type="range" min={1} max={14} value={newPlant.waterEvery}
                       onChange={ev => setNewPlant(p => ({ ...p, waterEvery:+ev.target.value }))}
                       style={{ width:"100%", accentColor:"#29b6f6" }} />
+                  </div>
+                  <div style={{ marginBottom:14 }}>
+                    <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:6 }}>🏠 Where are you growing?</div>
+                    <div style={{ display:"flex", gap:7 }}>
+                      {[[false,"🌿","Outdoor"],[ true,"🏠","Indoor"]].map(([val,icon,label]) => (
+                        <button key={label} onClick={() => setNewPlant(p => ({ ...p, indoor:val,
+                          container: val && p.container==="Milk Jug" ? "Mason Jar" : p.container }))}
+                          style={{ flex:1, background:newPlant.indoor===val?"linear-gradient(135deg,#43a047,#66bb6a)":"#f5f5f5", color:newPlant.indoor===val?"#fff":"#666", border:newPlant.indoor===val?"2px solid #2e7d32":"2px solid #e0e0e0", borderRadius:10, padding:"9px 4px", cursor:"pointer", fontFamily:"inherit", fontWeight:800, fontSize:13 }}>
+                          {icon} {label}
+                        </button>
+                      ))}
+                    </div>
+                    {newPlant.indoor && (
+                      <div style={{ background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", borderRadius:9, padding:"7px 10px", marginTop:7, fontSize:10, color:"#444" }}>
+                        🤧 <b>Allergy season tip:</b> Indoor herbs are low-pollen and safe to grow year-round! Mason jars, coffee cans, and yogurt containers work great on a windowsill.
+                      </div>
+                    )}
                   </div>
                   <button onClick={addPlant}
                     style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", padding:14, fontSize:14 }}>
@@ -850,13 +891,46 @@ export default function App() {
         {tab === "guides" && !selectedGuide && !selectedWatering && (
           <div>
             <div style={{ display:"flex", background:"#fff", borderRadius:11, padding:3, marginBottom:10, gap:3 }}>
-              {[["plants","🌿 Plants"],["watering","💧 Watering"]].map(([k,l]) => (
+              {[["plants","🌿 Plants"],["indoor","🏠 Indoor"],["watering","💧 Watering"]].map(([k,l]) => (
                 <button key={k} onClick={() => setGuidesTab(k)}
-                  style={{ flex:1, background:guidesTab===k?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"transparent", color:guidesTab===k?"#fff":"#666", border:"none", borderRadius:9, padding:"7px 4px", fontWeight:800, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
+                  style={{ flex:1, background:guidesTab===k?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"transparent", color:guidesTab===k?"#fff":"#666", border:"none", borderRadius:9, padding:"7px 4px", fontWeight:800, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
                   {l}
                 </button>
               ))}
             </div>
+
+            {guidesTab === "indoor" && (
+              <div>
+                {/* Allergy season banner */}
+                <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", border:"2px solid #a5d6a7" }}>
+                  <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:6 }}>🏠 Indoor & Allergy-Season Gardening</div>
+                  <div style={{ fontSize:11, color:"#555", lineHeight:1.6, marginBottom:10 }}>Can't be outside due to allergies? You can still grow! Indoor herbs are low-pollen, easy, and smell amazing. Most need just a sunny windowsill or a simple grow light.</div>
+                  <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20", marginBottom:6 }}>🤧 Allergy-Safe Tips</div>
+                  {ALLERGY_TIPS.map((t,i) => (
+                    <div key={i} style={{ display:"flex", gap:8, background:"rgba(255,255,255,0.6)", borderRadius:8, padding:"6px 8px", marginBottom:5, fontSize:10, color:"#444" }}>
+                      <span>{t.icon}</span><span>{t.tip}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Indoor plant guides */}
+                <div style={{ fontWeight:900, fontSize:13, color:"#2e7d32", margin:"12px 0 8px" }}>🌿 Best Indoor Herbs</div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+                  {INDOOR_GUIDES.map(g => (
+                    <button key={g.name} onClick={() => setSelectedGuide({ ...g, indoor:true })}
+                      style={{ background:"#fff", border:`2px solid ${g.allergySafe?"#a5d6a7":"#ffe0b2"}`, borderRadius:14, padding:"11px 7px", textAlign:"center", cursor:"pointer", fontFamily:"inherit", position:"relative", boxShadow:"0 2px 8px #0001" }}>
+                      <div style={{ position:"absolute", top:4, right:4, ...badge(g.allergySafe?"#e8f5e9":"#fff3e0", g.allergySafe?"#2e7d32":"#e65100"), fontSize:8 }}>
+                        {g.allergySafe ? "✅ Allergy safe" : "⚠️ Check first"}
+                      </div>
+                      <div style={{ fontSize:32, marginTop:4 }}>{g.emoji}</div>
+                      <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20", marginTop:4 }}>{g.name}</div>
+                      <div style={{ fontSize:9, color:"#888" }}>📦 {g.container}</div>
+                      <div style={{ fontSize:9, color:"#29b6f6" }}>☀️ {g.sun}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             {guidesTab === "plants" && (
               <>
                 {myZone && <div style={{ ...card, background:`linear-gradient(135deg,${myZone.color},white)`, border:`1.5px solid ${myZone.tc}20`, fontSize:11, color:myZone.tc }}>{myZone.emoji} <b>Zone {myZone.zone}:</b> Best picks — <b>{myZone.plants.slice(0,3).join(", ")}</b></div>}
@@ -900,10 +974,18 @@ export default function App() {
             <div style={card}>
               <div style={{ textAlign:"center", fontSize:52 }}>{selectedGuide.emoji}</div>
               <div style={{ textAlign:"center", fontWeight:900, fontSize:18, color:"#1b5e20", marginTop:5 }}>{selectedGuide.name}</div>
-              {[["📦 Container",selectedGuide.container],["☀️ Sunlight",selectedGuide.sun]].map(([k,v]) => (
+              {selectedGuide.indoor && (
+                <div style={{ textAlign:"center", marginTop:4, marginBottom:4 }}>
+                  <span style={badge(selectedGuide.allergySafe?"#e8f5e9":"#fff3e0", selectedGuide.allergySafe?"#2e7d32":"#e65100")}>
+                    {selectedGuide.allergySafe ? "✅ Allergy safe" : "⚠️ Check sensitivities first"}
+                  </span>
+                  {selectedGuide.allergyNote && <div style={{ fontSize:9, color:"#e65100", marginTop:4 }}>{selectedGuide.allergyNote}</div>}
+                </div>
+              )}
+              {[["📦 Container",selectedGuide.container],["☀️ "+(selectedGuide.indoor?"Light":"Sunlight"), selectedGuide.indoor ? selectedGuide.light : selectedGuide.sun]].map(([k,v]) => (
                 <div key={k} style={{ display:"flex", justifyContent:"space-between", padding:"9px 0", borderBottom:"1.5px solid #f5f5f5" }}>
                   <span style={{ fontWeight:700, color:"#555", fontSize:12 }}>{k}</span>
-                  <span style={{ fontWeight:800, color:"#2e7d32", fontSize:12 }}>{v}</span>
+                  <span style={{ fontWeight:800, color:"#2e7d32", fontSize:12, textAlign:"right", maxWidth:"55%" }}>{v}</span>
                 </div>
               ))}
               <div style={{ padding:"9px 0", borderBottom:"1.5px solid #f5f5f5" }}>
@@ -911,13 +993,26 @@ export default function App() {
                   <span style={{ fontWeight:700, color:"#555", fontSize:12 }}>💧 Watering</span>
                   <div style={{ textAlign:"right" }}>
                     <div style={{ fontWeight:800, color:"#2e7d32", fontSize:12 }}>{selectedGuide.water}</div>
-                    {myZone && (() => { const r=getWateringRange(selectedGuide.waterBase,myZone,selectedGuide.container); return <div style={{ fontSize:10, color:myZone.tc, fontWeight:700 }}>{myZone.emoji} Zone {myZone.zone}: {wLabel(r)}</div>; })()}
+                    {!selectedGuide.indoor && myZone && (() => { const r=getWateringRange(selectedGuide.waterBase,myZone,selectedGuide.container); return <div style={{ fontSize:10, color:myZone.tc, fontWeight:700 }}>{myZone.emoji} Zone {myZone.zone}: {wLabel(r)}</div>; })()}
+                    {selectedGuide.indoor && <div style={{ fontSize:10, color:"#29b6f6", fontWeight:700 }}>🏠 Indoors — no zone adjustment</div>}
                   </div>
                 </div>
                 <div style={{ fontSize:9, color:"#aaa", marginTop:2 }}>👆 Always finger-test soil 1" before watering</div>
               </div>
+              {selectedGuide.indoor && selectedGuide.humidity && (
+                <div style={{ display:"flex", justifyContent:"space-between", padding:"9px 0", borderBottom:"1.5px solid #f5f5f5" }}>
+                  <span style={{ fontWeight:700, color:"#555", fontSize:12 }}>💦 Humidity</span>
+                  <span style={{ fontWeight:800, color:"#29b6f6", fontSize:12, textAlign:"right", maxWidth:"55%" }}>{selectedGuide.humidity}</span>
+                </div>
+              )}
+              {selectedGuide.indoor && selectedGuide.growLight && (
+                <div style={{ background:"#e3f2fd", borderRadius:9, padding:"7px 10px", marginTop:8 }}>
+                  <div style={{ fontWeight:800, color:"#1565c0", fontSize:11, marginBottom:2 }}>💡 No sunny window?</div>
+                  <div style={{ fontSize:11, color:"#444" }}>{selectedGuide.growLight}</div>
+                </div>
+              )}
               <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:10, padding:10, marginTop:10 }}>
-                <div style={{ fontWeight:800, color:"#f57f17", fontSize:11, marginBottom:2 }}>💡 Milk Jug Tip</div>
+                <div style={{ fontWeight:800, color:"#f57f17", fontSize:11, marginBottom:2 }}>{selectedGuide.indoor ? "💡 Indoor Tip" : "💡 Milk Jug Tip"}</div>
                 <div style={{ fontSize:11, color:"#555", lineHeight:1.5 }}>{selectedGuide.tip}</div>
               </div>
             </div>
