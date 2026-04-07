@@ -163,6 +163,51 @@ function getWateringRange(waterEvery, zone, container) {
 
 function wLabel(r) { return r.min === r.max ? `every ${r.min}d` : `every ${r.min}–${r.max}d`; }
 
+const CONTAINER_WATERING_ADVICE = {
+  "Milk Jug": {
+    method: "Lift test + pour through top",
+    amount: "~1–2 cups",
+    howTo: "Pick up the jug daily — when it feels noticeably lighter, it's time. Pour slowly through the opening until you see a few drops from the drainage holes. If your jug is sealed, watch for slight leaf droop as your other signal.",
+    checkMethod: "🏋️ Lift test — light jug = thirsty",
+    icon: "🥛",
+  },
+  "Yogurt Container": {
+    method: "Bottom watering or gentle top",
+    amount: "~½ cup",
+    howTo: "Set in a shallow dish with ½\" of water and let it soak up for 15–20 min. These small containers dry out fast — check daily in warm weather. Finger test is easy here: just poke through the top.",
+    checkMethod: "👆 Finger test — these are small enough!",
+    icon: "🫙",
+  },
+  "Coffee Can": {
+    method: "Top water slowly",
+    amount: "~1 cup",
+    howTo: "Water slowly at the base until you see drainage from the bottom holes. Coffee cans hold moisture well but can get waterlogged — make sure drainage holes are clear. Finger test 1\" deep before each watering.",
+    checkMethod: "👆 Finger test 1\" deep before watering",
+    icon: "🥫",
+  },
+  "5-Gal Bucket": {
+    method: "Deep top watering",
+    amount: "~1 gallon",
+    howTo: "Water deeply and slowly until it drains from the bottom. Big containers hold moisture longer — don't water again until the top 2\" feel dry. Stick your whole finger in to check. In summer heat, check every day even if you don't water.",
+    checkMethod: "👆 Finger test 2\" deep — bigger pot, deeper check",
+    icon: "🪣",
+  },
+  "Plastic Pot": {
+    method: "Top water or bottom soak",
+    amount: "~2–3 cups",
+    howTo: "Water until it drains from the bottom, or set in a tray with 1\" of water for 20 min. Plastic retains moisture well — always finger-test before watering to avoid overwatering. Lift the pot too — heavy means wet!",
+    checkMethod: "👆 Finger test + 🏋️ lift test",
+    icon: "🪴",
+  },
+  "Fabric Bag": {
+    method: "Top water thoroughly",
+    amount: "~2–4 cups",
+    howTo: "Fabric bags breathe and dry out FAST — water more often than you think! Pour slowly around the whole surface until you see drainage. In hot weather these may need water every day. Squeeze the side of the bag — if it feels stiff and dry, water now.",
+    checkMethod: "🤏 Squeeze the bag side — stiff & dry = water now",
+    icon: "👜",
+  },
+};
+
 function getTS(plant, days) {
   const td = TRANSPLANT_MAP[plant.container] || { next:"Larger Container", nextVol:"2× current", daysMin:30, daysMax:45 };
   const signs = (plant.transplantSigns || []).length;
@@ -184,7 +229,7 @@ function calcFit(cont, plant, cVol, cDiam, cDepth) {
   const tooShallow = depth < plant.rootDepthIn;
   const tooSmall   = vol   < plant.minVolGal;
   const count = tooShallow || tooSmall ? 0 : Math.max(1, Math.floor(((diam-1)/plant.spacingIn)**2 * 0.7));
-  return { count, soilQts: Math.round(vol*4*0.85*10)/10, soilCuFt: Math.round(vol*0.134*0.85*10)/10, tooShallow, tooSmall, vol: Math.round(vol*10)/10, depth };
+  return { count, soilCups: Math.round(vol*4*0.85*4*10)/10, soilCuFt: Math.round(vol*0.134*0.85*10)/10, tooShallow, tooSmall, vol: Math.round(vol*10)/10, depth };
 }
 
 const UR = {
@@ -427,10 +472,11 @@ export default function App() {
 
       {/* ── TAB BAR ── */}
       <div style={{ display:"flex", background:"#fff", margin:"10px 12px 0", borderRadius:12, padding:3, boxShadow:"0 2px 8px #0001" }}>
-        {[["garden","🌱"],["guides","📖"],["zones","🗺️"],["calc","🧮"]].map(([k,l]) => (
+        {[["garden","🌱","Garden"],["guides","📖","Guides"],["zones","🗺️","Zones"],["calc","🧮","Calc"]].map(([k,icon,label]) => (
           <button key={k} onClick={() => setTab(k)}
-            style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"8px 2px", fontWeight:800, fontSize:15, cursor:"pointer", fontFamily:"inherit" }}>
-            {l}
+            style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"6px 2px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+            <span style={{ fontSize:16 }}>{icon}</span>
+            <span>{label}</span>
           </button>
         ))}
       </div>
@@ -849,7 +895,7 @@ export default function App() {
                   <>
                     <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:7, marginBottom:9 }}>
                       {[["🌱","Plants Fit",calcResult.count,calcResult.count===1?"plant":"plants","#e8f5e9","#2e7d32"],
-                        ["🪨","Soil",calcResult.soilQts,"qts","#fff3e0","#e65100"],
+                        ["🪨","Soil",calcResult.soilCups,"cups","#fff3e0","#e65100"],
                         ["📦","Also",calcResult.soilCuFt,"cu ft","#e3f2fd","#1565c0"]].map(([em,lbl,val,unit,bg,col]) => (
                         <div key={lbl} style={{ background:bg, borderRadius:10, padding:"9px 5px", textAlign:"center" }}>
                           <div style={{ fontSize:18 }}>{em}</div>
@@ -862,9 +908,28 @@ export default function App() {
                     <div style={{ background:"#fff", borderRadius:9, padding:9, marginBottom:7, fontSize:10, color:"#444" }}>
                       <b>📐</b> {activePlant.spacingIn}" spacing · {activePlant.rootDepthIn}" root depth · {calcResult.vol}gal container
                     </div>
-                    <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:9, padding:"7px 9px", fontSize:10, color:"#555" }}>
+                    <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:9, padding:"7px 9px", fontSize:10, color:"#555", marginBottom:9 }}>
                       💡 {activePlant.notes}
                     </div>
+                    <button
+                      onClick={() => {
+                        setNewPlant(p => ({
+                          ...p,
+                          name: activePlant.label,
+                          emoji: activePlant.emoji,
+                          container: calcCont.label.includes("Milk Jug") ? "Milk Jug"
+                            : calcCont.label.includes("Bucket") ? "5-Gal Bucket"
+                            : calcCont.label.includes("Fabric") ? "Fabric Bag"
+                            : calcCont.label.includes("Coffee") ? "Coffee Can"
+                            : calcCont.label.includes("Yogurt") ? "Yogurt Container"
+                            : "Plastic Pot",
+                        }));
+                        setTab("garden");
+                        setShowAdd(true);
+                      }}
+                      style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", fontSize:12 }}>
+                      🌱 Add this plant to My Garden
+                    </button>
                   </>
                 )}
               </div>
@@ -918,6 +983,30 @@ export default function App() {
                   {myZone && <div style={{ fontSize:9, color:myZone.tc, fontWeight:700, marginTop:2 }}>{myZone.emoji} Zone {myZone.zone}</div>}
                 </div>
               </div>
+
+              {/* Container-specific watering advice */}
+              {(() => {
+                const advice = CONTAINER_WATERING_ADVICE[p.container];
+                if (!advice) return null;
+                return (
+                  <div style={{ ...card, background:"linear-gradient(135deg,#e3f2fd,#e8f5e9)", border:"2px solid #90caf9", marginBottom:9 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:8 }}>
+                      <span style={{ fontSize:22 }}>{advice.icon}</span>
+                      <div>
+                        <div style={{ fontWeight:900, fontSize:12, color:"#1565c0" }}>💧 Watering your {p.container}</div>
+                        <div style={{ fontSize:10, color:"#555" }}>{advice.method} · <b style={{ color:"#1976d2" }}>{advice.amount}</b> per session</div>
+                      </div>
+                    </div>
+                    <div style={{ background:"rgba(255,255,255,0.75)", borderRadius:9, padding:"8px 10px", fontSize:11, color:"#444", lineHeight:1.6, marginBottom:7 }}>
+                      {advice.howTo}
+                    </div>
+                    <div style={{ background:"#e8f5e9", borderRadius:8, padding:"5px 9px", fontSize:10, color:"#2e7d32", fontWeight:700 }}>
+                      {advice.checkMethod}
+                    </div>
+                  </div>
+                );
+              })()}
+
               <div style={{ ...card, background:ur.bg, border:`2px solid ${ur.border}`, marginBottom:9 }}>
                 <div style={{ fontWeight:900, fontSize:12, color:ur.color, marginBottom:9 }}>🪴 Status: {ur.label}</div>
                 <div style={{ fontSize:10, color:"#888", marginBottom:7 }}>Check off signs you observe:</div>
