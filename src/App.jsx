@@ -244,6 +244,50 @@ const CONTAINER_WATERING_ADVICE = {
   "Custom Container": { method:"Depends on your container", amount:"Start small and watch drainage", howTo:"Every custom container is different! The golden rules: always have drainage holes in the bottom, start with a small amount of water and check for drainage, and always finger-test before watering again.", checkMethod:"👆 Finger test 1\" deep before every watering. When in doubt, wait a day", icon:"📦" },
 };
 
+const SOIL_TYPES = {
+  potting:   { name:"Potting Mix",           emoji:"🪴", color:"#e8f5e9", tc:"#2e7d32", desc:"All-purpose container soil. Lightweight, well-draining, and full of nutrients. The go-to for most container plants.", avoid:"Never use garden soil in containers — it compacts, drains poorly, and can bring pests and disease.", brands:"Look for: Miracle-Gro Potting Mix, Fox Farm Happy Frog, Espoma Organic." },
+  seedStart: { name:"Seed Starting Mix",     emoji:"🌱", color:"#e3f2fd", tc:"#1565c0", desc:"Fine, sterile, and light. Designed for germination — no big chunks that block tiny roots. Low nutrients by design since seedlings don't need much at first.", avoid:"Don't use regular potting mix for seeds — it's too dense and can crust over, blocking sprouts.", brands:"Look for: Jiffy Seed Starting Mix, Burpee Organic Seed Starting Formula." },
+  cactus:    { name:"Cactus & Succulent Mix",emoji:"🌵", color:"#fff9c4", tc:"#f57f17", desc:"Sandy, fast-draining mix. Perfect for herbs that hate wet roots like rosemary, thyme, lavender, and oregano. Mix with perlite for extra drainage.", avoid:"Don't use moisture-control or water-retaining mixes for drought-tolerant herbs — root rot will follow.", brands:"Look for: Miracle-Gro Cactus Mix, Espoma Cactus Mix. Or mix 50% potting mix + 50% perlite." },
+  moisture:  { name:"Moisture Control Mix",  emoji:"💧", color:"#e1f5fe", tc:"#0277bd", desc:"Contains water-retaining crystals or coconut coir. Stays moist longer — great for thirsty plants like lettuce, spinach, and strawberries.", avoid:"Don't use for herbs that like to dry out (rosemary, thyme, lavender) — they'll get root rot.", brands:"Look for: Miracle-Gro Moisture Control, Coast of Maine Sprout Island." },
+  compost:   { name:"Compost Amendment",     emoji:"🌿", color:"#f1f8e9", tc:"#33691e", desc:"Not a standalone soil — mix into potting mix at about 20–30% to boost nutrients. Great for heavy feeders like tomatoes, peppers, and potatoes.", avoid:"Don't use pure compost in containers — it compacts and holds too much moisture.", brands:"Look for: Black Kow Composted Manure, Espoma Bio-tone Starter. Or make your own!" },
+  perlite:   { name:"Perlite (amendment)",   emoji:"⚪", color:"#f5f5f5", tc:"#757575", desc:"White volcanic glass granules. Mix into any potting soil to improve drainage and aeration — especially helpful for containers that tend to stay too wet.", avoid:"Not a standalone soil — always mix with potting mix.", brands:"Available at any garden center. Mix at about 20–30% of total soil volume." },
+};
+
+// What soil type each plant needs
+const PLANT_SOIL_MAP = {
+  basil:"potting", mint:"potting", chives:"potting", parsley:"potting",
+  cilantro:"potting", dill:"potting", greenonion:"potting", chamomile:"potting",
+  lettuce:"moisture", spinach:"moisture", kale:"potting", radish:"potting",
+  tomato:"compost", pepper:"compost", cucumber:"compost", beans:"potting",
+  strawberry:"potting", potato:"compost", sweetpot:"potting", carrot:"potting",
+  micro:"seedStart",
+  // indoor guides by name
+  Basil:"potting", Mint:"potting", Chives:"potting", Parsley:"potting",
+  Cilantro:"potting", Dill:"potting", Thyme:"cactus", Rosemary:"cactus",
+  Oregano:"cactus", "Lemon Balm":"potting", Lavender:"cactus",
+  Microgreens:"seedStart", "Green Onions":"potting",
+};
+
+// What soil type each container calls for
+const CONTAINER_SOIL_MAP = {
+  "Egg Carton":"seedStart", "Takeout Tray":"seedStart", "Newspaper Pot":"seedStart",
+  "Solo Cup":"seedStart", "Milk Jug":"potting", "Yogurt Container":"potting",
+  "Coffee Can":"potting", "Mason Jar":"potting", "Plastic Bottle":"potting",
+  "Tin Can":"potting", "Plastic Pot":"potting", "5-Gal Bucket":"compost",
+  "Fabric Bag":"compost", "Laundry Basket":"compost", "Colander":"potting",
+  "Cardboard Box":"potting", "Custom Container":"potting",
+};
+
+function getSoilRec(plantId, plantName, container) {
+  const byPlant = PLANT_SOIL_MAP[plantId] || PLANT_SOIL_MAP[plantName];
+  const byCont  = CONTAINER_SOIL_MAP[container];
+  if (byCont === "seedStart") return SOIL_TYPES.seedStart;
+  if (byPlant === "cactus") return SOIL_TYPES.cactus;
+  if (byPlant === "compost" && byCont === "compost") return { ...SOIL_TYPES.compost, name:"Potting Mix + Compost", desc:"Use 70% quality potting mix + 30% compost. Heavy feeders in large containers thrive with this combo. Re-fertilize every 4–6 weeks through the season." };
+  if (byPlant === "moisture") return SOIL_TYPES.moisture;
+  return SOIL_TYPES.potting;
+}
+
 function getTS(plant, days) {
   const td = TRANSPLANT_MAP[plant.container] || { next:"Larger Container", nextVol:"2× current", daysMin:30, daysMax:45 };
   const signs = (plant.transplantSigns || []).length;
@@ -754,6 +798,18 @@ export default function App() {
                       </div>
                     )}
                   </div>
+                  {/* Soil recommendation */}
+                  {(() => {
+                    const soil = getSoilRec(null, newPlant.name, newPlant.container);
+                    if (!soil) return null;
+                    return (
+                      <div style={{ background:`linear-gradient(135deg,${soil.color},white)`, border:`1.5px solid ${soil.tc}30`, borderRadius:10, padding:"9px 10px", marginBottom:14 }}>
+                        <div style={{ fontWeight:800, fontSize:11, color:soil.tc, marginBottom:3 }}>🪨 Recommended Soil: {soil.emoji} {soil.name}</div>
+                        <div style={{ fontSize:10, color:"#555", lineHeight:1.5, marginBottom:4 }}>{soil.desc}</div>
+                        <div style={{ fontSize:9, color:"#e65100", fontWeight:700 }}>⚠️ {soil.avoid}</div>
+                      </div>
+                    );
+                  })()}
                   <button onClick={addPlant}
                     style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", padding:14, fontSize:14 }}>
                     🌱 Add to My Garden
@@ -995,6 +1051,18 @@ export default function App() {
                 <div style={{ fontWeight:800, color:"#f57f17", fontSize:11, marginBottom:2 }}>{selectedGuide.indoor ? "💡 Indoor Tip" : "💡 Milk Jug Tip"}</div>
                 <div style={{ fontSize:11, color:"#555", lineHeight:1.5 }}>{selectedGuide.tip}</div>
               </div>
+              {(() => {
+                const soil = getSoilRec(null, selectedGuide.name, selectedGuide.container);
+                if (!soil) return null;
+                return (
+                  <div style={{ background:`linear-gradient(135deg,${soil.color},white)`, border:`1.5px solid ${soil.tc}30`, borderRadius:10, padding:"9px 10px", marginTop:10 }}>
+                    <div style={{ fontWeight:800, fontSize:11, color:soil.tc, marginBottom:3 }}>🪨 Best Soil: {soil.emoji} {soil.name}</div>
+                    <div style={{ fontSize:10, color:"#555", lineHeight:1.5, marginBottom:4 }}>{soil.desc}</div>
+                    {soil.brands && <div style={{ fontSize:10, color:"#666", marginBottom:4 }}>🛒 {soil.brands}</div>}
+                    <div style={{ background:"#fff3e0", borderRadius:7, padding:"5px 8px", fontSize:10, color:"#e65100", fontWeight:700 }}>⚠️ {soil.avoid}</div>
+                  </div>
+                );
+              })()}
               {selectedGuide.indoor && (
                 <button
                   onClick={() => {
@@ -1237,6 +1305,24 @@ export default function App() {
                     <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:9, padding:"7px 9px", fontSize:10, color:"#555", marginBottom:9 }}>
                       💡 {activePlant.notes}
                     </div>
+                    {(() => {
+                      const contName = calcCont.label.includes("Milk Jug") ? "Milk Jug"
+                        : calcCont.label.includes("Bucket") ? "5-Gal Bucket"
+                        : calcCont.label.includes("Fabric") ? "Fabric Bag"
+                        : calcCont.label.includes("Coffee") ? "Coffee Can"
+                        : calcCont.label.includes("Yogurt") ? "Yogurt Container"
+                        : calcCont.label.includes("Basket") ? "Laundry Basket"
+                        : "Plastic Pot";
+                      const soil = getSoilRec(activePlant.id, activePlant.label, contName);
+                      if (!soil) return null;
+                      return (
+                        <div style={{ background:`linear-gradient(135deg,${soil.color},white)`, border:`1.5px solid ${soil.tc}30`, borderRadius:10, padding:"9px 10px", marginBottom:9 }}>
+                          <div style={{ fontWeight:800, fontSize:11, color:soil.tc, marginBottom:3 }}>🪨 Use: {soil.emoji} {soil.name}</div>
+                          <div style={{ fontSize:10, color:"#555", lineHeight:1.5, marginBottom:4 }}>{soil.desc}</div>
+                          <div style={{ fontSize:9, color:"#e65100", fontWeight:700 }}>⚠️ {soil.avoid}</div>
+                        </div>
+                      );
+                    })()}
                     <button
                       onClick={() => {
                         setNewPlant(p => ({
@@ -1329,6 +1415,20 @@ export default function App() {
                     <div style={{ background:"#e8f5e9", borderRadius:8, padding:"5px 9px", fontSize:10, color:"#2e7d32", fontWeight:700 }}>
                       {advice.checkMethod}
                     </div>
+                  </div>
+                );
+              })()}
+
+              {/* Soil recommendation */}
+              {(() => {
+                const soil = getSoilRec(null, p.name, p.container);
+                if (!soil) return null;
+                return (
+                  <div style={{ ...card, background:`linear-gradient(135deg,${soil.color},white)`, border:`1.5px solid ${soil.tc}30`, marginBottom:9 }}>
+                    <div style={{ fontWeight:900, fontSize:12, color:soil.tc, marginBottom:5 }}>🪨 Soil: {soil.emoji} {soil.name}</div>
+                    <div style={{ fontSize:11, color:"#444", lineHeight:1.5, marginBottom:6 }}>{soil.desc}</div>
+                    {soil.brands && <div style={{ fontSize:10, color:"#666", marginBottom:5 }}>🛒 {soil.brands}</div>}
+                    <div style={{ background:"#fff3e0", borderRadius:7, padding:"5px 8px", fontSize:10, color:"#e65100", fontWeight:700 }}>⚠️ {soil.avoid}</div>
                   </div>
                 );
               })()}
