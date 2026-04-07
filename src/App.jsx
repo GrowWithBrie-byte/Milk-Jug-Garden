@@ -414,7 +414,7 @@ export default function App() {
   const [selectedPlant,    setSelectedPlant]    = useState(null);
   const [showAdd,          setShowAdd]          = useState(false);
   const [newPlant,         setNewPlant]         = useState({ name:"", container:"Milk Jug", waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY });
-  const [guidesTab,        setGuidesTab]        = useState("plants");
+  const [guidesTab,        setGuidesTab]        = useState("indoor");
   const [selectedGuide,    setSelectedGuide]    = useState(null);
   const [selectedWatering, setSelectedWatering] = useState(null);
   const [zoneDetail,       setZoneDetail]       = useState(null);
@@ -894,9 +894,9 @@ export default function App() {
         {tab === "guides" && !selectedGuide && !selectedWatering && (
           <div>
             <div style={{ display:"flex", background:"#fff", borderRadius:11, padding:3, marginBottom:10, gap:3 }}>
-              {[["plants","🌿 Plants"],["indoor","🏠 Indoor"],["watering","💧 Watering"]].map(([k,l]) => (
+              {[["indoor","🏠 Indoor"],["watering","💧 Watering"]].map(([k,l]) => (
                 <button key={k} onClick={() => setGuidesTab(k)}
-                  style={{ flex:1, background:guidesTab===k?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"transparent", color:guidesTab===k?"#fff":"#666", border:"none", borderRadius:9, padding:"7px 4px", fontWeight:800, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
+                  style={{ flex:1, background:guidesTab===k?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"transparent", color:guidesTab===k?"#fff":"#666", border:"none", borderRadius:9, padding:"7px 4px", fontWeight:800, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
                   {l}
                 </button>
               ))}
@@ -904,7 +904,6 @@ export default function App() {
 
             {guidesTab === "indoor" && (
               <div>
-                {/* Allergy season banner */}
                 <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", border:"2px solid #a5d6a7" }}>
                   <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:6 }}>🏠 Indoor & Allergy-Season Gardening</div>
                   <div style={{ fontSize:11, color:"#555", lineHeight:1.6, marginBottom:10 }}>Can't be outside due to allergies? You can still grow! Indoor herbs are low-pollen, easy, and smell amazing. Most need just a sunny windowsill or a simple grow light.</div>
@@ -915,8 +914,6 @@ export default function App() {
                     </div>
                   ))}
                 </div>
-
-                {/* Indoor plant guides */}
                 <div style={{ fontWeight:900, fontSize:13, color:"#2e7d32", margin:"12px 0 8px" }}>🌿 Best Indoor Herbs</div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
                   {INDOOR_GUIDES.map(g => (
@@ -933,26 +930,6 @@ export default function App() {
                   ))}
                 </div>
               </div>
-            )}
-            {guidesTab === "plants" && (
-              <>
-                {myZone && <div style={{ ...card, background:`linear-gradient(135deg,${myZone.color},white)`, border:`1.5px solid ${myZone.tc}20`, fontSize:11, color:myZone.tc }}>{myZone.emoji} <b>Zone {myZone.zone}:</b> Best picks — <b>{myZone.plants.slice(0,3).join(", ")}</b></div>}
-                <div style={{ ...card, background:"linear-gradient(135deg,#e3f2fd,#bbdefb)", fontSize:11 }}><b>🥛 Milk Jug Tip:</b> Cut drainage holes in the bottom, then cut the top off or a side panel. Great for herbs, lettuce, and small peppers.</div>
-                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginTop:10 }}>
-                  {PLANT_GUIDES.map(g => {
-                    const match = myZone && myZone.plants.some(z => z.toLowerCase().includes(g.name.toLowerCase().split(" ")[0]) || g.name.toLowerCase().includes(z.toLowerCase()));
-                    return (
-                      <button key={g.name} onClick={() => setSelectedGuide(g)}
-                        style={{ background:"#fff", border:match?`2.5px solid ${myZone.tc}`:"2px solid #e8f5e9", borderRadius:14, padding:"11px 7px", textAlign:"center", cursor:"pointer", fontFamily:"inherit", position:"relative", boxShadow:"0 2px 8px #0001" }}>
-                        {match && <div style={{ position:"absolute", top:4, right:4, ...badge(myZone.color,myZone.tc), fontSize:8 }}>{myZone.emoji}</div>}
-                        <div style={{ fontSize:34 }}>{g.emoji}</div>
-                        <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20", marginTop:4 }}>{g.name}</div>
-                        <div style={{ fontSize:9, color:"#888" }}>📦 {g.container}</div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </>
             )}
             {guidesTab === "watering" && WATERING_METHODS.map(m => (
               <button key={m.id} onClick={() => setSelectedWatering(m)}
@@ -1018,6 +995,25 @@ export default function App() {
                 <div style={{ fontWeight:800, color:"#f57f17", fontSize:11, marginBottom:2 }}>{selectedGuide.indoor ? "💡 Indoor Tip" : "💡 Milk Jug Tip"}</div>
                 <div style={{ fontSize:11, color:"#555", lineHeight:1.5 }}>{selectedGuide.tip}</div>
               </div>
+              {selectedGuide.indoor && (
+                <button
+                  onClick={() => {
+                    setNewPlant(p => ({
+                      ...p,
+                      name: selectedGuide.name,
+                      emoji: selectedGuide.emoji,
+                      container: selectedGuide.container,
+                      waterEvery: selectedGuide.waterBase ? Math.round(selectedGuide.waterBase) : 2,
+                      indoor: true,
+                    }));
+                    setSelectedGuide(null);
+                    setTab("garden");
+                    setShowAdd(true);
+                  }}
+                  style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", fontSize:13, padding:13, marginTop:12 }}>
+                  🌱 Add {selectedGuide.name} to My Garden
+                </button>
+              )}
             </div>
           </div>
         )}
