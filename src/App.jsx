@@ -4,15 +4,43 @@ const TODAY = new Date().toISOString().split("T")[0];
 const todayMs = new Date(TODAY).getTime();
 const daysSince = d => Math.max(0, Math.floor((todayMs - new Date(d).getTime()) / 86400000));
 
-const CONTAINER_TYPES = ["Milk Jug","5-Gal Bucket","Plastic Pot","Fabric Bag","Coffee Can","Yogurt Container"];
+const CONTAINER_TYPES = [
+  "Milk Jug","5-Gal Bucket","Plastic Pot","Fabric Bag","Coffee Can","Yogurt Container",
+  "Egg Carton","Takeout Tray","Cardboard Box","Solo Cup","Plastic Bottle","Tin Can",
+  "Newspaper Pot","Laundry Basket","Colander","Custom Container"
+];
+
+// Presets for non-standard containers — watering method, drainage notes, transplant timing
+const CUSTOM_CONTAINER_PRESETS = {
+  "Egg Carton":     { emoji:"🥚", drains:false, sizeNote:"~1–2 tbsp soil per cell", waterNote:"Mist only — a few sprays per cell. Egg cartons absorb water fast and can get soggy. Keep barely moist.", checkMethod:"👆 Touch the surface — if it feels damp, wait. If dry and pulling away from edges, mist now.", transplantNote:"Transplant seedlings in 1–2 weeks when they have 2 true leaves. The whole carton cell can go in the ground!", icon:"🥚" },
+  "Takeout Tray":   { emoji:"🥡", drains:false, sizeNote:"~½–2 cups soil depending on size", waterNote:"Poke drainage holes first if you haven't! Water gently with ~¼ cup at a time. These are shallow so they dry out fast.", checkMethod:"👆 Finger test the center — edges dry first but roots need moisture in the middle.", transplantNote:"Great for starting seeds or growing microgreens. Transplant when plants get 2–3\" tall.", icon:"🥡" },
+  "Cardboard Box":  { emoji:"📦", drains:true, sizeNote:"Varies — line with plastic if needed", waterNote:"Water slowly and evenly. Cardboard absorbs water and will eventually break down — that's okay for in-ground planting! Check daily as it can dry unevenly.", checkMethod:"🏋️ Lift test + finger test. Cardboard boxes lose water through the sides too.", transplantNote:"Plant the whole box directly in the ground when ready — cardboard will decompose naturally!", icon:"📦" },
+  "Solo Cup":       { emoji:"🥤", drains:false, sizeNote:"~¾ cup soil (16oz cup)", waterNote:"Poke 3–4 holes in the bottom first. Water with ~2–3 tbsp at a time. Small volume dries out very fast — check daily in warm weather.", checkMethod:"👆 Finger test just ½\" deep — these are shallow!", transplantNote:"Transplant in 2–3 weeks when roots reach the bottom. Perfect starter size for herbs and seedlings.", icon:"🥤" },
+  "Plastic Bottle": { emoji:"🍶", drains:false, sizeNote:"~1–3 cups soil depending on bottle size", waterNote:"Cut in half and flip the top into the bottom for a self-watering setup! Or cut the side open. Poke drainage holes. Water ~¼ cup at a time.", checkMethod:"🏋️ Lift test — bottles are light so you can feel moisture difference easily.", transplantNote:"Great for one herb plant. Transplant when roots circle the bottom.", icon:"🍶" },
+  "Tin Can":        { emoji:"🥫", drains:false, sizeNote:"~½–1 cup soil", waterNote:"Poke several holes in the bottom with a nail — tin cans have NO drainage otherwise! Water ~¼ cup at a time. Metal heats up fast so check moisture twice a day in summer.", checkMethod:"🌡️ Check container temp first — if the can is hot to touch, soil is probably drying fast. Finger test 1\" deep.", transplantNote:"Good for single herb plants. Transplant when roots peek out the bottom.", icon:"🥫" },
+  "Newspaper Pot":  { emoji:"📰", drains:true, sizeNote:"~¼–½ cup soil per pot", waterNote:"Mist or bottom water only — newspaper falls apart when soaked from above. Set in a tray with ½\" of water for 10 min to absorb from below.", checkMethod:"👆 Very gentle finger test on the surface. If newspaper feels soggy, skip watering.", transplantNote:"Plant the whole pot — newspaper breaks down in soil. Transplant when seedling has 2+ true leaves.", icon:"📰" },
+  "Laundry Basket": { emoji:"🧺", drains:true, sizeNote:"~5–10 gallons of soil", waterNote:"Works like a fabric bag — breathes on all sides and dries out FAST. Water deeply with 1–2 gallons until you see drainage. Check daily in summer.", checkMethod:"🤏 Squeeze the side — if it feels stiff and dry, water now. Same as a fabric bag.", transplantNote:"Great for potatoes, tomatoes, or large plants. Can stay as a permanent container.", icon:"🧺" },
+  "Colander":       { emoji:"🪣", drains:true, sizeNote:"~2–5 quarts of soil", waterNote:"Drains extremely fast from all sides — water more often than you think! Line with burlap or newspaper first to hold soil in. Water until it runs through.", checkMethod:"👆 Finger test 1\" deep. Colanders dry out faster than regular pots.", transplantNote:"Great for strawberries and herbs. Usually stays as a permanent planter.", icon:"🪣" },
+  "Custom Container":{ emoji:"📦", drains:null, sizeNote:"Check your container size", waterNote:"Water amount depends on your container size. Start with a small amount and check drainage. Always make sure there are holes in the bottom!", checkMethod:"👆 Finger test 1\" deep before every watering. When in doubt, wait a day.", transplantNote:"Transplant when roots start circling the bottom or poking out drainage holes.", icon:"📦" },
+};
 
 const TRANSPLANT_MAP = {
-  "Yogurt Container":{ next:"Milk Jug", nextVol:"1 gal", daysMin:14, daysMax:21 },
-  "Coffee Can":      { next:"Plastic Pot", nextVol:"1–2 gal", daysMin:21, daysMax:35 },
-  "Milk Jug":        { next:"5-Gal Bucket", nextVol:"5 gal", daysMin:28, daysMax:45 },
-  "Plastic Pot":     { next:"5-Gal Bucket", nextVol:"5 gal", daysMin:28, daysMax:45 },
-  "5-Gal Bucket":    { next:"10-Gal Fabric Bag", nextVol:"10 gal", daysMin:60, daysMax:90 },
-  "Fabric Bag":      { next:"In-Ground/Raised Bed", nextVol:"N/A", daysMin:60, daysMax:90 },
+  "Yogurt Container":  { next:"Milk Jug", nextVol:"1 gal", daysMin:14, daysMax:21 },
+  "Coffee Can":        { next:"Plastic Pot", nextVol:"1–2 gal", daysMin:21, daysMax:35 },
+  "Milk Jug":          { next:"5-Gal Bucket", nextVol:"5 gal", daysMin:28, daysMax:45 },
+  "Plastic Pot":       { next:"5-Gal Bucket", nextVol:"5 gal", daysMin:28, daysMax:45 },
+  "5-Gal Bucket":      { next:"10-Gal Fabric Bag", nextVol:"10 gal", daysMin:60, daysMax:90 },
+  "Fabric Bag":        { next:"In-Ground/Raised Bed", nextVol:"N/A", daysMin:60, daysMax:90 },
+  "Egg Carton":        { next:"Yogurt Container or Solo Cup", nextVol:"½ gal", daysMin:7, daysMax:14 },
+  "Takeout Tray":      { next:"Milk Jug or Plastic Pot", nextVol:"1–2 gal", daysMin:14, daysMax:21 },
+  "Cardboard Box":     { next:"Plant directly in ground", nextVol:"N/A", daysMin:21, daysMax:35 },
+  "Solo Cup":          { next:"Yogurt Container or Coffee Can", nextVol:"½–1 gal", daysMin:14, daysMax:21 },
+  "Plastic Bottle":    { next:"Milk Jug or Coffee Can", nextVol:"1 gal", daysMin:21, daysMax:35 },
+  "Tin Can":           { next:"Coffee Can or Plastic Pot", nextVol:"1–2 gal", daysMin:21, daysMax:35 },
+  "Newspaper Pot":     { next:"Plant directly in ground", nextVol:"N/A", daysMin:10, daysMax:21 },
+  "Laundry Basket":    { next:"In-Ground/Raised Bed", nextVol:"N/A", daysMin:60, daysMax:90 },
+  "Colander":          { next:"5-Gal Bucket or Fabric Bag", nextVol:"5–7 gal", daysMin:30, daysMax:60 },
+  "Custom Container":  { next:"Larger Container", nextVol:"2× current size", daysMin:21, daysMax:45 },
 };
 
 const VISUAL_SIGNS = [
@@ -164,48 +192,22 @@ function getWateringRange(waterEvery, zone, container) {
 function wLabel(r) { return r.min === r.max ? `every ${r.min}d` : `every ${r.min}–${r.max}d`; }
 
 const CONTAINER_WATERING_ADVICE = {
-  "Milk Jug": {
-    method: "Lift test + pour through top",
-    amount: "~1–2 cups",
-    howTo: "Pick up the jug daily — when it feels noticeably lighter, it's time. Pour slowly through the opening until you see a few drops from the drainage holes. If your jug is sealed, watch for slight leaf droop as your other signal.",
-    checkMethod: "🏋️ Lift test — light jug = thirsty",
-    icon: "🥛",
-  },
-  "Yogurt Container": {
-    method: "Bottom watering or gentle top",
-    amount: "~½ cup",
-    howTo: "Set in a shallow dish with ½\" of water and let it soak up for 15–20 min. These small containers dry out fast — check daily in warm weather. Finger test is easy here: just poke through the top.",
-    checkMethod: "👆 Finger test — these are small enough!",
-    icon: "🫙",
-  },
-  "Coffee Can": {
-    method: "Top water slowly",
-    amount: "~1 cup",
-    howTo: "Water slowly at the base until you see drainage from the bottom holes. Coffee cans hold moisture well but can get waterlogged — make sure drainage holes are clear. Finger test 1\" deep before each watering.",
-    checkMethod: "👆 Finger test 1\" deep before watering",
-    icon: "🥫",
-  },
-  "5-Gal Bucket": {
-    method: "Deep top watering",
-    amount: "~1 gallon",
-    howTo: "Water deeply and slowly until it drains from the bottom. Big containers hold moisture longer — don't water again until the top 2\" feel dry. Stick your whole finger in to check. In summer heat, check every day even if you don't water.",
-    checkMethod: "👆 Finger test 2\" deep — bigger pot, deeper check",
-    icon: "🪣",
-  },
-  "Plastic Pot": {
-    method: "Top water or bottom soak",
-    amount: "~2–3 cups",
-    howTo: "Water until it drains from the bottom, or set in a tray with 1\" of water for 20 min. Plastic retains moisture well — always finger-test before watering to avoid overwatering. Lift the pot too — heavy means wet!",
-    checkMethod: "👆 Finger test + 🏋️ lift test",
-    icon: "🪴",
-  },
-  "Fabric Bag": {
-    method: "Top water thoroughly",
-    amount: "~2–4 cups",
-    howTo: "Fabric bags breathe and dry out FAST — water more often than you think! Pour slowly around the whole surface until you see drainage. In hot weather these may need water every day. Squeeze the side of the bag — if it feels stiff and dry, water now.",
-    checkMethod: "🤏 Squeeze the bag side — stiff & dry = water now",
-    icon: "👜",
-  },
+  "Milk Jug":         { method:"Lift test + pour through top", amount:"~1–2 cups", howTo:"Pick up the jug daily — when it feels noticeably lighter, it's time. Pour slowly through the opening until you see a few drops from the drainage holes. If your jug is sealed, watch for slight leaf droop as your other signal.", checkMethod:"🏋️ Lift test — light jug = thirsty", icon:"🥛" },
+  "Yogurt Container": { method:"Bottom watering or gentle top", amount:"~½ cup", howTo:"Set in a shallow dish with ½\" of water and let it soak up for 15–20 min. These small containers dry out fast — check daily in warm weather. Finger test is easy here: just poke through the top.", checkMethod:"👆 Finger test — these are small enough!", icon:"🫙" },
+  "Coffee Can":       { method:"Top water slowly", amount:"~1 cup", howTo:"Water slowly at the base until you see drainage from the bottom holes. Coffee cans hold moisture well but can get waterlogged — make sure drainage holes are clear. Finger test 1\" deep before each watering.", checkMethod:"👆 Finger test 1\" deep before watering", icon:"🥫" },
+  "5-Gal Bucket":     { method:"Deep top watering", amount:"~1 gallon", howTo:"Water deeply and slowly until it drains from the bottom. Big containers hold moisture longer — don't water again until the top 2\" feel dry. Stick your whole finger in to check. In summer heat, check every day even if you don't water.", checkMethod:"👆 Finger test 2\" deep — bigger pot, deeper check", icon:"🪣" },
+  "Plastic Pot":      { method:"Top water or bottom soak", amount:"~2–3 cups", howTo:"Water until it drains from the bottom, or set in a tray with 1\" of water for 20 min. Plastic retains moisture well — always finger-test before watering to avoid overwatering. Lift the pot too — heavy means wet!", checkMethod:"👆 Finger test + 🏋️ lift test", icon:"🪴" },
+  "Fabric Bag":       { method:"Top water thoroughly", amount:"~2–4 cups", howTo:"Fabric bags breathe and dry out FAST — water more often than you think! Pour slowly around the whole surface until you see drainage. In hot weather these may need water every day. Squeeze the side of the bag — if it feels stiff and dry, water now.", checkMethod:"🤏 Squeeze the bag side — stiff & dry = water now", icon:"👜" },
+  "Egg Carton":       { method:"Mist only", amount:"A few sprays per cell", howTo:"Egg cartons absorb water fast and can get soggy. Use a spray bottle and mist each cell lightly. Keep barely moist — not wet. Sit the carton in a tray to catch any drips and keep humidity up.", checkMethod:"👆 Touch the surface — damp = wait, dry & pulling away = mist now", icon:"🥚" },
+  "Takeout Tray":     { method:"Gentle pour or mist", amount:"~¼ cup at a time", howTo:"Poke drainage holes first if you haven't! These are shallow so they dry out fast. Water gently — too much at once and you'll wash seeds around. Check twice a day in warm weather.", checkMethod:"👆 Finger test the center — edges dry first but roots need moisture in the middle", icon:"🥡" },
+  "Cardboard Box":    { method:"Slow even watering", amount:"Varies by size", howTo:"Water slowly and evenly across the whole surface. Cardboard absorbs water and will eventually break down — that's totally fine for in-ground planting! Check daily as it can dry unevenly. Line with plastic if you want it to last longer.", checkMethod:"🏋️ Lift test + finger test. Cardboard loses water through the sides too", icon:"📦" },
+  "Solo Cup":         { method:"Small pours only", amount:"~2–3 tbsp", howTo:"Poke 3–4 holes in the bottom first if you haven't. The small volume dries out very fast — check daily in warm weather. Water slowly so it soaks in rather than running off the sides.", checkMethod:"👆 Finger test just ½\" deep — these are very shallow!", icon:"🥤" },
+  "Plastic Bottle":   { method:"Small pours or self-watering setup", amount:"~¼ cup", howTo:"For a self-watering setup: cut in half, flip the top into the bottom with a wick, fill the bottom as a reservoir. Otherwise poke drainage holes and water ~¼ cup at a time. Lift test works great — bottles are light!", checkMethod:"🏋️ Lift test — bottles are light so you feel the difference easily", icon:"🍶" },
+  "Tin Can":          { method:"Small careful pours", amount:"~¼–½ cup", howTo:"Poke several holes in the bottom with a nail first — tin cans have NO drainage otherwise! Metal heats up fast so check moisture twice a day in summer. Water in the morning before the can heats up.", checkMethod:"🌡️ Check if the can is hot to touch — if so, soil is drying fast. Finger test 1\" deep", icon:"🥫" },
+  "Newspaper Pot":    { method:"Bottom watering or misting only", amount:"A few sprays or short soak", howTo:"Newspaper falls apart when soaked from above — use a spray bottle or set the pot in a tray with ½\" of water for 10 min to absorb from below. Keep just barely moist. Plant the whole pot when transplanting!", checkMethod:"👆 Very gentle surface touch. Soggy newspaper = skip watering", icon:"📰" },
+  "Laundry Basket":   { method:"Deep top watering", amount:"~1–2 gallons", howTo:"Works like a fabric bag — breathes on all sides and dries out fast. Line with burlap or landscape fabric first to hold soil in. Water deeply until you see drainage from the bottom. Check daily in summer.", checkMethod:"🤏 Squeeze the side — stiff & dry = water now", icon:"🧺" },
+  "Colander":         { method:"Top water until it runs through", amount:"~2–4 cups", howTo:"Colanders drain extremely fast from all sides — line with burlap or newspaper first to hold soil in. Water slowly until it runs through. These dry out faster than regular pots so check often.", checkMethod:"👆 Finger test 1\" deep. Colanders dry faster than regular pots!", icon:"🪣" },
+  "Custom Container": { method:"Depends on your container", amount:"Start small and watch drainage", howTo:"Every custom container is different! The golden rules: always have drainage holes in the bottom, start with a small amount of water and check for drainage, and always finger-test before watering again.", checkMethod:"👆 Finger test 1\" deep before every watering. When in doubt, wait a day", icon:"📦" },
 };
 
 function getTS(plant, days) {
@@ -590,11 +592,33 @@ export default function App() {
                       style={{ width:"100%", border:"2px solid #e8f5e9", borderRadius:12, padding:"10px", fontSize:14, fontFamily:"inherit", background:"#fff", boxSizing:"border-box" }} />
                   </div>
                   <div style={{ marginBottom:12 }}>
-                    <div style={{ fontSize:10, fontWeight:700, color:"#2e7d32", marginBottom:4 }}>📦 Container Type</div>
-                    <select value={newPlant.container} onChange={ev => setNewPlant(p => ({ ...p, container:ev.target.value }))}
-                      style={{ width:"100%", border:"2px solid #e0e0e0", borderRadius:9, padding:"10px", fontSize:14, fontFamily:"inherit", background:"#fff" }}>
-                      {CONTAINER_TYPES.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                    <div style={{ fontSize:10, fontWeight:700, color:"#2e7d32", marginBottom:6 }}>📦 Container Type</div>
+                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:5, marginBottom:6 }}>
+                      {CONTAINER_TYPES.map(c => {
+                        const preset = CUSTOM_CONTAINER_PRESETS[c];
+                        const emoji = preset?.emoji ||
+                          (c==="Milk Jug"?"🥛": c==="5-Gal Bucket"?"🪣": c==="Plastic Pot"?"🪴": c==="Fabric Bag"?"👜": c==="Coffee Can"?"🥫": c==="Yogurt Container"?"🫙":"📦");
+                        const selected = newPlant.container === c;
+                        return (
+                          <button key={c} onClick={() => setNewPlant(p => ({ ...p, container:c }))}
+                            style={{ background:selected?"linear-gradient(135deg,#43a047,#66bb6a)":"#f5f5f5", color:selected?"#fff":"#444", border:selected?"2px solid #2e7d32":"2px solid #e0e0e0", borderRadius:10, padding:"7px 4px", cursor:"pointer", fontFamily:"inherit", textAlign:"center", fontSize:10, fontWeight:700, lineHeight:1.3 }}>
+                            <div style={{ fontSize:18, marginBottom:2 }}>{emoji}</div>
+                            {c}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {/* Custom container info panel */}
+                    {CUSTOM_CONTAINER_PRESETS[newPlant.container] && (
+                      <div style={{ background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", borderRadius:10, padding:"9px 10px", border:"1.5px solid #a5d6a7", fontSize:10, color:"#444", lineHeight:1.6 }}>
+                        <div style={{ fontWeight:800, color:"#1b5e20", marginBottom:4 }}>
+                          {CUSTOM_CONTAINER_PRESETS[newPlant.container].emoji} Tips for {newPlant.container}
+                        </div>
+                        <div style={{ marginBottom:4 }}>💧 <b>Watering:</b> {CUSTOM_CONTAINER_PRESETS[newPlant.container].waterNote}</div>
+                        <div style={{ marginBottom:4 }}>🌱 <b>Soil:</b> {CUSTOM_CONTAINER_PRESETS[newPlant.container].sizeNote}</div>
+                        <div style={{ color:"#2e7d32", fontWeight:700 }}>🪴 <b>Transplant:</b> {CUSTOM_CONTAINER_PRESETS[newPlant.container].transplantNote}</div>
+                      </div>
+                    )}
                   </div>
                   <div style={{ marginBottom:14 }}>
                     <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:3 }}>
