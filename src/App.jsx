@@ -1103,7 +1103,7 @@ export default function App() {
 
       {/* ── TAB BAR ── */}
       <div style={{ display:"flex", background:"#fff", margin:"10px 12px 0", borderRadius:12, padding:3, boxShadow:"0 2px 8px #0001" }}>
-        {[["garden","🌱","My Garden"],["jugs","🥛","Jugs"],["calc","🧮","Calc"],["calendar","📅","Calendar"],["transplant","🪴","Transplant"],["guides","📖","Guides"]].map(([k,icon,label]) => (
+        {[["garden","🌱","My Garden"],["tracker","🌿","Tracker"],["calc","🧮","Calc"],["calendar","📅","Calendar"],["transplant","🪴","Transplant"],["guides","📖","Guides"]].map(([k,icon,label]) => (
           <button key={k} onClick={() => setTab(k)}
             style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"6px 2px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
             <span style={{ fontSize:15 }}>{icon}</span>
@@ -1666,7 +1666,7 @@ export default function App() {
         {tab === "guides" && !selectedGuide && !selectedWatering && !selectedTrouble && (
           <div>
             <div style={{ display:"flex", background:"#fff", borderRadius:11, padding:3, marginBottom:10, gap:3 }}>
-              {[["indoor","🏠 Indoor"],["watering","💧 Water"],["zones","🗺️ Zones"],["trouble","🚑 Help"]].map(([k,l]) => (
+              {[["indoor","🏠 Indoor"],["watering","💧 Water"],["winter","❄️ Winter"],["zones","🗺️ Zones"],["trouble","🚑 Help"]].map(([k,l]) => (
                 <button key={k} onClick={() => setGuidesTab(k)}
                   style={{ flex:1, background:guidesTab===k?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"transparent", color:guidesTab===k?"#fff":"#666", border:"none", borderRadius:9, padding:"7px 2px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit" }}>
                   {l}
@@ -1794,6 +1794,123 @@ export default function App() {
                 </div>
               </div>
             )}
+            {guidesTab === "winter" && (
+              <div>
+                {/* Hero */}
+                <div style={{ background:"linear-gradient(135deg,#0d47a1,#1565c0)", borderRadius:18, padding:"18px 16px", marginBottom:12, boxShadow:"0 4px 20px #0d47a140" }}>
+                  <div style={{ color:"#fff", fontWeight:900, fontSize:20, marginBottom:4 }}>❄️ Winter Sowing</div>
+                  <div style={{ color:"#bbdefb", fontSize:11, lineHeight:1.7 }}>
+                    Start seeds in milk jugs outdoors during winter. Nature does the cold stratification work for you — and seeds sprout when conditions are just right in spring!
+                  </div>
+                </div>
+
+                {/* What is winter sowing */}
+                <div style={{ ...card, marginBottom:10 }}>
+                  <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>🥛 What is Winter Sowing?</div>
+                  <div style={{ fontSize:11, color:"#444", lineHeight:1.7, marginBottom:10 }}>
+                    Winter sowing is planting seeds in milk jugs or other containers and leaving them outside all winter. The jugs act as mini greenhouses — cold temps break seed dormancy naturally, and seeds sprout on their own schedule when spring arrives.
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
+                    {[
+                      { emoji:"✅", title:"What you need", items:["Gallon milk jugs","Potting mix","Seeds","Tape & marker","A drill or knife"] },
+                      { emoji:"🌟", title:"Why it works", items:["No grow lights needed","No indoor space needed","Seeds self-regulate","Stronger seedlings","Basically free!"] },
+                    ].map(s => (
+                      <div key={s.title} style={{ background:"#f9fbe7", borderRadius:10, padding:"10px" }}>
+                        <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20", marginBottom:6 }}>{s.emoji} {s.title}</div>
+                        {s.items.map((item,i) => (
+                          <div key={i} style={{ fontSize:10, color:"#555", marginBottom:3, display:"flex", gap:5 }}>
+                            <span style={{ color:"#43a047" }}>•</span>{item}
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Step by step */}
+                <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>📋 How to Set Up a Winter Sowing Jug</div>
+                {[
+                  { n:"1", icon:"✂️", title:"Prepare the jug", desc:"Cut the jug almost in half horizontally, leaving a 1–2\" hinge on the handle side so the top flips open. Remove the cap — this is your ventilation!" },
+                  { n:"2", icon:"🕳️", title:"Add drainage holes", desc:"Poke 4–6 holes in the bottom with a drill, nail, or hot skewer. Good drainage is essential — sitting water will rot your seeds." },
+                  { n:"3", icon:"🪨", title:"Add soil", desc:"Fill the bottom half with 3–4\" of moistened potting mix. Don't use garden soil — it compacts and doesn't drain well in containers." },
+                  { n:"4", icon:"🌱", title:"Sow your seeds", desc:"Scatter seeds on the surface and cover lightly per packet directions. Label the outside of the jug with the plant name, variety, and date!" },
+                  { n:"5", icon:"🔒", title:"Close and seal", desc:"Tape the two halves shut with duct tape. Leave the cap off for ventilation and rain to get in." },
+                  { n:"6", icon:"🌨️", title:"Set outside and wait", desc:"Place jugs in a spot that gets some sun and will collect rain/snow. Face them south if possible. Now just... wait! Check monthly." },
+                  { n:"7", icon:"🌱", title:"Watch for sprouts", desc:"When you see sprouts, start cracking the lid open during warm days and close at night. Harden off for 1–2 weeks before fully removing the top." },
+                ].map(step => (
+                  <div key={step.n} style={{ display:"flex", gap:10, background:"#fff", borderRadius:12, padding:"10px 12px", marginBottom:8, border:"1.5px solid #e8f5e9", boxShadow:"0 1px 4px #0001" }}>
+                    <div style={{ background:"linear-gradient(135deg,#1565c0,#1976d2)", borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:"#fff", fontWeight:900, fontSize:13 }}>{step.n}</div>
+                    <div>
+                      <div style={{ fontWeight:800, fontSize:12, color:"#1b5e20", marginBottom:3 }}>{step.icon} {step.title}</div>
+                      <div style={{ fontSize:11, color:"#555", lineHeight:1.6 }}>{step.desc}</div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* When to sow by zone */}
+                <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8, marginTop:4 }}>🗺️ When to Start by Zone</div>
+                <div style={{ ...card, marginBottom:10 }}>
+                  {[
+                    { zones:"3–4", when:"November–December", note:"Coldest zones — start early so seeds get enough cold stratification" },
+                    { zones:"5–6", when:"December–January", note:"Sweet spot for winter sowing — most seeds do great" },
+                    { zones:"7–8", when:"January–February", note:"Mild winters mean less cold stratification but still works well" },
+                    { zones:"8b–9", when:"November–January", note:"Use the cooler months — avoid sowing when temps stay above 50°F at night" },
+                    { zones:"9–10", when:"October–December", note:"Winter IS your growing season — skip stratification-needing seeds" },
+                  ].map((r,i) => (
+                    <div key={i} style={{ display:"flex", gap:10, padding:"8px 0", borderBottom: i < 4 ? "1px solid #f0f0f0" : "none" }}>
+                      <div style={{ background:"#e3f2fd", borderRadius:7, padding:"3px 8px", fontSize:10, fontWeight:800, color:"#1565c0", flexShrink:0, alignSelf:"flex-start" }}>Zone {r.zones}</div>
+                      <div>
+                        <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20" }}>{r.when}</div>
+                        <div style={{ fontSize:10, color:"#888", marginTop:1 }}>{r.note}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {myZone && (
+                    <div style={{ background:`linear-gradient(135deg,${myZone.color},white)`, borderRadius:9, padding:"8px 10px", marginTop:8, fontSize:11, color:myZone.tc, fontWeight:700 }}>
+                      {myZone.emoji} You're in Zone {myZone.zone} — best window: {
+                        parseFloat(myZone.zone) <= 4 ? "November–December" :
+                        parseFloat(myZone.zone) <= 6 ? "December–January" :
+                        parseFloat(myZone.zone) <= 8 ? "January–February" :
+                        "October–December"
+                      }
+                    </div>
+                  )}
+                </div>
+
+                {/* Best plants for winter sowing */}
+                <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>🌿 Best Plants for Winter Sowing</div>
+                <div style={{ ...card, marginBottom:10 }}>
+                  {[
+                    { emoji:"✅", label:"Easy — perfect for beginners", plants:["Tomatoes","Peppers","Kale","Lettuce","Spinach","Broccoli","Cabbage","Marigolds","Zinnias"] },
+                    { emoji:"🌸", label:"Flowers that love cold stratification", plants:["Coneflower","Black-eyed Susan","Columbine","Lavender","Yarrow","Foxglove","Snapdragons"] },
+                    { emoji:"🌿", label:"Herbs that winter sow well", plants:["Parsley","Chives","Dill","Cilantro","Chamomile","Lemon balm","Thyme"] },
+                    { emoji:"⚠️", label:"Skip these — need warm starts only", plants:["Basil","Cucumbers","Squash","Melons","Sweet potatoes"] },
+                  ].map((g,i) => (
+                    <div key={i} style={{ marginBottom: i < 3 ? 10 : 0 }}>
+                      <div style={{ fontWeight:700, fontSize:10, color: i===3?"#e65100":"#2e7d32", marginBottom:5 }}>{g.emoji} {g.label}</div>
+                      <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
+                        {g.plants.map(p => (
+                          <span key={p} style={{ background: i===3?"#fff3e0":"#e8f5e9", color: i===3?"#e65100":"#2e7d32", borderRadius:6, padding:"2px 7px", fontSize:10 }}>{p}</span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Jug tracker tip */}
+                <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", border:"1.5px solid #a5d6a7" }}>
+                  <div style={{ fontWeight:800, fontSize:12, color:"#1b5e20", marginBottom:6 }}>🌿 Use the Plant Tracker for your jugs!</div>
+                  <div style={{ fontSize:11, color:"#444", lineHeight:1.7 }}>
+                    Label each jug with a number on tape, then add it to the Plant Tracker tab with that number. You'll always know what's in Jug #1, Jug #2, and so on — even when they all look the same in February! Tap the Tracker tab to get started.
+                  </div>
+                  <button onClick={() => setTab("tracker")}
+                    style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), marginTop:10, fontSize:11, width:"100%" }}>
+                    🌿 Go to Plant Tracker →
+                  </button>
+                </div>
+              </div>
+            )}
+
             {guidesTab === "watering" && WATERING_METHODS.map(m => (
               <button key={m.id} onClick={() => setSelectedWatering(m)}
                 style={{ ...card, width:"100%", textAlign:"left", cursor:"pointer", display:"flex", gap:11, alignItems:"center" }}>
@@ -2065,29 +2182,29 @@ export default function App() {
         )}
 
         {/* ══ JUG TRACKER ══ */}
-        {tab === "jugs" && (
+        {tab === "tracker" && (
           <div>
             {/* Header */}
             <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:18, padding:"16px 16px 14px", marginBottom:12, boxShadow:"0 4px 20px #1b5e2040" }}>
-              <div style={{ color:"#fff", fontWeight:900, fontSize:20, marginBottom:4 }}>🥛 Jug Tracker</div>
+              <div style={{ color:"#fff", fontWeight:900, fontSize:20, marginBottom:4 }}>🌿 Plant Tracker</div>
               <div style={{ color:"#a5d6a7", fontSize:11, lineHeight:1.6 }}>
-                Label your physical jugs and containers with numbers so you always know what's growing in each one — even mid-winter!
+                Label your containers with numbers so you always know what's growing in each one — jugs, pots, bags, cans, whatever you're using!
               </div>
             </div>
 
             {/* How it works tip */}
             <div style={{ ...card, background:"linear-gradient(135deg,#e3f2fd,#e8f5e9)", border:"1.5px solid #90caf9", marginBottom:12 }}>
-              <div style={{ fontWeight:800, fontSize:12, color:"#1565c0", marginBottom:6 }}>💡 How winter sowers use this</div>
+              <div style={{ fontWeight:800, fontSize:12, color:"#1565c0", marginBottom:6 }}>💡 How to use this</div>
               <div style={{ fontSize:11, color:"#444", lineHeight:1.7 }}>
-                Write the jug number on a piece of tape on each physical container. Then log it here when you add a plant. No more mystery jugs in the spring! 🌱
+                Write a number on a piece of tape on each physical container. Log it here when you add a plant. No more mystery pots in the spring! 🌱 Winter sowers love this for labeling milk jugs.
               </div>
             </div>
 
             {plants.length === 0 ? (
               <div style={{ textAlign:"center", padding:"36px 0", color:"#aaa" }}>
-                <div style={{ fontSize:44 }}>🥛</div>
-                <div style={{ fontWeight:800, marginTop:8, fontSize:13 }}>No jugs tracked yet!</div>
-                <div style={{ fontSize:11, marginTop:4 }}>Add a plant with a jug number to see it here.</div>
+                <div style={{ fontSize:44 }}>🌿</div>
+                <div style={{ fontWeight:800, marginTop:8, fontSize:13 }}>No plants tracked yet!</div>
+                <div style={{ fontSize:11, marginTop:4 }}>Add a plant with a container label to see it here.</div>
                 <button onClick={() => { setTab("garden"); setShowAdd(true); }}
                   style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), marginTop:14, fontSize:12 }}>
                   + Add Your First Plant
@@ -2104,7 +2221,7 @@ export default function App() {
                       {labeled.length > 0 && (
                         <>
                           <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>
-                            🥛 Your Labeled Jugs ({labeled.length})
+                            🌿 Your Labeled Plants ({labeled.length})
                           </div>
                           {labeled
                             .slice()
