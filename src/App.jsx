@@ -765,21 +765,21 @@ export default function App() {
             @keyframes lgBarGrow { from{width:0} to{width:100%} }
             @keyframes lgFadeOut { from{opacity:1} to{opacity:0;pointer-events:none} }
             @keyframes lgShimmer { 0%,100%{opacity:0.3} 50%{opacity:1} }
-            .lg-splash { animation: lgFadeOut 0.5s ease 2.8s both; }
-            .lg-logo { animation: lgPop 0.8s cubic-bezier(.36,.07,.19,.97) 0.3s both; }
-            .lg-title { animation: lgFadeIn 0.6s ease 0.9s both; }
-            .lg-sub { animation: lgFadeIn 0.6s ease 1.2s both; }
-            .lg-tagline { animation: lgFadeIn 0.6s ease 1.4s both; }
-            .lg-bar { animation: lgFadeIn 0.4s ease 1.6s both; }
-            .lg-skip { animation: lgFadeIn 0.4s ease 2s both; }
-            .lg-p1 { animation: lgFloat  3.1s ease-in-out 0.2s infinite; position:absolute; }
-            .lg-p2 { animation: lgFloat2 2.7s ease-in-out 0.5s infinite; position:absolute; }
-            .lg-p3 { animation: lgFloat  3.4s ease-in-out 0.0s infinite; position:absolute; }
-            .lg-p4 { animation: lgFloat2 2.9s ease-in-out 0.8s infinite; position:absolute; }
-            .lg-p5 { animation: lgFloat  2.5s ease-in-out 1.1s infinite; position:absolute; }
-            .lg-p6 { animation: lgFloat2 3.2s ease-in-out 0.3s infinite; position:absolute; }
-            .lg-dot { animation: lgShimmer 1.2s ease-in-out infinite; display:inline-block; width:7px; height:7px; background:rgba(255,255,255,0.5); border-radius:50%; margin:0 3px; }
-            .lg-dot:nth-child(2){animation-delay:0.2s} .lg-dot:nth-child(3){animation-delay:0.4s}
+            .lg-splash { animation: lgFadeOut 0.8s ease 5.5s both; }
+            .lg-logo { animation: lgPop 1s cubic-bezier(.36,.07,.19,.97) 0.4s both; }
+            .lg-title { animation: lgFadeIn 0.9s ease 1.2s both; }
+            .lg-sub { animation: lgFadeIn 0.9s ease 1.8s both; }
+            .lg-tagline { animation: lgFadeIn 0.9s ease 2.2s both; }
+            .lg-bar { animation: lgFadeIn 0.6s ease 2.8s both; }
+            .lg-skip { animation: lgFadeIn 0.6s ease 3.5s both; }
+            .lg-p1 { animation: lgFloat  3.8s ease-in-out 0.2s infinite; position:absolute; }
+            .lg-p2 { animation: lgFloat2 3.4s ease-in-out 0.5s infinite; position:absolute; }
+            .lg-p3 { animation: lgFloat  4.1s ease-in-out 0.0s infinite; position:absolute; }
+            .lg-p4 { animation: lgFloat2 3.6s ease-in-out 0.8s infinite; position:absolute; }
+            .lg-p5 { animation: lgFloat  3.2s ease-in-out 1.1s infinite; position:absolute; }
+            .lg-p6 { animation: lgFloat2 3.9s ease-in-out 0.3s infinite; position:absolute; }
+            .lg-dot { animation: lgShimmer 1.6s ease-in-out infinite; display:inline-block; width:7px; height:7px; background:rgba(255,255,255,0.5); border-radius:50%; margin:0 3px; }
+            .lg-dot:nth-child(2){animation-delay:0.3s} .lg-dot:nth-child(3){animation-delay:0.6s}
           `}</style>
           <div className="lg-splash" onAnimationEnd={() => { localStorage.setItem('lazygarden_splashSeen','true'); setShowSplash(false); }}
             style={{ width:"100%", height:"100%", background:"linear-gradient(160deg,#1b5e20 0%,#2e7d32 45%,#33691e 75%,#1b5e20 100%)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", position:"relative" }}>
@@ -824,7 +824,7 @@ export default function App() {
             {/* Loading bar */}
             <div className="lg-bar" style={{ width:180, marginBottom:16 }}>
               <div style={{ height:3, background:"rgba(255,255,255,0.15)", borderRadius:4, overflow:"hidden" }}>
-                <div style={{ height:"100%", background:"#a5d6a7", borderRadius:4, animation:"lgBarGrow 2s cubic-bezier(0.4,0,0.2,1) 1.6s both" }} />
+                <div style={{ height:"100%", background:"#a5d6a7", borderRadius:4, animation:"lgBarGrow 3s cubic-bezier(0.4,0,0.2,1) 2.8s both" }} />
               </div>
             </div>
 
