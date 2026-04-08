@@ -1397,7 +1397,13 @@ export default function App() {
                 onClick={() => setShowAdd(false)}>
                 <div style={{ background:"#fff", borderRadius:"22px 22px 0 0", padding:18, width:"100%", maxWidth:480, paddingBottom:34, maxHeight:"86vh", overflowY:"auto" }}
                   onClick={ev => ev.stopPropagation()}>
-                  <div style={{ fontWeight:900, fontSize:16, color:"#2e7d32", marginBottom:11 }}>🌱 Add New Plant</div>
+                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:11 }}>
+                    <div style={{ fontWeight:900, fontSize:16, color:"#2e7d32" }}>🌱 Add New Plant</div>
+                    <button onClick={() => setShowAdd(false)}
+                      style={{ background:"#f5f5f5", border:"none", borderRadius:20, padding:"6px 14px", fontSize:12, fontWeight:700, color:"#888", cursor:"pointer", fontFamily:"inherit" }}>
+                      ✕ Cancel
+                    </button>
+                  </div>
                   <div style={{ marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:5 }}>Quick Pick</div>
                     <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>
