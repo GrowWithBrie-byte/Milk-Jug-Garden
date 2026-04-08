@@ -1395,15 +1395,18 @@ export default function App() {
             {showAdd && (
               <div style={{ position:"fixed", inset:0, background:"#0008", zIndex:100, display:"flex", alignItems:"flex-end", justifyContent:"center" }}
                 onClick={() => setShowAdd(false)}>
-                <div style={{ background:"#fff", borderRadius:"22px 22px 0 0", padding:18, width:"100%", maxWidth:480, paddingBottom:34, maxHeight:"86vh", overflowY:"auto" }}
+                <div style={{ background:"#fff", borderRadius:"22px 22px 0 0", width:"100%", maxWidth:480, maxHeight:"90dvh", display:"flex", flexDirection:"column", paddingBottom:"env(safe-area-inset-bottom, 16px)" }}
                   onClick={ev => ev.stopPropagation()}>
-                  <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:11 }}>
+                  {/* Sticky header with cancel — always visible */}
+                  <div style={{ padding:"16px 18px 12px", borderBottom:"1.5px solid #f0f0f0", display:"flex", justifyContent:"space-between", alignItems:"center", flexShrink:0 }}>
                     <div style={{ fontWeight:900, fontSize:16, color:"#2e7d32" }}>🌱 Add New Plant</div>
                     <button onClick={() => setShowAdd(false)}
-                      style={{ background:"#f5f5f5", border:"none", borderRadius:20, padding:"6px 14px", fontSize:12, fontWeight:700, color:"#888", cursor:"pointer", fontFamily:"inherit" }}>
+                      style={{ background:"#f5f5f5", border:"none", borderRadius:20, padding:"8px 16px", fontSize:13, fontWeight:700, color:"#888", cursor:"pointer", fontFamily:"inherit", minHeight:40, minWidth:80 }}>
                       ✕ Cancel
                     </button>
                   </div>
+                  {/* Scrollable content */}
+                  <div style={{ overflowY:"auto", padding:"14px 18px 24px", flex:1 }}>
                   <div style={{ marginBottom:10 }}>
                     <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:5 }}>Quick Pick</div>
                     <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>
@@ -1536,6 +1539,7 @@ export default function App() {
                     style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", padding:14, fontSize:14 }}>
                     🌱 Add to My Garden
                   </button>
+                </div>
                 </div>
               </div>
             )}
