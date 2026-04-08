@@ -746,7 +746,7 @@ export default function App() {
 
   const [selectedPlant,    setSelectedPlant]    = useState(null);
   const [showAdd,          setShowAdd]          = useState(false);
-  const [newPlant,         setNewPlant]         = useState({ name:"", container:"Milk Jug", waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY, indoor:false, sproutMin:7, sproutMax:14 });
+  const [newPlant,         setNewPlant]         = useState({ name:"", container:"Milk Jug", waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY, indoor:false, sproutMin:7, sproutMax:14, jugNumber:"" });
   const [guidesTab,        setGuidesTab]        = useState("indoor");
   const [selectedGuide,    setSelectedGuide]    = useState(null);
   const [selectedWatering, setSelectedWatering] = useState(null);
@@ -756,6 +756,24 @@ export default function App() {
   const [newProgressNote, setNewProgressNote] = useState("");
   const [newProgressMood, setNewProgressMood] = useState("🌱");
   const [showProgressForm, setShowProgressForm] = useState(false);
+  const [sproutCelebration, setSproutCelebration] = useState(null);
+
+  const markSprouted = (id) => {
+    const plant = plants.find(p => p.id === id);
+    setPlants(ps => ps.map(p => p.id !== id ? p : {
+      ...p,
+      sproutedDate: TODAY,
+      health: Math.min(100, p.health + 20),
+      progressLog: [...(p.progressLog || []), {
+        id: Date.now(),
+        date: TODAY,
+        note: `🌱 First sprout spotted! Day ${daysSince(p.planted)} after planting.`,
+        mood: "🎉",
+        day: daysSince(p.planted),
+      }]
+    }));
+    setSproutCelebration(plant);
+  };
   const [zoneDetail,       setZoneDetail]       = useState(null);
   const [calcCont,         setCalcCont]         = useState(null);
   const [calcPlant,        setCalcPlant]        = useState(null);
@@ -790,7 +808,7 @@ export default function App() {
   const addPlant      = () => {
     if (!newPlant.name.trim()) return;
     setPlants(ps => [...ps, { ...newPlant, id:Date.now(), planted:newPlant.plantedDate||TODAY, lastWatered:TODAY, health:100, transplantSigns:[] }]);
-    setNewPlant({ name:"", container:"Milk Jug", waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY, indoor:false, sproutMin:7, sproutMax:14 });
+    setNewPlant({ name:"", container:"Milk Jug", waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY, indoor:false, sproutMin:7, sproutMax:14, jugNumber:"" });
     setShowAdd(false);
   };
 
@@ -1025,7 +1043,7 @@ export default function App() {
 
       {/* ── TAB BAR ── */}
       <div style={{ display:"flex", background:"#fff", margin:"10px 12px 0", borderRadius:12, padding:3, boxShadow:"0 2px 8px #0001" }}>
-        {[["garden","🌱","My Garden"],["calc","🧮","Calc"],["calendar","📅","Calendar"],["transplant","🪴","Transplant"],["guides","📖","Guides"]].map(([k,icon,label]) => (
+        {[["garden","🌱","My Garden"],["jugs","🥛","Jugs"],["calc","🧮","Calc"],["calendar","📅","Calendar"],["transplant","🪴","Transplant"],["guides","📖","Guides"]].map(([k,icon,label]) => (
           <button key={k} onClick={() => setTab(k)}
             style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"6px 2px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
             <span style={{ fontSize:15 }}>{icon}</span>
@@ -1084,11 +1102,14 @@ export default function App() {
                   return (
                     <div style={{ display:"flex", flexDirection:"column", gap:5 }}>
                       {nextWater && (() => {
-                        const daysLeft = nextWater.waterEvery - daysSince(nextWater.lastWatered);
+                        const nextDate = new Date(nextWater.lastWatered);
+                        nextDate.setDate(nextDate.getDate() + nextWater.waterEvery);
+                        const daysLeft = Math.ceil((nextDate - new Date(TODAY)) / 86400000);
+                        const dateLabel = daysLeft <= 0 ? "Today!" : daysLeft === 1 ? "Tomorrow" : nextDate.toLocaleDateString("en-US",{month:"short",day:"numeric"});
                         return (
                           <div style={{ background:"rgba(255,255,255,0.1)", borderRadius:9, padding:"6px 10px", fontSize:10, color:"#e3f2fd", display:"flex", justifyContent:"space-between" }}>
                             <span>💧 Next watering: <b style={{ color:"#fff" }}>{nextWater.emoji} {nextWater.name}</b></span>
-                            <span style={{ color:"#81d4fa", fontWeight:700 }}>{daysLeft <= 0 ? "Today!" : daysLeft === 1 ? "Tomorrow" : `in ${daysLeft}d`}</span>
+                            <span style={{ color:"#81d4fa", fontWeight:700 }}>{dateLabel}</span>
                           </div>
                         );
                       })()}
@@ -1109,9 +1130,18 @@ export default function App() {
             ) : (
               /* Empty state command center */
               <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:18, padding:"24px 16px", marginBottom:12, textAlign:"center" }}>
-                <div style={{ fontSize:48, marginBottom:8 }}>🪴</div>
-                <div style={{ color:"#fff", fontWeight:900, fontSize:18, marginBottom:4 }}>Welcome to Lazy Gardening!</div>
-                <div style={{ color:"#a5d6a7", fontSize:11, marginBottom:14, lineHeight:1.5 }}>Your garden command center. Add your first plant to get started!</div>
+                <div style={{ fontSize:48, marginBottom:8 }}>🌱</div>
+                <div style={{ color:"#fff", fontWeight:900, fontSize:19, marginBottom:6, lineHeight:1.3 }}>Garden Tracker for Beginners</div>
+                <div style={{ color:"#a5d6a7", fontSize:12, marginBottom:12, lineHeight:1.7 }}>
+                  Track watering, sprouting, and plant growth<br/>in one simple garden calendar.
+                </div>
+                <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:14 }}>
+                  {[["1️⃣","Add your first plant"],["2️⃣","Log when you planted it"],["3️⃣","Track watering and growth"]].map(([n,t]) => (
+                    <div key={n} style={{ background:"rgba(255,255,255,0.12)", borderRadius:9, padding:"7px 12px", fontSize:11, color:"#fff", display:"flex", alignItems:"center", gap:8, textAlign:"left" }}>
+                      <span style={{ fontSize:16 }}>{n}</span> {t}
+                    </div>
+                  ))}
+                </div>
                 {!myZone && (
                   <button onClick={() => setShowZonePicker(true)}
                     style={{ background:"rgba(255,255,255,0.2)", border:"1.5px solid rgba(255,255,255,0.3)", borderRadius:10, padding:"8px 16px", color:"#fff", fontSize:11, fontWeight:800, cursor:"pointer", fontFamily:"inherit", marginBottom:8, display:"block", width:"100%" }}>
@@ -1177,40 +1207,96 @@ export default function App() {
 
             {/* ── PLANT CARDS ── */}
             {plants.map(plant => {
-              const days    = daysSince(plant.planted);
-              const wr      = getWateringRange(plant.waterEvery, myZone, plant.container);
-              const ts      = getTS(plant, days);
-              const ur      = UR[ts.urgency];
-              const thirsty = daysSince(plant.lastWatered) >= plant.waterEvery;
+              const days      = daysSince(plant.planted);
+              const wr        = getWateringRange(plant.waterEvery, myZone, plant.container);
+              const ts        = getTS(plant, days);
+              const ur        = UR[ts.urgency];
+              const thirsty   = daysSince(plant.lastWatered) >= plant.waterEvery;
               const sproutMin = plant.sproutMin || 7;
               const sproutMax = plant.sproutMax || 14;
-              const sprouted = days > sproutMax;
+              const sprouted  = days > sproutMax;
               const sproutingSoon = !sprouted && days >= sproutMin;
-              const daysToSprout = Math.max(0, sproutMin - days);
+              const daysToSprout  = Math.max(0, sproutMin - days);
+
+              // Calc next water date
+              const nextWaterDate = new Date(plant.lastWatered);
+              nextWaterDate.setDate(nextWaterDate.getDate() + plant.waterEvery);
+              const daysUntilWater = Math.ceil((nextWaterDate - new Date(TODAY)) / 86400000);
+              const nextWaterLabel = thirsty ? "Water now!" : daysUntilWater <= 0 ? "Water today!" : daysUntilWater === 1 ? "Tomorrow" : nextWaterDate.toLocaleDateString("en-US",{month:"long",day:"numeric"});
+              const lastWaterLabel = daysSince(plant.lastWatered) === 0 ? "Today" : new Date(plant.lastWatered+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric"});
+
+              // Calc transplant window
+              const td = TRANSPLANT_MAP[plant.container];
+              const transplantDate = td ? (() => { const d = new Date(plant.planted); d.setDate(d.getDate() + td.daysMin); return d; })() : null;
+              const transplantLabel = transplantDate ? transplantDate.toLocaleDateString("en-US",{month:"long",day:"numeric"}) : null;
 
               return (
                 <div key={plant.id} onClick={() => setSelectedPlant(plant)}
-                  style={{ ...card, cursor:"pointer", border:thirsty?"2px solid #ff7043":ts.urgency!=="growing"?`2px solid ${ur.border}`:"2px solid #e8f5e9", padding:0, overflow:"hidden" }}>
+                  style={{ ...card, cursor:"pointer", border:thirsty?"2px solid #ff7043":ts.urgency!=="growing"?`2px solid ${ur.border}`:"1.5px solid #e8f5e9", padding:0, overflow:"hidden", marginBottom:10 }}>
+                  {/* Top color bar */}
                   <div style={{ height:4, background:thirsty?"linear-gradient(90deg,#ff7043,#ffb74d)":`linear-gradient(90deg,#43a047,#66bb6a ${plant.health}%,#e0e0e0 ${plant.health}%)` }} />
-                  <div style={{ padding:"11px 12px", display:"flex", gap:9, alignItems:"flex-start" }}>
-                    <span style={{ fontSize:36 }}>{plant.emoji}</span>
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontWeight:900, fontSize:14, color:"#1b5e20" }}>{plant.name}</div>
-                      <div style={{ fontSize:10, color:"#888" }}>📦 {plant.container} · 🗓 Day {days}{plant.indoor ? " · 🏠" : " · 🌿"}{(plant.progressLog||[]).length > 0 ? ` · 📸 ${(plant.progressLog||[]).length}` : ""}</div>
-                      {/* Sprout prediction */}
-                      {!sprouted && (
-                        <div style={{ fontSize:10, color: sproutingSoon?"#43a047":"#888", fontWeight: sproutingSoon?800:400, marginTop:2 }}>
-                          {sproutingSoon ? "🌱 Check for sprouts!" : `🌱 Sprout in ~${daysToSprout}d`}
+
+                  <div style={{ padding:"12px 13px" }}>
+                    {/* Header row — emoji, name, jug, water button */}
+                    <div style={{ display:"flex", alignItems:"flex-start", gap:10, marginBottom:10 }}>
+                      <span style={{ fontSize:38, lineHeight:1 }}>{plant.emoji}</span>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontWeight:900, fontSize:15, color:"#1b5e20", lineHeight:1.2 }}>{plant.name}</div>
+                        <div style={{ fontSize:10, color:"#888", marginTop:2 }}>
+                          {plant.jugNumber ? <span style={{ fontWeight:700, color:"#2e7d32" }}>🥛 Jug #{plant.jugNumber} · </span> : null}
+                          {plant.container}{plant.indoor ? " · 🏠 Indoor" : ""}
+                        </div>
+                      </div>
+                      <button onClick={ev => { ev.stopPropagation(); waterPlant(plant.id); }}
+                        style={{ ...btn(thirsty?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"#e3f2fd", thirsty?"#fff":"#90a4ae"), padding:"8px 10px", fontSize:18, flexShrink:0 }}>💧</button>
+                    </div>
+
+                    {/* Key info rows */}
+                    <div style={{ display:"flex", flexDirection:"column", gap:5 }}>
+                      {/* Watering */}
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", background:thirsty?"#fff3e0":"#f9fbe7", borderRadius:8, padding:"6px 10px" }}>
+                        <div>
+                          <span style={{ fontWeight:800, fontSize:11, color:thirsty?"#ff7043":"#1565c0" }}>💧 Next watering: </span>
+                          <span style={{ fontWeight:900, fontSize:11, color:thirsty?"#ff7043":"#1b5e20" }}>{nextWaterLabel}</span>
+                        </div>
+                        <span style={{ fontSize:10, color:"#aaa" }}>Last: {lastWaterLabel}</span>
+                      </div>
+
+                      {/* Sprout */}
+                      {plant.sproutedDate ? (
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", background:"#e8f5e9", borderRadius:8, padding:"6px 10px" }}>
+                          <span style={{ fontWeight:800, fontSize:11, color:"#2e7d32" }}>🌱 Sprouted: {new Date(plant.sproutedDate+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric"})}</span>
+                          <span style={{ fontSize:10, color:"#888" }}>Day {Math.floor((new Date(plant.sproutedDate) - new Date(plant.planted)) / 86400000)}</span>
+                        </div>
+                      ) : !sprouted ? (
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", background:"#f1f8e9", borderRadius:8, padding:"6px 10px" }}>
+                          <span style={{ fontSize:11, color:sproutingSoon?"#43a047":"#888", fontWeight:sproutingSoon?800:400 }}>
+                            🌱 {sproutingSoon ? "Check for sprouts!" : `Sprout expected in ~${daysToSprout}d`}
+                          </span>
+                          {sproutingSoon && (
+                            <button onClick={ev => { ev.stopPropagation(); markSprouted(plant.id); }}
+                              style={{ background:"linear-gradient(135deg,#43a047,#66bb6a)", border:"none", borderRadius:7, padding:"3px 9px", color:"#fff", fontSize:9, fontWeight:800, cursor:"pointer", fontFamily:"inherit" }}>
+                              Sprouted! 🌱
+                            </button>
+                          )}
+                        </div>
+                      ) : null}
+
+                      {/* Transplant */}
+                      {transplantLabel && (
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", background:ts.urgency==="urgent"?"#ffebee":ts.urgency==="ready"?"#fff3e0":"#f5f5f5", borderRadius:8, padding:"6px 10px" }}>
+                          <span style={{ fontWeight:800, fontSize:11, color:ts.urgency==="urgent"?"#c62828":ts.urgency==="ready"?"#e65100":"#888" }}>
+                            🪴 {ts.urgency==="urgent" ? "Transplant NOW!" : ts.urgency==="ready" ? "Ready to transplant!" : `Transplant: ${transplantLabel}`}
+                          </span>
+                          {(ts.urgency==="ready"||ts.urgency==="urgent") && (
+                            <span style={{ fontSize:10, color:ts.urgency==="urgent"?"#c62828":"#e65100", fontWeight:700 }}>{ur.label.replace("🪴 ","").replace("🚨 ","")}</span>
+                          )}
                         </div>
                       )}
-                      <div style={{ display:"flex", gap:4, marginTop:5, flexWrap:"wrap" }}>
-                        <span style={badge(thirsty?"#fff3e0":"#e8f5e9", thirsty?"#ff7043":"#2e7d32")}>{thirsty?"💧 Water now!":"✅ watered "+daysSince(plant.lastWatered)+"d ago"}</span>
-                        <span style={badge("#e3f2fd","#1565c0")}>💧 {myZone?wLabel(wr):"every "+plant.waterEvery+"d"}</span>
-                        <span style={{ ...badge(ur.bg,ur.color), border:`1px solid ${ur.border}` }}>{ur.label}</span>
-                      </div>
                     </div>
-                    <button onClick={ev => { ev.stopPropagation(); waterPlant(plant.id); }}
-                      style={{ ...btn(thirsty?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"#e3f2fd", thirsty?"#fff":"#90a4ae"), padding:"7px 9px", fontSize:17, flexShrink:0 }}>💧</button>
+
+                    {/* Tap hint */}
+                    <div style={{ fontSize:9, color:"#ccc", marginTop:7, textAlign:"right" }}>Tap for full details →</div>
                   </div>
                 </div>
               );
@@ -1250,6 +1336,20 @@ export default function App() {
                         placeholder="e.g. Cherry Tomatoes"
                         style={{ flex:1, border:"2px solid #e0e0e0", borderRadius:9, padding:"10px", fontSize:14, fontFamily:"inherit", outline:"none" }} />
                     </div>
+                  </div>
+                  {/* Jug number */}
+                  <div style={{ marginBottom:12 }}>
+                    <div style={{ fontSize:10, fontWeight:700, color:"#2e7d32", marginBottom:4 }}>🥛 Jug / Container Label <span style={{ color:"#aaa", fontWeight:400 }}>(optional)</span></div>
+                    <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                      <div style={{ background:"#e8f5e9", borderRadius:8, padding:"10px 12px", fontWeight:900, fontSize:13, color:"#2e7d32", whiteSpace:"nowrap" }}>Jug #</div>
+                      <input
+                        value={newPlant.jugNumber}
+                        onChange={ev => setNewPlant(p => ({ ...p, jugNumber:ev.target.value }))}
+                        placeholder="e.g. 1, 2, A, Front Porch..."
+                        style={{ flex:1, border:"2px solid #e8f5e9", borderRadius:9, padding:"10px", fontSize:13, fontFamily:"inherit", outline:"none" }}
+                      />
+                    </div>
+                    <div style={{ fontSize:9, color:"#aaa", marginTop:4 }}>💡 Label your physical jug with this number so you always know what's inside!</div>
                   </div>
                   <div style={{ marginBottom:12 }}>
                     <div style={{ fontSize:10, fontWeight:700, color:"#2e7d32", marginBottom:4 }}>📅 Planting Date</div>
@@ -1883,6 +1983,142 @@ export default function App() {
           </div>
         )}
 
+        {/* ══ JUG TRACKER ══ */}
+        {tab === "jugs" && (
+          <div>
+            {/* Header */}
+            <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:18, padding:"16px 16px 14px", marginBottom:12, boxShadow:"0 4px 20px #1b5e2040" }}>
+              <div style={{ color:"#fff", fontWeight:900, fontSize:20, marginBottom:4 }}>🥛 Jug Tracker</div>
+              <div style={{ color:"#a5d6a7", fontSize:11, lineHeight:1.6 }}>
+                Label your physical jugs and containers with numbers so you always know what's growing in each one — even mid-winter!
+              </div>
+            </div>
+
+            {/* How it works tip */}
+            <div style={{ ...card, background:"linear-gradient(135deg,#e3f2fd,#e8f5e9)", border:"1.5px solid #90caf9", marginBottom:12 }}>
+              <div style={{ fontWeight:800, fontSize:12, color:"#1565c0", marginBottom:6 }}>💡 How winter sowers use this</div>
+              <div style={{ fontSize:11, color:"#444", lineHeight:1.7 }}>
+                Write the jug number on a piece of tape on each physical container. Then log it here when you add a plant. No more mystery jugs in the spring! 🌱
+              </div>
+            </div>
+
+            {plants.length === 0 ? (
+              <div style={{ textAlign:"center", padding:"36px 0", color:"#aaa" }}>
+                <div style={{ fontSize:44 }}>🥛</div>
+                <div style={{ fontWeight:800, marginTop:8, fontSize:13 }}>No jugs tracked yet!</div>
+                <div style={{ fontSize:11, marginTop:4 }}>Add a plant with a jug number to see it here.</div>
+                <button onClick={() => { setTab("garden"); setShowAdd(true); }}
+                  style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), marginTop:14, fontSize:12 }}>
+                  + Add Your First Plant
+                </button>
+              </div>
+            ) : (
+              <>
+                {/* Labeled jugs */}
+                {(() => {
+                  const labeled = plants.filter(p => p.jugNumber);
+                  const unlabeled = plants.filter(p => !p.jugNumber);
+                  return (
+                    <>
+                      {labeled.length > 0 && (
+                        <>
+                          <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>
+                            🥛 Your Labeled Jugs ({labeled.length})
+                          </div>
+                          {labeled
+                            .slice()
+                            .sort((a,b) => {
+                              const na = isNaN(a.jugNumber) ? a.jugNumber : Number(a.jugNumber);
+                              const nb = isNaN(b.jugNumber) ? b.jugNumber : Number(b.jugNumber);
+                              return na > nb ? 1 : na < nb ? -1 : 0;
+                            })
+                            .map(plant => {
+                              const days = daysSince(plant.planted);
+                              const ts = getTS(plant, days);
+                              const ur = UR[ts.urgency];
+                              const thirsty = daysSince(plant.lastWatered) >= plant.waterEvery;
+                              const sproutMin = plant.sproutMin || 7;
+                              const sproutMax = plant.sproutMax || 14;
+                              const sprouted = days > sproutMax;
+                              const sproutDaysLeft = Math.max(0, sproutMin - days);
+                              return (
+                                <button key={plant.id} onClick={() => { setSelectedPlant(plant); setTab("garden"); }}
+                                  style={{ display:"flex", alignItems:"center", gap:12, background:"#fff", borderRadius:14, padding:"12px 14px", marginBottom:8, width:"100%", textAlign:"left", cursor:"pointer", fontFamily:"inherit", border:thirsty?"2px solid #ff7043":ts.urgency!=="growing"?`2px solid ${ur.border}`:"1.5px solid #e8f5e9", boxShadow:"0 2px 8px #0001" }}>
+                                  {/* Jug number badge */}
+                                  <div style={{ background:"linear-gradient(135deg,#43a047,#66bb6a)", borderRadius:10, width:48, height:48, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                                    <div style={{ color:"rgba(255,255,255,0.7)", fontSize:7, fontWeight:700 }}>JUG</div>
+                                    <div style={{ color:"#fff", fontWeight:900, fontSize:18, lineHeight:1 }}>#{plant.jugNumber}</div>
+                                  </div>
+                                  <div style={{ flex:1 }}>
+                                    <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:3 }}>
+                                      <span style={{ fontSize:20 }}>{plant.emoji}</span>
+                                      <span style={{ fontWeight:900, fontSize:13, color:"#1b5e20" }}>{plant.name}</span>
+                                    </div>
+                                    <div style={{ fontSize:10, color:"#888", marginBottom:4 }}>📦 {plant.container} · 🗓 Day {days}{plant.indoor?" · 🏠":""}</div>
+                                    <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
+                                      {thirsty && <span style={badge("#fff3e0","#ff7043")}>💧 Thirsty!</span>}
+                                      {!sprouted && <span style={badge("#e8f5e9","#2e7d32")}>{sproutDaysLeft > 0 ? `🌱 Sprout in ~${sproutDaysLeft}d` : "🌱 Check sprouts!"}</span>}
+                                      <span style={{ ...badge(ur.bg,ur.color), border:`1px solid ${ur.border}` }}>{ur.label}</span>
+                                    </div>
+                                  </div>
+                                  <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
+                                    <button onClick={ev => { ev.stopPropagation(); waterPlant(plant.id); }}
+                                      style={{ ...btn(thirsty?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"#e3f2fd", thirsty?"#fff":"#90a4ae"), padding:"6px 8px", fontSize:16 }}>💧</button>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                        </>
+                      )}
+
+                      {/* Unlabeled plants */}
+                      {unlabeled.length > 0 && (
+                        <>
+                          <div style={{ fontWeight:900, fontSize:13, color:"#888", marginBottom:8, marginTop: labeled.length > 0 ? 12 : 0 }}>
+                            📋 Plants Without a Jug Label ({unlabeled.length})
+                          </div>
+                          <div style={{ ...card, background:"#fff9c4", border:"1.5px solid #f9a825", marginBottom:8, fontSize:11, color:"#666", lineHeight:1.6 }}>
+                            💡 These plants don't have a jug number yet. Tap a plant → tap its name in the detail page to edit and add one!
+                          </div>
+                          {unlabeled.map(plant => (
+                            <button key={plant.id} onClick={() => { setSelectedPlant(plant); setTab("garden"); }}
+                              style={{ display:"flex", alignItems:"center", gap:10, background:"#fafafa", borderRadius:12, padding:"10px 12px", marginBottom:6, width:"100%", textAlign:"left", cursor:"pointer", fontFamily:"inherit", border:"1.5px solid #e0e0e0" }}>
+                              <span style={{ fontSize:24 }}>{plant.emoji}</span>
+                              <div style={{ flex:1 }}>
+                                <div style={{ fontWeight:800, fontSize:12, color:"#555" }}>{plant.name}</div>
+                                <div style={{ fontSize:10, color:"#aaa" }}>📦 {plant.container} · Day {daysSince(plant.planted)}</div>
+                              </div>
+                              <span style={{ fontSize:11, color:"#ccc" }}>›</span>
+                            </button>
+                          ))}
+                        </>
+                      )}
+                    </>
+                  );
+                })()}
+
+                {/* Summary stats */}
+                <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#f1f8e9)", border:"1.5px solid #a5d6a7", marginTop:8 }}>
+                  <div style={{ fontWeight:800, fontSize:12, color:"#2e7d32", marginBottom:8 }}>📊 Garden Summary</div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+                    {[
+                      ["🥛", plants.filter(p=>p.jugNumber).length, "labeled"],
+                      ["💧", plants.filter(p=>daysSince(p.lastWatered)>=p.waterEvery).length, "thirsty"],
+                      ["🌱", plants.filter(p=>{ const d=daysSince(p.planted); return d>=(p.sproutMin||7)&&d<=(p.sproutMax||14); }).length, "sprouting"],
+                    ].map(([icon,val,label]) => (
+                      <div key={label} style={{ background:"rgba(255,255,255,0.7)", borderRadius:9, padding:"8px", textAlign:"center" }}>
+                        <div style={{ fontSize:18 }}>{icon}</div>
+                        <div style={{ fontWeight:900, fontSize:20, color:"#1b5e20" }}>{val}</div>
+                        <div style={{ fontSize:9, color:"#888" }}>{label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
         {/* ══ CALCULATOR ══ */}
         {tab === "calc" && (
           <div>
@@ -2076,7 +2312,9 @@ export default function App() {
                 <span style={{ fontSize:38 }}>{p.emoji}</span>
                 <div>
                   <div style={{ color:"#fff", fontWeight:900, fontSize:17 }}>{p.name}</div>
-                  <div style={{ color:"#c8e6c9", fontSize:10 }}>📦 {p.container} · 🗓 {days} days old</div>
+                  <div style={{ color:"#c8e6c9", fontSize:10 }}>
+                    {p.jugNumber ? `🥛 Jug #${p.jugNumber} · ` : ""}📦 {p.container} · 🗓 {days} days old
+                  </div>
                 </div>
               </div>
               <div style={{ marginTop:11 }}>
@@ -2104,6 +2342,28 @@ export default function App() {
                   {myZone && <div style={{ fontSize:9, color:myZone.tc, fontWeight:700, marginTop:2 }}>{myZone.emoji} Zone {myZone.zone}</div>}
                 </div>
               </div>
+
+              {/* ── SPROUTED BUTTON ── */}
+              {!p.sproutedDate ? (
+                <button onClick={() => markSprouted(p.id)}
+                  style={{ width:"100%", background:"linear-gradient(135deg,#43a047,#66bb6a)", border:"none", borderRadius:14, padding:"14px", marginBottom:10, cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:10, boxShadow:"0 4px 14px #43a04740" }}>
+                  <span style={{ fontSize:28 }}>🌱</span>
+                  <div style={{ textAlign:"left" }}>
+                    <div style={{ color:"#fff", fontWeight:900, fontSize:15 }}>Sprouted!</div>
+                    <div style={{ color:"#c8e6c9", fontSize:10 }}>Tap when you see the first sprout</div>
+                  </div>
+                </button>
+              ) : (
+                <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#f1f8e9)", border:"2px solid #a5d6a7", marginBottom:10, display:"flex", alignItems:"center", gap:10 }}>
+                  <span style={{ fontSize:28 }}>🌱</span>
+                  <div>
+                    <div style={{ fontWeight:900, fontSize:12, color:"#2e7d32" }}>Sprouted on Day {daysSince(p.planted) - daysSince(p.sproutedDate || p.planted) === 0 ? daysSince(p.planted) : (() => { const plantedMs = new Date(p.planted).getTime(); const sproutedMs = new Date(p.sproutedDate).getTime(); return Math.floor((sproutedMs - plantedMs) / 86400000); })()}! 🎉</div>
+                    <div style={{ fontSize:10, color:"#666" }}>{new Date(p.sproutedDate + "T12:00:00").toLocaleDateString("en-US", { month:"long", day:"numeric", year:"numeric" })}</div>
+                  </div>
+                  <button onClick={() => setPlants(ps => ps.map(pl => pl.id !== p.id ? pl : { ...pl, sproutedDate: null }))}
+                    style={{ marginLeft:"auto", background:"none", border:"none", color:"#ccc", fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>undo</button>
+                </div>
+              )}
 
               {/* Container-specific watering advice */}
               {(() => {
@@ -2264,8 +2524,13 @@ export default function App() {
                 const milestones = [
                   { label:"🌱 Planted", date:p.planted, color:"#43a047", done:true },
                   { label:"💧 Next water", date:nextWaterD.toISOString().split("T")[0], color:"#29b6f6", done:false },
-                  { label: sprouted ? "✅ Sprouted (expected)" : "🌿 Expected first sprout", date:sproutMinD.toISOString().split("T")[0], color:"#66bb6a", done:sprouted },
-                  { label: sprouted ? "✅ Fully sprouted (expected)" : "🌿 Sprout window closes", date:sproutMaxD.toISOString().split("T")[0], color:"#388e3c", done:sprouted },
+                  ...(p.sproutedDate
+                    ? [{ label:"🌱 Sprouted! 🎉", date:p.sproutedDate, color:"#66bb6a", done:true }]
+                    : [
+                        { label:"🌿 Expected first sprout", date:sproutMinD.toISOString().split("T")[0], color:"#66bb6a", done:sprouted },
+                        { label:"🌿 Sprout window closes", date:sproutMaxD.toISOString().split("T")[0], color:"#388e3c", done:sprouted },
+                      ]
+                  ),
                   ...(td ? [
                     { label:"🪴 Transplant window", date:(() => { const d=new Date(plantedD); d.setDate(d.getDate()+td.daysMin); return d.toISOString().split("T")[0]; })(), color:"#ff9800", done:daysSince(p.planted) >= td.daysMin },
                     { label:"⚠️ Transplant deadline", date:(() => { const d=new Date(plantedD); d.setDate(d.getDate()+td.daysMax); return d.toISOString().split("T")[0]; })(), color:"#f44336", done:daysSince(p.planted) >= td.daysMax },
@@ -2273,25 +2538,42 @@ export default function App() {
                 ].sort((a,b) => a.date.localeCompare(b.date));
                 return (
                   <div style={{ ...card, marginBottom:9 }}>
-                    <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20", marginBottom:4 }}>📅 Plant Timeline</div>
-                    {!sprouted && (
-                      <div style={{ background:"#e8f5e9", borderRadius:8, padding:"5px 9px", marginBottom:10, fontSize:10, color:"#2e7d32", fontWeight:700 }}>
-                        🌱 Sprout prediction: Day {sproutMin}–{sproutMax} · {daysSince(p.planted) < sproutMin ? `${sproutMin - daysSince(p.planted)} days to go` : "Check daily for sprouts!"}
+                    <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20", marginBottom:12 }}>🌱 Plant Timeline</div>
+                    {!p.sproutedDate && !sprouted && (
+                      <div style={{ background:"#e8f5e9", borderRadius:8, padding:"6px 10px", marginBottom:10, fontSize:10, color:"#2e7d32", fontWeight:700 }}>
+                        🌱 Sprout expected: Day {sproutMin}–{sproutMax} · {daysSince(p.planted) < sproutMin ? `${sproutMin - daysSince(p.planted)} days to go` : "Check daily!"}
                       </div>
                     )}
-                    <div style={{ position:"relative", paddingLeft:16 }}>
-                      <div style={{ position:"absolute", left:7, top:0, bottom:0, width:2, background:"#e8f5e9", borderRadius:2 }} />
-                      {milestones.map((m, i) => (
-                        <div key={i} style={{ position:"relative", marginBottom:10, paddingLeft:16 }}>
-                          <div style={{ position:"absolute", left:-9, top:2, width:10, height:10, borderRadius:"50%", background:m.done?"#43a047":m.color, border:`2px solid ${m.done?"#2e7d32":m.color}`, boxShadow:`0 0 0 2px ${m.color}20` }} />
-                          <div style={{ fontSize:10, fontWeight:800, color:m.done?"#aaa":m.color }}>{m.label}</div>
-                          <div style={{ fontSize:9, color:"#999" }}>{new Date(m.date + "T12:00:00").toLocaleDateString("en-US",{ month:"short", day:"numeric", year:"numeric" })}</div>
-                        </div>
-                      ))}
+                    <div style={{ position:"relative" }}>
+                      <div style={{ position:"absolute", left:5, top:0, bottom:0, width:2, background:"#e8f5e9", borderRadius:2 }} />
+                      {milestones.map((m, i) => {
+                        const isPast = m.date <= TODAY;
+                        const isToday = m.date === TODAY;
+                        // Find any progress note on this date
+                        const matchNote = (p.progressLog||[]).find(n => n.date === m.date);
+                        return (
+                          <div key={i} style={{ position:"relative", paddingLeft:20, marginBottom:12 }}>
+                            <div style={{ position:"absolute", left:0, top:3, width:12, height:12, borderRadius:"50%", background:m.done?"#43a047":isPast?m.color:"#e0e0e0", border:`2px solid ${m.done?"#2e7d32":isPast?m.color:"#ccc"}`, zIndex:1 }} />
+                            <div style={{ display:"flex", alignItems:"baseline", gap:8, flexWrap:"wrap" }}>
+                              <div style={{ fontSize:11, fontWeight:700, color:isPast?"#888":"#bbb", minWidth:72, flexShrink:0 }}>
+                                {new Date(m.date+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric"})}
+                              </div>
+                              <div style={{ fontSize:12, fontWeight:900, color:m.done?"#2e7d32":isPast?m.color:"#bbb" }}>
+                                {isToday ? "🔵 " : ""}{m.label}
+                              </div>
+                            </div>
+                            {matchNote && (
+                              <div style={{ marginLeft:80, marginTop:3, background:"#fafafa", borderRadius:7, padding:"5px 8px", fontSize:10, color:"#666", fontStyle:"italic", borderLeft:"2px solid #c8e6c9" }}>
+                                "{matchNote.note}"
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
                     <button onClick={() => setTab("calendar")}
                       style={{ ...btn("#e8f5e9","#2e7d32"), fontSize:10, padding:"5px 10px", marginTop:4 }}>
-                      📅 View in calendar →
+                      📅 View full calendar →
                     </button>
                   </div>
                 );
@@ -2401,6 +2683,77 @@ export default function App() {
           </div>
         );
       })()}
+
+      {/* ── SPROUT CELEBRATION MODAL ── */}
+      {sproutCelebration && (
+        <div style={{ position:"fixed", inset:0, background:"#000a", zIndex:460, display:"flex", alignItems:"center", justifyContent:"center", padding:24 }}
+          onClick={() => setSproutCelebration(null)}>
+          <div style={{ background:"#fff", borderRadius:24, width:"100%", maxWidth:380, overflow:"hidden", boxShadow:"0 20px 60px rgba(0,0,0,0.3)" }}
+            onClick={ev => ev.stopPropagation()}>
+            <style>{`
+              @keyframes sproutPop { 0%{transform:scale(0) rotate(-15deg)} 60%{transform:scale(1.2) rotate(5deg)} 100%{transform:scale(1) rotate(0deg)} }
+              @keyframes confettiFall { 0%{transform:translateY(-20px) rotate(0deg);opacity:1} 100%{transform:translateY(60px) rotate(360deg);opacity:0} }
+              .sprout-emoji { animation: sproutPop 0.6s cubic-bezier(.36,.07,.19,.97) both; }
+              .confetti-1 { animation: confettiFall 1.2s ease-in 0.2s both; position:absolute; top:20px; left:20%; font-size:16px; }
+              .confetti-2 { animation: confettiFall 1.4s ease-in 0.1s both; position:absolute; top:10px; left:50%; font-size:14px; }
+              .confetti-3 { animation: confettiFall 1.1s ease-in 0.3s both; position:absolute; top:15px; right:20%; font-size:18px; }
+              .confetti-4 { animation: confettiFall 1.3s ease-in 0.0s both; position:absolute; top:5px; left:35%; font-size:12px; }
+              .confetti-5 { animation: confettiFall 1.5s ease-in 0.4s both; position:absolute; top:25px; right:30%; font-size:15px; }
+            `}</style>
+
+            {/* Celebration header */}
+            <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", padding:"28px 20px 22px", textAlign:"center", position:"relative", overflow:"hidden" }}>
+              <span className="confetti-1">🌸</span>
+              <span className="confetti-2">⭐</span>
+              <span className="confetti-3">🎊</span>
+              <span className="confetti-4">✨</span>
+              <span className="confetti-5">🌼</span>
+              <div className="sprout-emoji" style={{ fontSize:64, marginBottom:10 }}>🌱</div>
+              <div style={{ color:"#fff", fontWeight:900, fontSize:22, marginBottom:6 }}>It sprouted!!</div>
+              <div style={{ color:"#a5d6a7", fontSize:13 }}>
+                {sproutCelebration.emoji} <b style={{ color:"#fff" }}>{sproutCelebration.name}</b> has its first sprout!
+              </div>
+            </div>
+
+            <div style={{ padding:"18px 20px" }}>
+              {/* Stats */}
+              <div style={{ background:"#e8f5e9", borderRadius:12, padding:"12px 14px", marginBottom:14, textAlign:"center" }}>
+                <div style={{ fontWeight:900, fontSize:13, color:"#2e7d32", marginBottom:4 }}>
+                  🗓 Day {daysSince(sproutCelebration.planted)} after planting
+                </div>
+                <div style={{ fontSize:11, color:"#555" }}>
+                  Sprouted on {new Date(TODAY+"T12:00:00").toLocaleDateString("en-US",{ weekday:"long", month:"long", day:"numeric" })}
+                </div>
+              </div>
+
+              {/* What to watch for next */}
+              <div style={{ background:"#fffde7", borderRadius:12, padding:"12px 14px", marginBottom:14, border:"1.5px solid #f9a825" }}>
+                <div style={{ fontWeight:800, fontSize:12, color:"#f57f17", marginBottom:8 }}>🌿 What happens next</div>
+                {[
+                  "Keep soil moist but not soaked — sprouts are fragile",
+                  "Make sure it's getting light — leggy sprouts need more sun",
+                  "Look for true leaves in the next 1–2 weeks",
+                  "True leaves = almost transplant time! 🪴",
+                ].map((t,i) => (
+                  <div key={i} style={{ display:"flex", gap:7, fontSize:11, color:"#444", marginBottom:5 }}>
+                    <span style={{ color:"#f57f17", flexShrink:0 }}>•</span>{t}
+                  </div>
+                ))}
+              </div>
+
+              {/* Note logged */}
+              <div style={{ background:"#f5f5f5", borderRadius:10, padding:"9px 12px", marginBottom:14, fontSize:10, color:"#888" }}>
+                ✅ Progress note logged automatically to your timeline!
+              </div>
+
+              <button onClick={() => setSproutCelebration(null)}
+                style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", fontSize:13, padding:13 }}>
+                🌱 Woohoo! Back to my garden
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── TRANSPLANT CONGRATS MODAL ── */}
       {congratsPlant && (
