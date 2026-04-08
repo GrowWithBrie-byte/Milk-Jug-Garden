@@ -737,12 +737,27 @@ function AutoDetectZone({ onDetected }) {
 
 export default function App() {
   const [tab, setTab] = useState("garden");
-  const [showSplash, setShowSplash] = useState(() => localStorage.getItem('lazygarden_splashSeen') === null);
+  const [showSplash, setShowSplash] = useState(() => localStorage.getItem('lazysprout_splashSeen') === null);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
 
-  const [onboarding, setOnboarding] = useState(() => localStorage.getItem('jugGarden_myZone') === null);
+  useEffect(() => {
+    const handler = e => { e.preventDefault(); setInstallPrompt(e); setShowInstallBanner(true); };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') { setShowInstallBanner(false); setInstallPrompt(null); }
+  };
+
+  const [onboarding, setOnboarding] = useState(() => localStorage.getItem('lazysprout_myZone') === null);
   const [showZonePicker, setShowZonePicker] = useState(false);
-  const [myZone,  setMyZone]  = useState(() => { const s = localStorage.getItem('jugGarden_myZone');  return s ? JSON.parse(s) : null; });
-  const [plants,  setPlants]  = useState(() => { const s = localStorage.getItem('jugGarden_plants');  return s ? JSON.parse(s) : [];   });
+  const [myZone,  setMyZone]  = useState(() => { const s = localStorage.getItem('lazysprout_myZone');  return s ? JSON.parse(s) : null; });
+  const [plants,  setPlants]  = useState(() => { const s = localStorage.getItem('lazysprout_plants');  return s ? JSON.parse(s) : [];   });
 
   const [selectedPlant,    setSelectedPlant]    = useState(null);
   const [showAdd,          setShowAdd]          = useState(false);
@@ -782,8 +797,8 @@ export default function App() {
   const [cpName, setCpName] = useState(""); const [cpSpacing, setCpSpacing] = useState(""); const [cpDepth, setCpDepth] = useState(""); const [cpMinVol, setCpMinVol] = useState("");
   const [showAllCalc, setShowAllCalc] = useState(false);
 
-  useEffect(() => { localStorage.setItem('jugGarden_plants',  JSON.stringify(plants));  }, [plants]);
-  useEffect(() => { localStorage.setItem('jugGarden_myZone',  JSON.stringify(myZone));  }, [myZone]);
+  useEffect(() => { localStorage.setItem('lazysprout_plants',  JSON.stringify(plants));  }, [plants]);
+  useEffect(() => { localStorage.setItem('lazysprout_myZone',  JSON.stringify(myZone));  }, [myZone]);
 
   const waterPlant    = id => setPlants(ps => ps.map(p => p.id === id ? { ...p, lastWatered:TODAY, health:Math.min(100,p.health+15) } : p));
   const toggleSign    = (pid, sid) => setPlants(ps => ps.map(p => { if (p.id!==pid) return p; const s=p.transplantSigns||[]; return { ...p, transplantSigns: s.includes(sid)?s.filter(x=>x!==sid):[...s,sid] }; }));
@@ -908,31 +923,76 @@ export default function App() {
             <span className="lg-p5" style={{ bottom:"18%",left:"8%",  fontSize:26 }}>🥒</span>
             <span className="lg-p6" style={{ bottom:"14%",right:"7%", fontSize:30 }}>🌱</span>
 
-            {/* Logo */}
-            <div className="lg-logo" style={{ marginBottom:18 }}>
-              <img
-                src="/icon-512.png"
-                alt="Lazy Gardening"
-                onLoad={() => {
-                  const root = document.getElementById('lg-splash-root');
-                  if (root) {
-                    root.classList.add('lg-splash-ready');
-                    setTimeout(() => {
-                      root.classList.add('lg-do-exit');
-                      setTimeout(() => {
-                        localStorage.setItem('lazygarden_splashSeen','true');
-                        setShowSplash(false);
-                      }, 800);
-                    }, 5500);
-                  }
-                }}
-                style={{ width:160, height:160, borderRadius:"50%", border:"4px solid rgba(255,255,255,0.3)", objectFit:"cover", display:"block", boxShadow:"0 8px 32px rgba(0,0,0,0.3)" }}
-              />
+            {/* Sprout illustration */}
+            <div className="lg-logo" style={{ marginBottom:4, width:"100%", maxWidth:320 }}>
+              <svg width="100%" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" style={{ display:"block" }}>
+                <style>{`
+                  @keyframes lgsway { 0%,100%{transform-origin:340px 340px;transform:rotate(-2deg)} 50%{transform-origin:340px 340px;transform:rotate(2deg)} }
+                  @keyframes lgleafL { 0%,100%{transform-origin:325px 280px;transform:rotate(-5deg)} 50%{transform-origin:325px 280px;transform:rotate(3deg)} }
+                  @keyframes lgleafR { 0%,100%{transform-origin:355px 270px;transform:rotate(5deg)} 50%{transform-origin:355px 270px;transform:rotate(-3deg)} }
+                  @keyframes lgdrop { 0%{opacity:0;transform:translateY(0)} 60%{opacity:1} 100%{opacity:0;transform:translateY(18px)} }
+                  .lgstem { animation: lgsway 3.5s ease-in-out infinite; }
+                  .lgleafl { animation: lgleafL 3.5s ease-in-out infinite; }
+                  .lgleafr { animation: lgleafR 3.5s ease-in-out 0.4s infinite; }
+                  .lgdrop1 { animation: lgdrop 2.2s ease-in 0.3s infinite; }
+                  .lgdrop2 { animation: lgdrop 2.2s ease-in 1.1s infinite; }
+                `}</style>
+                <rect x="0" y="0" width="680" height="420" fill="none"/>
+                <ellipse cx="340" cy="370" rx="180" ry="22" fill="#5d4037"/>
+                <ellipse cx="340" cy="362" rx="170" ry="16" fill="#6d4c41"/>
+                <rect x="268" y="295" width="144" height="80" rx="12" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/>
+                <path d="M412 305 Q445 305 445 330 Q445 355 412 355" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="3" strokeLinecap="round"/>
+                <rect x="310" y="272" width="60" height="28" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/>
+                <rect x="318" y="258" width="44" height="18" rx="5" fill="#a5d6a7" stroke="#c8e6c9" strokeWidth="2"/>
+                <rect x="268" y="340" width="144" height="35" fill="#5d4037"/>
+                <ellipse cx="340" cy="340" rx="72" ry="8" fill="#6d4c41"/>
+                <g className="lgstem">
+                  <path d="M340 338 Q337 310 336 280 Q335 250 340 220" fill="none" stroke="#a5d6a7" strokeWidth="5" strokeLinecap="round"/>
+                  <g className="lgleafl">
+                    <path d="M336 280 Q305 255 298 228 Q318 238 332 262 Q334 272 336 280Z" fill="#c8e6c9"/>
+                    <path d="M336 280 Q316 247 310 230" fill="none" stroke="#a5d6a7" strokeWidth="1.5" strokeLinecap="round"/>
+                  </g>
+                  <g className="lgleafr">
+                    <path d="M338 270 Q372 240 382 212 Q360 225 345 252 Q341 261 338 270Z" fill="#e8f5e9"/>
+                    <path d="M338 270 Q362 238 374 218" fill="none" stroke="#c8e6c9" strokeWidth="1.5" strokeLinecap="round"/>
+                  </g>
+                  <ellipse cx="340" cy="218" rx="8" ry="11" fill="#a5d6a7" transform="rotate(-5 340 218)"/>
+                  <ellipse cx="340" cy="213" rx="5" ry="7" fill="#e8f5e9" transform="rotate(-5 340 213)"/>
+                </g>
+                <ellipse className="lgdrop1" cx="292" cy="292" rx="4" ry="6" fill="rgba(255,255,255,0.6)"/>
+                <ellipse className="lgdrop2" cx="384" cy="298" rx="3" ry="5" fill="rgba(255,255,255,0.5)"/>
+                <path d="M190 368 Q188 350 190 335" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M190 350 Q175 338 170 325 Q183 332 190 348Z" fill="rgba(255,255,255,0.2)"/>
+                <path d="M190 342 Q205 330 210 318 Q197 328 190 342Z" fill="rgba(255,255,255,0.15)"/>
+                <path d="M490 368 Q492 348 490 332" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M490 348 Q505 335 510 322 Q496 330 490 348Z" fill="rgba(255,255,255,0.2)"/>
+                <path d="M490 340 Q476 328 472 316 Q484 326 490 340Z" fill="rgba(255,255,255,0.15)"/>
+              </svg>
             </div>
+
+            {/* Logo with onLoad trigger */}
+            <img
+              src="/icon-512.png"
+              alt="Lazy Sprout"
+              onLoad={() => {
+                const root = document.getElementById('lg-splash-root');
+                if (root) {
+                  root.classList.add('lg-splash-ready');
+                  setTimeout(() => {
+                    root.classList.add('lg-do-exit');
+                    setTimeout(() => {
+                      localStorage.setItem('lazysprout_splashSeen','true');
+                      setShowSplash(false);
+                    }, 800);
+                  }, 5500);
+                }
+              }}
+              style={{ display:"none" }}
+            />
 
             {/* App name */}
             <div className="lg-title" style={{ textAlign:"center", marginBottom:6 }}>
-              <div style={{ color:"#fff", fontWeight:900, fontSize:34, fontFamily:"'Quicksand',sans-serif", letterSpacing:-0.5 }}>Lazy Gardening</div>
+              <div style={{ color:"#fff", fontWeight:900, fontSize:34, fontFamily:"'Quicksand',sans-serif", letterSpacing:-0.5 }}>Lazy Sprout</div>
               <div style={{ color:"#a5d6a7", fontSize:13, fontWeight:700, marginTop:3, fontFamily:"'Quicksand',sans-serif" }}>by Lazy Brie</div>
             </div>
 
@@ -963,7 +1023,7 @@ export default function App() {
 
             {/* Skip button */}
             <button className="lg-skip"
-              onClick={() => { localStorage.setItem('lazygarden_splashSeen','true'); setShowSplash(false); }}
+              onClick={() => { localStorage.setItem('lazysprout_splashSeen','true'); setShowSplash(false); }}
               style={{ background:"rgba(255,255,255,0.12)", border:"1.5px solid rgba(255,255,255,0.2)", borderRadius:20, padding:"6px 18px", color:"rgba(255,255,255,0.6)", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"'Quicksand',sans-serif" }}>
               Tap to skip
             </button>
@@ -977,7 +1037,7 @@ export default function App() {
           <div style={{ padding:"36px 18px 40px" }}>
             <div style={{ textAlign:"center", marginBottom:22 }}>
               <div style={{ fontSize:52 }}>🪴</div>
-              <div style={{ fontWeight:900, fontSize:22, color:"#1b5e20", marginTop:8 }}>Welcome to Lazy Gardening!</div>
+              <div style={{ fontWeight:900, fontSize:22, color:"#1b5e20", marginTop:8 }}>Welcome to Lazy Sprout!</div>
               <div style={{ fontSize:12, color:"#666", marginTop:5, lineHeight:1.5 }}>Pick your <b>USDA Hardiness Zone</b> to personalize everything for your climate.</div>
 
               {/* ── AUTO DETECT BUTTON ── */}
@@ -1008,11 +1068,11 @@ export default function App() {
       {/* ── HEADER ── */}
       <div style={{ background:"linear-gradient(90deg,#43a047,#66bb6a)", padding:"12px 14px 0", borderRadius:"0 0 22px 22px", boxShadow:"0 4px 18px #43a04740", overflow:"hidden" }}>
         <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10 }}>
-          <img src="/icon-192.png" alt="Lazy Gardening logo"
+          <img src="/icon-192.png" alt="Lazy Sprout logo"
             style={{ width:42, height:42, borderRadius:"50%", border:"2px solid rgba(255,255,255,0.3)", objectFit:"cover", flexShrink:0 }} />
           <div style={{ flex:1 }}>
-            <div style={{ color:"#fff", fontWeight:900, fontSize:17, lineHeight:1.1 }}>Lazy Gardening</div>
-            <div style={{ color:"#c8e6c9", fontSize:9, lineHeight:1.3 }}>Budget gardening, made simple 🌱</div>
+            <div style={{ color:"#fff", fontWeight:900, fontSize:17, lineHeight:1.1 }}>Lazy Sprout</div>
+            <div style={{ color:"#c8e6c9", fontSize:9, lineHeight:1.3 }}>Your beginner garden helper 🌱</div>
           </div>
           <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:3 }}>
             {thirstyCount > 0 && <span style={{ background:"#ff7043", color:"#fff", borderRadius:20, padding:"2px 9px", fontSize:10, fontWeight:800 }}>💧 {thirstyCount} thirsty</span>}
@@ -1129,25 +1189,53 @@ export default function App() {
               </div>
             ) : (
               /* Empty state command center */
-              <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:18, padding:"24px 16px", marginBottom:12, textAlign:"center" }}>
-                <div style={{ fontSize:48, marginBottom:8 }}>🌱</div>
-                <div style={{ color:"#fff", fontWeight:900, fontSize:19, marginBottom:6, lineHeight:1.3 }}>Garden Tracker for Beginners</div>
-                <div style={{ color:"#a5d6a7", fontSize:12, marginBottom:12, lineHeight:1.7 }}>
-                  Track watering, sprouting, and plant growth<br/>in one simple garden calendar.
+              <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:18, padding:"20px 18px 20px", marginBottom:12, textAlign:"center" }}>
+                {/* Mini sprout illustration */}
+                <div style={{ margin:"0 auto 8px", width:"70%", maxWidth:240 }}>
+                  <svg width="100%" viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="268" y="235" width="144" height="80" rx="12" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" strokeWidth="3"/>
+                    <path d="M412 245 Q445 245 445 270 Q445 295 412 295" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="3" strokeLinecap="round"/>
+                    <rect x="310" y="212" width="60" height="28" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" strokeWidth="3"/>
+                    <rect x="318" y="198" width="44" height="18" rx="5" fill="#a5d6a7"/>
+                    <rect x="268" y="280" width="144" height="35" fill="#5d4037" rx="0 0 12 12"/>
+                    <ellipse cx="340" cy="280" rx="72" ry="8" fill="#6d4c41"/>
+                    <path d="M340 278 Q337 250 336 220 Q335 190 340 160" fill="none" stroke="#a5d6a7" strokeWidth="5" strokeLinecap="round"/>
+                    <path d="M336 220 Q305 195 298 168 Q318 178 332 202 Q334 212 336 220Z" fill="#c8e6c9"/>
+                    <path d="M338 210 Q372 180 382 152 Q360 165 345 192 Q341 201 338 210Z" fill="#e8f5e9"/>
+                    <ellipse cx="340" cy="158" rx="8" ry="11" fill="#a5d6a7" transform="rotate(-5 340 158)"/>
+                    <path d="M190 308 Q188 290 190 275" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="3" strokeLinecap="round"/>
+                    <path d="M190 290 Q175 278 170 265 Q183 272 190 288Z" fill="rgba(255,255,255,0.15)"/>
+                    <path d="M490 308 Q492 288 490 272" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="3" strokeLinecap="round"/>
+                    <path d="M490 288 Q505 275 510 262 Q496 270 490 288Z" fill="rgba(255,255,255,0.15)"/>
+                    <ellipse cx="340" cy="310" rx="170" ry="14" fill="#5d4037"/>
+                  </svg>
                 </div>
-                <div style={{ display:"flex", flexDirection:"column", gap:6, marginBottom:14 }}>
-                  {[["1️⃣","Add your first plant"],["2️⃣","Log when you planted it"],["3️⃣","Track watering and growth"]].map(([n,t]) => (
-                    <div key={n} style={{ background:"rgba(255,255,255,0.12)", borderRadius:9, padding:"7px 12px", fontSize:11, color:"#fff", display:"flex", alignItems:"center", gap:8, textAlign:"left" }}>
-                      <span style={{ fontSize:16 }}>{n}</span> {t}
+                <div style={{ color:"#fff", fontWeight:900, fontSize:21, marginBottom:6, lineHeight:1.3 }}>Your Garden Helper</div>
+                <div style={{ color:"#a5d6a7", fontSize:12, marginBottom:16, lineHeight:1.8 }}>
+                  Keep track of watering, sprouts, and plant progress — without the guesswork.
+                </div>
+                <div style={{ display:"flex", flexDirection:"column", gap:7, marginBottom:18 }}>
+                  {[
+                    ["💧","Know exactly when to water"],
+                    ["🌱","Get notified when sprouts are expected"],
+                    ["🪴","See when it's time to transplant"],
+                  ].map(([icon,text]) => (
+                    <div key={text} style={{ background:"rgba(255,255,255,0.12)", borderRadius:10, padding:"9px 14px", fontSize:12, color:"#fff", display:"flex", alignItems:"center", gap:10, textAlign:"left" }}>
+                      <span style={{ fontSize:18 }}>{icon}</span>
+                      <span>{text}</span>
                     </div>
                   ))}
                 </div>
                 {!myZone && (
                   <button onClick={() => setShowZonePicker(true)}
-                    style={{ background:"rgba(255,255,255,0.2)", border:"1.5px solid rgba(255,255,255,0.3)", borderRadius:10, padding:"8px 16px", color:"#fff", fontSize:11, fontWeight:800, cursor:"pointer", fontFamily:"inherit", marginBottom:8, display:"block", width:"100%" }}>
-                    🗺️ Set my growing zone first
+                    style={{ background:"rgba(255,255,255,0.18)", border:"1.5px solid rgba(255,255,255,0.3)", borderRadius:12, padding:"10px 16px", color:"#fff", fontSize:11, fontWeight:800, cursor:"pointer", fontFamily:"inherit", marginBottom:10, display:"block", width:"100%" }}>
+                    🗺️ First: Set my growing zone
                   </button>
                 )}
+                <button onClick={() => setShowAdd(true)}
+                  style={{ background:"linear-gradient(135deg,#ff7043,#ff8a65)", border:"none", borderRadius:12, padding:"14px 16px", color:"#fff", fontSize:14, fontWeight:900, cursor:"pointer", fontFamily:"inherit", width:"100%", boxShadow:"0 4px 14px rgba(255,112,67,0.4)" }}>
+                  🌱 Add My First Plant
+                </button>
               </div>
             )}
 
@@ -1302,14 +1390,7 @@ export default function App() {
               );
             })}
 
-            {plants.length === 0 && (
-              <button onClick={() => setShowAdd(true)}
-                style={{ ...card, width:"100%", border:"2px dashed #a5d6a7", textAlign:"center", padding:"28px 0", cursor:"pointer", background:"transparent" }}>
-                <div style={{ fontSize:36 }}>➕</div>
-                <div style={{ fontWeight:800, color:"#2e7d32", marginTop:6, fontSize:13 }}>Add your first plant</div>
-                <div style={{ fontSize:10, color:"#aaa", marginTop:3 }}>Tap to get started!</div>
-              </button>
-            )}
+            {plants.length === 0 && null}
 
             {showAdd && (
               <div style={{ position:"fixed", inset:0, background:"#0008", zIndex:100, display:"flex", alignItems:"flex-end", justifyContent:"center" }}
@@ -2889,6 +2970,23 @@ export default function App() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ── INSTALL BANNER ── */}
+      {showInstallBanner && (
+        <div style={{ position:"fixed", bottom:80, left:"50%", transform:"translateX(-50%)", width:"calc(100% - 32px)", maxWidth:448, zIndex:350, background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:16, padding:"12px 14px", boxShadow:"0 8px 32px rgba(0,0,0,0.25)", display:"flex", alignItems:"center", gap:10 }}>
+          <img src="/icon-192.png" style={{ width:36, height:36, borderRadius:"50%", flexShrink:0 }} alt="Lazy Sprout" />
+          <div style={{ flex:1 }}>
+            <div style={{ color:"#fff", fontWeight:900, fontSize:12 }}>Add Lazy Sprout to your home screen!</div>
+            <div style={{ color:"#a5d6a7", fontSize:10, marginTop:1 }}>Get the full app experience 🌱</div>
+          </div>
+          <button onClick={handleInstall}
+            style={{ background:"#fff", border:"none", borderRadius:9, padding:"6px 12px", color:"#2e7d32", fontWeight:900, fontSize:11, cursor:"pointer", fontFamily:"inherit", flexShrink:0 }}>
+            Install
+          </button>
+          <button onClick={() => setShowInstallBanner(false)}
+            style={{ background:"none", border:"none", color:"rgba(255,255,255,0.5)", fontSize:16, cursor:"pointer", padding:"0 4px", flexShrink:0 }}>✕</button>
         </div>
       )}
 
