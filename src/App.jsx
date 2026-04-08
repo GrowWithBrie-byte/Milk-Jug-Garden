@@ -700,6 +700,9 @@ export default function App() {
   const [selectedTrouble,  setSelectedTrouble]  = useState(null);
   const [showTransplantPro, setShowTransplantPro] = useState(false);
   const [congratsPlant, setCongratsPlant] = useState(null);
+  const [newProgressNote, setNewProgressNote] = useState("");
+  const [newProgressMood, setNewProgressMood] = useState("🌱");
+  const [showProgressForm, setShowProgressForm] = useState(false);
   const [zoneDetail,       setZoneDetail]       = useState(null);
   const [calcCont,         setCalcCont]         = useState(null);
   const [calcPlant,        setCalcPlant]        = useState(null);
@@ -713,7 +716,17 @@ export default function App() {
 
   const waterPlant    = id => setPlants(ps => ps.map(p => p.id === id ? { ...p, lastWatered:TODAY, health:Math.min(100,p.health+15) } : p));
   const toggleSign    = (pid, sid) => setPlants(ps => ps.map(p => { if (p.id!==pid) return p; const s=p.transplantSigns||[]; return { ...p, transplantSigns: s.includes(sid)?s.filter(x=>x!==sid):[...s,sid] }; }));
-  const markTransplanted = id => {
+  const addProgressNote = (plantId, note, mood) => {
+    if (!note.trim()) return;
+    const entry = { id: Date.now(), date: TODAY, note: note.trim(), mood, day: daysSince(plants.find(p => p.id === plantId)?.planted || TODAY) };
+    setPlants(ps => ps.map(p => p.id !== plantId ? p : { ...p, progressLog: [...(p.progressLog || []), entry] }));
+    setNewProgressNote("");
+    setNewProgressMood("🌱");
+    setShowProgressForm(false);
+  };
+  const deleteProgressNote = (plantId, noteId) => {
+    setPlants(ps => ps.map(p => p.id !== plantId ? p : { ...p, progressLog: (p.progressLog || []).filter(n => n.id !== noteId) }));
+  };
     const plant = plants.find(p => p.id === id);
     setPlants(ps => ps.map(p => p.id!==id ? p : { ...p, planted:TODAY, transplantSigns:[], health:Math.min(100,p.health+10), notes:(p.notes?p.notes+" · ":"")+"Transplanted!" }));
     setSelectedPlant(null);
@@ -841,7 +854,7 @@ export default function App() {
                     }, 5500);
                   }
                 }}
-                style={{ width:110, height:110, borderRadius:"50%", border:"3px solid rgba(255,255,255,0.3)", objectFit:"cover", display:"block", boxShadow:"0 8px 32px rgba(0,0,0,0.3)" }}
+                style={{ width:160, height:160, borderRadius:"50%", border:"4px solid rgba(255,255,255,0.3)", objectFit:"cover", display:"block", boxShadow:"0 8px 32px rgba(0,0,0,0.3)" }}
               />
             </div>
 
@@ -958,7 +971,7 @@ export default function App() {
 
       {/* ── TAB BAR ── */}
       <div style={{ display:"flex", background:"#fff", margin:"10px 12px 0", borderRadius:12, padding:3, boxShadow:"0 2px 8px #0001" }}>
-        {[["garden","🌱","My Garden"],["calc","🧮","Calc"],["calendar","📅","Calendar"],["guides","📖","Guides"]].map(([k,icon,label]) => (
+        {[["garden","🌱","My Garden"],["calc","🧮","Calc"],["calendar","📅","Calendar"],["transplant","🪴","Transplant"],["guides","📖","Guides"]].map(([k,icon,label]) => (
           <button key={k} onClick={() => setTab(k)}
             style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"6px 2px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
             <span style={{ fontSize:15 }}>{icon}</span>
@@ -1129,7 +1142,7 @@ export default function App() {
                     <span style={{ fontSize:36 }}>{plant.emoji}</span>
                     <div style={{ flex:1 }}>
                       <div style={{ fontWeight:900, fontSize:14, color:"#1b5e20" }}>{plant.name}</div>
-                      <div style={{ fontSize:10, color:"#888" }}>📦 {plant.container} · 🗓 Day {days}{plant.indoor ? " · 🏠" : " · 🌿"}</div>
+                      <div style={{ fontSize:10, color:"#888" }}>📦 {plant.container} · 🗓 Day {days}{plant.indoor ? " · 🏠" : " · 🌿"}{(plant.progressLog||[]).length > 0 ? ` · 📸 ${(plant.progressLog||[]).length}` : ""}</div>
                       {/* Sprout prediction */}
                       {!sprouted && (
                         <div style={{ fontSize:10, color: sproutingSoon?"#43a047":"#888", fontWeight: sproutingSoon?800:400, marginTop:2 }}>
@@ -1702,6 +1715,120 @@ export default function App() {
           </div>
         )}
 
+        {/* ══ TRANSPLANT ══ */}
+        {tab === "transplant" && (
+          <div>
+            {/* Header */}
+            <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:18, padding:"18px 16px", marginBottom:12, boxShadow:"0 4px 20px #1b5e2040" }}>
+              <div style={{ color:"#fff", fontWeight:900, fontSize:20, marginBottom:4 }}>🌱 Transplant Guides</div>
+              <div style={{ color:"#a5d6a7", fontSize:11, lineHeight:1.6 }}>
+                Know when to transplant, how to do it step by step, and what to do after. The most critical moment in your plant's life — done right!
+              </div>
+            </div>
+
+            {/* Free section — when to transplant */}
+            <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>✅ Free — When to Transplant</div>
+            <div style={{ ...card, marginBottom:10 }}>
+              <div style={{ fontWeight:800, fontSize:12, color:"#2e7d32", marginBottom:8 }}>🍃 The main signal: True Leaves</div>
+              <div style={{ fontSize:11, color:"#444", lineHeight:1.7, marginBottom:10 }}>
+                True leaves are the second set of leaves that grow after the first "seed leaves" (cotyledons). They look like the actual plant — tomato-shaped for tomatoes, herb-shaped for herbs.
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:10 }}>
+                {[
+                  { emoji:"🌱", label:"1 set of true leaves", status:"Too early", color:"#e3f2fd", tc:"#1565c0" },
+                  { emoji:"🍃", label:"2 sets of true leaves", status:"Getting close!", color:"#fff9c4", tc:"#f57f17" },
+                  { emoji:"🍃🍃", label:"3 sets of true leaves", status:"Ready! Go for it!", color:"#e8f5e9", tc:"#2e7d32" },
+                  { emoji:"🚨", label:"Roots out of holes", status:"Transplant NOW", color:"#ffebee", tc:"#c62828" },
+                ].map(s => (
+                  <div key={s.label} style={{ background:s.color, borderRadius:10, padding:"9px 10px", border:`1.5px solid ${s.tc}20` }}>
+                    <div style={{ fontSize:18, marginBottom:3 }}>{s.emoji}</div>
+                    <div style={{ fontWeight:800, fontSize:10, color:s.tc }}>{s.status}</div>
+                    <div style={{ fontSize:9, color:s.tc, opacity:0.8, marginTop:2 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ background:"#f9fbe7", borderRadius:9, padding:"8px 10px", fontSize:10, color:"#555", lineHeight:1.6 }}>
+                💡 <b>Remember:</b> You don't need to check all the boxes. 3 sets of true leaves alone is your green light — go for it!
+              </div>
+            </div>
+
+            {/* What happens if you wait too long */}
+            <div style={{ ...card, marginBottom:12, background:"linear-gradient(135deg,#ffebee,white)", border:"1.5px solid #ffcdd2" }}>
+              <div style={{ fontWeight:800, fontSize:12, color:"#c62828", marginBottom:6 }}>⚠️ What happens if you wait too long?</div>
+              {[
+                "Roots circle the container and strangle themselves (root-bound)",
+                "Plant stops growing entirely — stunted for the whole season",
+                "Soil dries out within hours every day",
+                "Leaves turn yellow from nutrient deficiency",
+              ].map((t,i) => (
+                <div key={i} style={{ display:"flex", gap:8, fontSize:11, color:"#444", marginBottom:5 }}>
+                  <span style={{ color:"#c62828", flexShrink:0 }}>•</span>{t}
+                </div>
+              ))}
+            </div>
+
+            {/* PRO section */}
+            <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>
+              🔒 Transplant Pro — Step-by-Step Guides
+              <span style={{ background:"#ff9800", color:"#fff", borderRadius:6, padding:"2px 8px", fontSize:9, fontWeight:800, marginLeft:8 }}>PRO</span>
+            </div>
+
+            {TRANSPLANT_GUIDES.map(g => (
+              <div key={g.id} style={{ ...card, background:"linear-gradient(135deg,#f9fbe7,white)", border:"1.5px solid #c8e6c9", marginBottom:10 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}>
+                  <span style={{ fontSize:28 }}>{g.emoji}</span>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20" }}>{g.name}</div>
+                    <div style={{ display:"flex", gap:5, marginTop:3 }}>
+                      <span style={{ background:"#e8f5e9", color:"#2e7d32", borderRadius:5, padding:"1px 6px", fontSize:9 }}>📋 {g.steps.length} steps</span>
+                      <span style={{ background:"#e3f2fd", color:"#1565c0", borderRadius:5, padding:"1px 6px", fontSize:9 }}>🌿 {g.aftercare.length} aftercare tips</span>
+                      <span style={{ background:"#ffebee", color:"#c62828", borderRadius:5, padding:"1px 6px", fontSize:9 }}>⚠️ {g.commonMistakes.length} mistakes</span>
+                    </div>
+                  </div>
+                  <span style={{ background:"#ff9800", color:"#fff", borderRadius:6, padding:"2px 8px", fontSize:9, fontWeight:800 }}>PRO</span>
+                </div>
+
+                {/* Free preview */}
+                <div style={{ background:"rgba(255,255,255,0.7)", borderRadius:9, padding:"8px 10px", marginBottom:8, fontSize:11, color:"#444", lineHeight:1.5, borderLeft:"3px solid #a5d6a7" }}>
+                  💡 {g.freePreview}
+                </div>
+
+                {/* Blurred locked steps */}
+                <div style={{ position:"relative", overflow:"hidden", borderRadius:9, marginBottom:8 }}>
+                  <div style={{ background:"#f5f5f5", padding:"8px 10px", filter:"blur(3px)", userSelect:"none", pointerEvents:"none" }}>
+                    {g.steps.slice(0,3).map((s,i) => (
+                      <div key={i} style={{ fontSize:10, color:"#444", marginBottom:4 }}>{i+1}. {s.step} — {s.desc.slice(0,40)}...</div>
+                    ))}
+                  </div>
+                  <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(255,255,255,0.5)" }}>
+                    <div style={{ textAlign:"center" }}>
+                      <div style={{ fontSize:20, marginBottom:4 }}>🔒</div>
+                      <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20" }}>Unlock to read</div>
+                    </div>
+                  </div>
+                </div>
+
+                <button onClick={() => setShowTransplantPro(true)}
+                  style={{ ...btn("linear-gradient(135deg,#ff9800,#ff6f00)"), width:"100%", fontSize:12, padding:"10px" }}>
+                  🔓 Unlock Full {g.name} Guide
+                </button>
+              </div>
+            ))}
+
+            {/* Coming soon note */}
+            <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", border:"1.5px solid #a5d6a7", textAlign:"center", padding:"20px" }}>
+              <div style={{ fontSize:32, marginBottom:8 }}>🚧</div>
+              <div style={{ fontWeight:900, fontSize:14, color:"#1b5e20", marginBottom:6 }}>Transplant Pro — Coming Soon!</div>
+              <div style={{ fontSize:11, color:"#555", lineHeight:1.6, marginBottom:10 }}>
+                Full step-by-step guides for every plant, post-transplant care calendars, hardening off guides, and zone-timed transplant windows.
+              </div>
+              <div style={{ background:"#fff", borderRadius:9, padding:"10px 12px", fontSize:11, color:"#888" }}>
+                💌 Visit <b style={{ color:"#2e7d32" }}>lazybrie.com</b> to get notified when it launches and get early access!
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ══ CALCULATOR ══ */}
         {tab === "calc" && (
           <div>
@@ -2116,9 +2243,99 @@ export default function App() {
                 );
               })()}
 
+              {/* ── PROGRESS TIMELINE ── */}
+              {(() => {
+                const log = p.progressLog || [];
+                const MOODS = ["🌱","😊","💪","😐","😟","🚨","🌸","🎉","💧","☀️"];
+                return (
+                  <div style={{ ...card, marginBottom:9 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+                      <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20" }}>📸 Progress Timeline</div>
+                      <button onClick={() => setShowProgressForm(v => !v)}
+                        style={{ ...btn(showProgressForm?"#f5f5f5":"linear-gradient(135deg,#43a047,#66bb6a)", showProgressForm?"#888":"#fff"), padding:"5px 11px", fontSize:10 }}>
+                        {showProgressForm ? "✕ Cancel" : "+ Add Update"}
+                      </button>
+                    </div>
+
+                    {/* Add note form */}
+                    {showProgressForm && (
+                      <div style={{ background:"#f9fbe7", borderRadius:12, padding:"12px", marginBottom:12, border:"1.5px solid #c8e6c9" }}>
+                        <div style={{ fontSize:10, fontWeight:700, color:"#555", marginBottom:6 }}>How's your plant doing?</div>
+                        {/* Mood picker */}
+                        <div style={{ display:"flex", gap:6, marginBottom:8, flexWrap:"wrap" }}>
+                          {MOODS.map(m => (
+                            <button key={m} onClick={() => setNewProgressMood(m)}
+                              style={{ fontSize:20, background:newProgressMood===m?"#e8f5e9":"transparent", border:newProgressMood===m?"2px solid #43a047":"2px solid transparent", borderRadius:8, padding:"3px 5px", cursor:"pointer" }}>
+                              {m}
+                            </button>
+                          ))}
+                        </div>
+                        <textarea
+                          value={newProgressNote}
+                          onChange={ev => setNewProgressNote(ev.target.value)}
+                          placeholder="e.g. Spotted first true leaves today! Looking healthy and green 🌿"
+                          rows={3}
+                          style={{ width:"100%", border:"2px solid #c8e6c9", borderRadius:9, padding:"8px 10px", fontSize:11, fontFamily:"inherit", resize:"none", boxSizing:"border-box", outline:"none", lineHeight:1.5 }}
+                        />
+                        <button
+                          onClick={() => addProgressNote(p.id, newProgressNote, newProgressMood)}
+                          style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", marginTop:8, fontSize:12 }}>
+                          ✅ Save Update
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Timeline entries */}
+                    {log.length === 0 ? (
+                      <div style={{ textAlign:"center", padding:"20px 0", color:"#bbb" }}>
+                        <div style={{ fontSize:32, marginBottom:6 }}>📸</div>
+                        <div style={{ fontSize:11, fontWeight:700 }}>No updates yet</div>
+                        <div style={{ fontSize:10, marginTop:3 }}>Tap "+ Add Update" to log your first progress note!</div>
+                      </div>
+                    ) : (
+                      <div style={{ position:"relative", paddingLeft:16 }}>
+                        {/* Timeline line */}
+                        <div style={{ position:"absolute", left:7, top:0, bottom:0, width:2, background:"#e8f5e9", borderRadius:2 }} />
+                        {[...log].reverse().map((entry, i) => (
+                          <div key={entry.id} style={{ position:"relative", marginBottom:12, paddingLeft:16 }}>
+                            {/* Timeline dot */}
+                            <div style={{ position:"absolute", left:-9, top:4, width:10, height:10, borderRadius:"50%", background:"#43a047", border:"2px solid #2e7d32" }} />
+                            <div style={{ background: i === 0 ? "#f1f8e9" : "#fafafa", borderRadius:10, padding:"9px 11px", border:`1.5px solid ${i === 0 ? "#a5d6a7" : "#f0f0f0"}` }}>
+                              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:4 }}>
+                                <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                                  <span style={{ fontSize:18 }}>{entry.mood}</span>
+                                  <div>
+                                    <div style={{ fontWeight:800, fontSize:10, color:"#1b5e20" }}>
+                                      Day {entry.day}
+                                      {i === 0 && <span style={{ background:"#e8f5e9", color:"#2e7d32", borderRadius:5, padding:"1px 5px", fontSize:8, fontWeight:800, marginLeft:5 }}>Latest</span>}
+                                    </div>
+                                    <div style={{ fontSize:9, color:"#aaa" }}>
+                                      {new Date(entry.date + "T12:00:00").toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" })}
+                                    </div>
+                                  </div>
+                                </div>
+                                <button onClick={() => deleteProgressNote(p.id, entry.id)}
+                                  style={{ background:"none", border:"none", color:"#ddd", fontSize:14, cursor:"pointer", padding:"0 2px", lineHeight:1 }}>✕</button>
+                              </div>
+                              <div style={{ fontSize:11, color:"#444", lineHeight:1.6 }}>{entry.note}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {log.length > 0 && (
+                      <div style={{ textAlign:"center", marginTop:4, fontSize:10, color:"#bbb" }}>
+                        {log.length} update{log.length !== 1 ? "s" : ""} logged 🌱
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
               {p.notes ? (
                 <div style={{ ...card, fontSize:11, color:"#555" }}>
-                  <div style={{ fontWeight:800, color:"#2e7d32", marginBottom:4 }}>📝 Notes</div>
+                  <div style={{ fontWeight:800, color:"#2e7d32", marginBottom:4 }}>📝 Planting Notes</div>
                   {p.notes}
                 </div>
               ) : null}
