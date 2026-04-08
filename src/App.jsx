@@ -1824,7 +1824,7 @@ export default function App() {
                 Full step-by-step guides for every plant, post-transplant care calendars, hardening off guides, and zone-timed transplant windows.
               </div>
               <div style={{ background:"#fff", borderRadius:9, padding:"10px 12px", fontSize:11, color:"#888" }}>
-                💌 Visit <b style={{ color:"#2e7d32" }}>lazybrie.com</b> to get notified when it launches and get early access!
+                🎵 Follow us on TikTok <b style={{ color:"#2e7d32" }}>@lazybriegardening</b> for tips, tutorials and early access announcements!
               </div>
             </div>
           </div>
@@ -2473,7 +2473,7 @@ export default function App() {
                 <div style={{ fontWeight:900, fontSize:14, color:"#1b5e20", marginBottom:4 }}>Coming Soon!</div>
                 <div style={{ fontSize:11, color:"#555", lineHeight:1.6 }}>Transplant Pro is in development. Want early access or to be notified when it launches?</div>
                 <div style={{ marginTop:10, background:"#fff", borderRadius:9, padding:"8px 10px", fontSize:10, color:"#888" }}>
-                  💌 Leave your email at <b style={{ color:"#2e7d32" }}>lazybrie.com</b> to get notified first!
+                  🎵 Follow <b style={{ color:"#a5d6a7" }}>@lazybriegardening</b> on TikTok to get notified first!
                 </div>
               </div>
 
