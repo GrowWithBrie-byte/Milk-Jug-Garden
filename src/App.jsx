@@ -727,6 +727,7 @@ export default function App() {
   const deleteProgressNote = (plantId, noteId) => {
     setPlants(ps => ps.map(p => p.id !== plantId ? p : { ...p, progressLog: (p.progressLog || []).filter(n => n.id !== noteId) }));
   };
+  const markTransplanted = id => {
     const plant = plants.find(p => p.id === id);
     setPlants(ps => ps.map(p => p.id!==id ? p : { ...p, planted:TODAY, transplantSigns:[], health:Math.min(100,p.health+10), notes:(p.notes?p.notes+" · ":"")+"Transplanted!" }));
     setSelectedPlant(null);
