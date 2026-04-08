@@ -451,7 +451,8 @@ function AutoDetectZone({ onDetected }) {
 export default function App() {
   const [tab, setTab] = useState("garden");
 
-  const [onboarding, setOnboarding] = useState(() => localStorage.getItem('jugGarden_onboarded') === null);
+  const [onboarding, setOnboarding] = useState(() => localStorage.getItem('jugGarden_myZone') === null);
+  const [showZonePicker, setShowZonePicker] = useState(false);
   const [myZone,  setMyZone]  = useState(() => { const s = localStorage.getItem('jugGarden_myZone');  return s ? JSON.parse(s) : null; });
   const [plants,  setPlants]  = useState(() => { const s = localStorage.getItem('jugGarden_plants');  return s ? JSON.parse(s) : [];   });
 
@@ -471,7 +472,6 @@ export default function App() {
 
   useEffect(() => { localStorage.setItem('jugGarden_plants',  JSON.stringify(plants));  }, [plants]);
   useEffect(() => { localStorage.setItem('jugGarden_myZone',  JSON.stringify(myZone));  }, [myZone]);
-  useEffect(() => { if (!onboarding) localStorage.setItem('jugGarden_onboarded', 'true'); }, [onboarding]);
 
   const waterPlant    = id => setPlants(ps => ps.map(p => p.id === id ? { ...p, lastWatered:TODAY, health:Math.min(100,p.health+15) } : p));
   const toggleSign    = (pid, sid) => setPlants(ps => ps.map(p => { if (p.id!==pid) return p; const s=p.transplantSigns||[]; return { ...p, transplantSigns: s.includes(sid)?s.filter(x=>x!==sid):[...s,sid] }; }));
@@ -572,7 +572,7 @@ export default function App() {
           </div>
           <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:3 }}>
             {thirstyCount > 0 && <span style={{ background:"#ff7043", color:"#fff", borderRadius:20, padding:"2px 9px", fontSize:10, fontWeight:800 }}>💧 {thirstyCount} thirsty</span>}
-            <button onClick={() => setOnboarding(true)}
+            <button onClick={() => setShowZonePicker(true)}
               style={{ background:myZone?myZone.color:"rgba(255,255,255,0.25)", color:myZone?myZone.tc:"#fff", border:"none", borderRadius:20, padding:"2px 9px", fontSize:10, fontWeight:800, cursor:"pointer", fontFamily:"inherit" }}>
               {myZone ? `${myZone.emoji} Zone ${myZone.zone}` : "🗺️ Set My Zone"}
             </button>
@@ -607,7 +607,7 @@ export default function App() {
                     📅 {new Date().toLocaleDateString("en-US",{ weekday:"long", month:"long", day:"numeric" })}
                   </div>
                   {myZone && (
-                    <button onClick={() => setOnboarding(true)}
+                    <button onClick={() => setShowZonePicker(true)}
                       style={{ background:"rgba(255,255,255,0.15)", border:"none", borderRadius:20, padding:"2px 9px", color:"#c8e6c9", fontSize:10, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
                       {myZone.emoji} Zone {myZone.zone}
                     </button>
@@ -670,7 +670,7 @@ export default function App() {
                 <div style={{ color:"#fff", fontWeight:900, fontSize:18, marginBottom:4 }}>Welcome to JugGarden!</div>
                 <div style={{ color:"#a5d6a7", fontSize:11, marginBottom:14, lineHeight:1.5 }}>Your garden command center. Add your first plant to get started!</div>
                 {!myZone && (
-                  <button onClick={() => setOnboarding(true)}
+                  <button onClick={() => setShowZonePicker(true)}
                     style={{ background:"rgba(255,255,255,0.2)", border:"1.5px solid rgba(255,255,255,0.3)", borderRadius:10, padding:"8px 16px", color:"#fff", fontSize:11, fontWeight:800, cursor:"pointer", fontFamily:"inherit", marginBottom:8, display:"block", width:"100%" }}>
                     🗺️ Set my growing zone first
                   </button>
@@ -1336,7 +1336,7 @@ export default function App() {
               {!myZone && (
                 <div style={{ fontSize:10, color:"#2e7d32", background:"#e8f5e9", borderRadius:7, padding:"4px 7px", marginBottom:7 }}>
                   💡 Set your zone to see climate picks first!{" "}
-                  <button onClick={() => setOnboarding(true)} style={{ background:"none", border:"none", color:"#43a047", fontWeight:800, cursor:"pointer", fontFamily:"inherit", fontSize:10 }}>Set zone →</button>
+                  <button onClick={() => setShowZonePicker(true)} style={{ background:"none", border:"none", color:"#43a047", fontWeight:800, cursor:"pointer", fontFamily:"inherit", fontSize:10 }}>Set zone →</button>
                 </div>
               )}
               <div style={{ borderTop:"1.5px solid #f0f0f0", paddingTop:7 }}>
@@ -1606,6 +1606,45 @@ export default function App() {
           </div>
         );
       })()}
+
+      {/* ── ZONE PICKER SHEET ── */}
+      {showZonePicker && (
+        <div style={{ position:"fixed", inset:0, background:"#0008", zIndex:300, display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+          onClick={() => setShowZonePicker(false)}>
+          <div style={{ background:"#fff", borderRadius:"22px 22px 0 0", width:"100%", maxWidth:480, maxHeight:"88vh", overflowY:"auto", paddingBottom:30 }}
+            onClick={ev => ev.stopPropagation()}>
+            <div style={{ padding:"18px 18px 10px", borderBottom:"1px solid #f0f0f0", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+              <div style={{ fontWeight:900, fontSize:15, color:"#1b5e20" }}>🗺️ Change Growing Zone</div>
+              <button onClick={() => setShowZonePicker(false)}
+                style={{ background:"#f5f5f5", border:"none", borderRadius:8, padding:"4px 10px", fontSize:12, color:"#888", cursor:"pointer", fontFamily:"inherit", fontWeight:700 }}>✕ Close</button>
+            </div>
+            <div style={{ padding:"14px 18px" }}>
+              {myZone && (
+                <div style={{ background:`linear-gradient(135deg,${myZone.color},white)`, borderRadius:12, padding:"10px 12px", marginBottom:12, border:`1.5px solid ${myZone.tc}20` }}>
+                  <div style={{ fontSize:10, color:"#888", marginBottom:2 }}>Currently set to</div>
+                  <div style={{ fontWeight:900, fontSize:14, color:myZone.tc }}>{myZone.emoji} Zone {myZone.zone} · {myZone.region}</div>
+                </div>
+              )}
+              <AutoDetectZone onDetected={(z) => { setMyZone(z); setShowZonePicker(false); }} />
+              <div style={{ fontSize:10, color:"#aaa", textAlign:"center", margin:"10px 0 8px" }}>— or pick manually —</div>
+              <div style={{ fontSize:10, color:"#888", background:"#e8f5e9", borderRadius:8, padding:"4px 10px", display:"inline-block", marginBottom:12 }}>💡 Not sure? Search "USDA zone [your zip code]"</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7 }}>
+                {ZONES.map(z => (
+                  <button key={z.zone} onClick={() => { setMyZone(z); setShowZonePicker(false); }}
+                    style={{ background:myZone?.zone===z.zone?z.tc:z.color, border:`2px solid ${z.tc}30`, borderRadius:12, padding:"9px 7px", textAlign:"left", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:7 }}>
+                    <span style={{ fontSize:18 }}>{z.emoji}</span>
+                    <div>
+                      <div style={{ fontWeight:900, fontSize:12, color:myZone?.zone===z.zone?"#fff":z.tc }}>Zone {z.zone}</div>
+                      <div style={{ fontSize:9, color:myZone?.zone===z.zone?"rgba(255,255,255,0.8)":z.tc, opacity:0.8, lineHeight:1.2 }}>{z.temp}</div>
+                      <div style={{ fontSize:9, color:myZone?.zone===z.zone?"rgba(255,255,255,0.6)":z.tc, opacity:0.6, lineHeight:1.2 }}>{z.region}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
