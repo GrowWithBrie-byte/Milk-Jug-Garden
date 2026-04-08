@@ -44,14 +44,18 @@ const TRANSPLANT_MAP = {
   "Custom Container":  { next:"Larger Container", nextVol:"2× current size", daysMin:21, daysMax:45 },
 };
 
-const VISUAL_SIGNS = [
-  { id:"roots",  label:"Roots poking out of drainage holes",       icon:"🌿" },
-  { id:"droop",  label:"Plant wilts quickly after watering",        icon:"😓" },
-  { id:"slow",   label:"Growth has slowed or stalled",              icon:"🐌" },
-  { id:"leaves4",label:"Has 4+ true leaves (seedlings)",            icon:"🍃" },
-  { id:"heavy",  label:"Plant looks top-heavy for its pot",         icon:"⚖️" },
-  { id:"dry",    label:"Soil dries out extremely fast",             icon:"🏜️" },
+const TRANSPLANT_SIGNS = [
+  { id:"leaves2", label:"Has 2 sets of true leaves",         icon:"🍃", weight:2, tip:"True leaves look different from the first seed leaves (cotyledons). They have the plant's actual shape." },
+  { id:"leaves3", label:"Has 3+ sets of true leaves",        icon:"🍃", weight:3, tip:"3 sets means the plant is strong enough to handle transplant stress. This is the ideal time for most herbs." },
+  { id:"roots",   label:"Roots poking out of drainage holes",icon:"🌿", weight:3, tip:"Visible roots at the bottom means the plant has outgrown its container — don't wait much longer!" },
+  { id:"rootball",label:"Soil holds shape when tipped out",  icon:"🪨", weight:2, tip:"Gently tip the plant out. If the roots hold the soil together in a ball shape, it's ready." },
+  { id:"slow",    label:"Growth has slowed or stalled",      icon:"🐌", weight:1, tip:"When a plant stops growing despite good water and light, it's usually root-bound and needs more space." },
+  { id:"heavy",   label:"Plant looks top-heavy for its pot", icon:"⚖️", weight:1, tip:"If the plant looks too big for the container, trust your eyes — it probably is!" },
+  { id:"dry",     label:"Soil dries out extremely fast",     icon:"🏜️", weight:2, tip:"When roots fill the container, there's less soil to hold water. Fast drying = root-bound plant." },
+  { id:"droop",   label:"Wilts quickly even after watering", icon:"😓", weight:2, tip:"If the plant perks up right after watering but wilts again within hours, roots are too crowded." },
 ];
+
+// Score thresholds: 0-2 = growing, 3-4 = watch, 5-7 = ready, 8+ = urgent
 
 const EMOJI_PRESETS = {
   "🍅":{ name:"Tomatoes",     container:"Milk Jug",        waterEvery:2, sproutMin:5,  sproutMax:10 },
@@ -142,6 +146,221 @@ const ALLERGY_TIPS = [
   { icon:"🌱", tip:"Choose low-pollen herbs like basil, mint, and chives — they're pollinated by insects, not wind, so very little airborne pollen." },
   { icon:"🚿", tip:"Rinse harvested herbs before using — even indoors, dust can settle on leaves." },
   { icon:"🏠", tip:"Indoor gardening during allergy season means you control the environment — no wind, no outdoor pollen, no bees!" },
+];
+
+const TROUBLESHOOTING = [
+  {
+    id:"leggy", emoji:"🌿", title:"Leggy / Stretched Seedlings",
+    color:"#fff9c4", tc:"#f57f17",
+    looks:"Seedlings are tall and thin with long gaps between leaves, falling over or leaning toward light.",
+    why:"Not enough light! Seedlings stretch toward any light source they can find. Also caused by seeds planted too deep or started too early indoors.",
+    fixes:[
+      "Move the container to your sunniest window — south-facing is best",
+      "If indoors, add a grow light 2–4 inches above seedlings for 14–16 hours/day",
+      "Bury the leggy stem deeper when transplanting — tomatoes and peppers especially love this",
+      "Rotate the container every day so all sides get equal light",
+      "Next time: start seeds closer to your window or under a light from day one",
+    ],
+    urgent: false,
+  },
+  {
+    id:"overwater", emoji:"💧", title:"Overwatered Plant",
+    color:"#e3f2fd", tc:"#1565c0",
+    looks:"Yellow or pale leaves, mushy or dark stem near soil, soil stays wet for days, mold on soil surface, plant wilts despite wet soil.",
+    why:"Too much water drowns roots and causes root rot. Containers without drainage holes are the #1 cause. Small containers with dense soil hold water too long.",
+    fixes:[
+      "Stop watering immediately and let the soil dry out completely",
+      "Check drainage holes — if clogged, poke them clear with a toothpick",
+      "If soil smells musty or roots look brown/mushy, gently tip out the plant and remove rotten roots with clean scissors",
+      "Repot in fresh dry potting mix with better drainage",
+      "Add a layer of perlite to your soil next time (about 20%) to improve drainage",
+      "Always finger-test soil before watering — if it feels damp, wait",
+    ],
+    urgent: true,
+  },
+  {
+    id:"transplantshock", emoji:"🪴", title:"Transplant Shock",
+    color:"#fce4ec", tc:"#c62828",
+    looks:"Plant wilts, droops, or loses leaves right after being moved to a new container. May look sad for several days.",
+    why:"Totally normal! Moving disturbs roots. The plant is adjusting to new soil and environment. Usually not permanent.",
+    fixes:[
+      "Water gently right after transplanting to help roots settle",
+      "Keep out of direct sun for 2–3 days — indirect light only while recovering",
+      "Don't fertilize right after transplanting — it stresses already-stressed roots",
+      "Mist leaves lightly once a day to reduce stress while roots establish",
+      "Be patient — most plants bounce back within 3–7 days",
+      "If leaves are still wilting after 2 weeks, check for root rot or pests",
+    ],
+    urgent: false,
+  },
+  {
+    id:"fell", emoji:"🤕", title:"Plant Fell Out of Container",
+    color:"#fff3e0", tc:"#e65100",
+    looks:"Plant is out of its container, roots exposed, soil everywhere.",
+    why:"Accidents happen! Tipped over jugs, curious pets, or wind. Act fast — exposed roots dry out quickly.",
+    fixes:[
+      "Act within minutes — don't leave roots exposed to air",
+      "Gently gather any loose soil back into the container",
+      "Lower the plant back in, trying to keep the root ball together as much as possible",
+      "Fill in gaps with fresh potting mix and firm gently around the base",
+      "Water immediately to help roots reconnect with soil",
+      "Keep in shade for 2–3 days while it recovers — treat like transplant shock",
+      "Don't panic if a few leaves fall — focus on the roots",
+    ],
+    urgent: true,
+  },
+  {
+    id:"toomanyseeds", emoji:"🌱", title:"Too Many Seeds Germinated",
+    color:"#e8f5e9", tc:"#2e7d32",
+    looks:"Container is packed with tiny seedlings all competing for space. Dense, crowded sprouts.",
+    why:"Most beginners plant too many seeds \"just in case.\" Now they all sprouted!",
+    fixes:[
+      "Thin seedlings early — the sooner the better",
+      "Use small scissors to snip extra seedlings at soil level — don't pull them out (it disturbs neighbors)",
+      "Keep only the strongest 1–2 seedlings per container",
+      "The hardest part: yes, you have to remove them even if they look healthy",
+      "Thinned seedlings can sometimes be transplanted to new containers if roots are intact",
+      "Next time: plant 2–3 seeds max per small container, 1 seed per cell in egg cartons",
+    ],
+    urgent: false,
+  },
+  {
+    id:"mold", emoji:"🍄", title:"Mold on Soil Surface",
+    color:"#f3e5f5", tc:"#6a1b9a",
+    looks:"White or gray fuzzy growth on top of soil. Sometimes smells musty.",
+    why:"Too much moisture on the soil surface, poor air circulation, or overwatering. Very common indoors.",
+    fixes:[
+      "Scoop off the moldy top layer of soil and discard",
+      "Let the soil dry out more between waterings",
+      "Improve air circulation — a small fan nearby helps a lot",
+      "Sprinkle a thin layer of cinnamon on the soil surface — it's a natural antifungal",
+      "Bottom watering instead of top watering keeps the surface dry",
+      "Move to a spot with more light and airflow",
+      "If mold keeps returning, repot in fresh soil",
+    ],
+    urgent: false,
+  },
+  {
+    id:"heatstress", emoji:"🥵", title:"Heat Stress / Wilting in Summer",
+    color:"#fff9c4", tc:"#e65100",
+    looks:"Leaves curl inward, edges turn brown or crispy, plant wilts in afternoon even with moist soil. Dark containers feel very hot to touch.",
+    why:"Containers heat up fast in direct sun, especially dark-colored ones. Roots cook before the soil dries out.",
+    fixes:[
+      "Move containers out of direct afternoon sun (shade from noon–4pm is ideal in summer)",
+      "Water in the early morning before heat builds",
+      "Wrap dark containers in white paper or foil to reflect heat",
+      "Set containers on a wooden surface instead of concrete or metal — they absorb less heat",
+      "Group containers together — they shade each other's sides",
+      "For Zone 8b summers: most containers need water every 1–2 days minimum",
+    ],
+    urgent: false,
+  },
+  {
+    id:"pests", emoji:"🐛", title:"Pests on Indoor Plants",
+    color:"#ffebee", tc:"#b71c1c",
+    looks:"Tiny bugs on leaves or soil, sticky residue on leaves, small holes in leaves, yellowing from the underside.",
+    why:"Common indoor pests include fungus gnats (in wet soil), spider mites (dry conditions), and aphids (hitchhike in on new plants).",
+    fixes:[
+      "Check the undersides of leaves first — most pests hide there",
+      "Isolate affected plants immediately to prevent spreading",
+      "For fungus gnats: let soil dry out fully between waterings, add a layer of sand on top of soil",
+      "For spider mites: wipe leaves with a damp cloth, then spray with diluted dish soap + water",
+      "For aphids: blast with water, then apply neem oil spray",
+      "Neem oil is safe, organic, and works on most indoor pests — find it at any garden center",
+      "Yellow sticky traps near plants catch flying pests before they spread",
+    ],
+    urgent: false,
+  },
+  {
+    id:"wrongsoil", emoji:"🪨", title:"Used Wrong Soil / Garden Soil in Container",
+    color:"#efebe9", tc:"#4e342e",
+    looks:"Soil is hard, dense, or concrete-like after watering. Water pools on top and won't drain. Plant growth is slow despite watering.",
+    why:"Garden soil compacts in containers, blocking drainage and air to roots. It's designed for in-ground use, not pots.",
+    fixes:[
+      "If the plant is young, repot now in proper potting mix — the sooner the better",
+      "If the plant is established and seems okay, mix in perlite around the edges to improve drainage",
+      "Use a chopstick to gently aerate (poke holes in) compacted soil without disturbing roots",
+      "Water less frequently until soil drains better",
+      "Going forward: always use potting mix (not garden soil or topsoil) in containers",
+      "Add 20% perlite to any potting mix for even better drainage",
+    ],
+    urgent: false,
+  },
+];
+
+const TRANSPLANT_GUIDES = [
+  {
+    id:"tomato", name:"Tomatoes", emoji:"🍅", matchNames:["tomato","tomatoes","cherry tomato"],
+    freePreview:"Tomatoes love being buried deep — up to ⅔ of the stem can go underground and it'll grow roots all along it. Always transplant in the evening or on a cloudy day.",
+    steps:[
+      { step:"Harden off first", desc:"If moving outdoors, set the plant outside in shade for 1–2 hours/day for a week first. Sudden sun exposure shocks them badly." },
+      { step:"Water the night before", desc:"Moist soil holds together better and reduces root disturbance during transplanting." },
+      { step:"Prepare new container", desc:"Fill new container ⅓ with potting mix + compost blend. Make a deep hole — tomatoes get buried deep." },
+      { step:"Remove from old container", desc:"Tip the plant upside down, support the stem with two fingers, and let it slide out gently. Don't yank!" },
+      { step:"Bury the stem deep", desc:"Place in new container so only the top 3–4 sets of leaves are above soil. Roots will form all along the buried stem." },
+      { step:"Firm soil and water", desc:"Press soil gently around the base (no air pockets), then water deeply until drainage. No fertilizer for 2 weeks." },
+      { step:"Shade for 3 days", desc:"Keep out of direct sun for 3 days. The plant will look sad — that's normal. It's adjusting." },
+    ],
+    aftercare:["Water deeply every 1–2 days","Add tomato cage or stake within the first week","First fertilize 2 weeks after transplanting","Watch for transplant shock — wilting that bounces back by evening is normal"],
+    commonMistakes:["Planting too shallow — always bury the stem","Fertilizing right away — wait 2 weeks","Full sun immediately — ease in over 3–5 days"],
+  },
+  {
+    id:"pepper", name:"Peppers", emoji:"🫑", matchNames:["pepper","peppers","bell pepper","hot pepper"],
+    freePreview:"Peppers are sensitive to root disturbance. Be gentle and keep as much soil around the roots as possible when moving them.",
+    steps:[
+      { step:"Wait for true warmth", desc:"Don't transplant until nighttime temps stay above 55°F. Cold soil stresses peppers badly." },
+      { step:"Water the night before", desc:"Moist soil holds the root ball together — key for peppers since they hate disturbed roots." },
+      { step:"Prepare container", desc:"Use potting mix + 20% compost. Peppers are heavy feeders. Make a hole just bigger than the root ball." },
+      { step:"Remove carefully", desc:"Squeeze the container sides gently to loosen, then tip out keeping the root ball as intact as possible." },
+      { step:"Plant at same depth", desc:"Unlike tomatoes, peppers go in at the same depth they were growing — don't bury the stem." },
+      { step:"Water and mulch", desc:"Water gently, then add a thin layer of mulch around the base to keep soil temperature stable." },
+      { step:"No direct sun for 4 days", desc:"Peppers show transplant shock more than most plants. Indirect light only for the first 4 days." },
+    ],
+    aftercare:["Water every 2 days — consistent moisture is key","Fertilize with balanced fertilizer 2 weeks after transplanting","Pinch off first flowers to encourage stronger root development","Support branches as they get heavy with fruit"],
+    commonMistakes:["Disturbing roots — be extra gentle","Transplanting in cold weather","Skipping the hardening off process outdoors"],
+  },
+  {
+    id:"herbs", name:"Herbs (General)", emoji:"🌿", matchNames:["basil","mint","parsley","cilantro","dill","chives","oregano","thyme","rosemary","herb","herbs","chamomile","lemon balm"],
+    freePreview:"Most herbs transplant easily but hate wet feet after moving. Make sure your new container has great drainage before you start.",
+    steps:[
+      { step:"Choose the right time", desc:"Morning or evening on a mild day. Avoid transplanting in peak summer heat." },
+      { step:"Prepare draining container", desc:"Add perlite to your potting mix (about 20%) for extra drainage. Most herbs die from overwatering not underwatering." },
+      { step:"Remove from old container", desc:"Squeeze sides, tip out gently. If roots are tightly coiled, gently loosen them with your fingers." },
+      { step:"Plant at same depth", desc:"Match the same soil level as the original container. Burying the crown causes rot on most herbs." },
+      { step:"Press and water lightly", desc:"Firm the soil gently and water lightly — just enough to settle the soil, not drench it." },
+      { step:"Hold off on big watering", desc:"Wait 2 days before a thorough watering. Herbs establish better when not waterlogged right after moving." },
+    ],
+    aftercare:["Let soil dry slightly between waterings","Harvest lightly for the first 2 weeks to reduce stress","Fertilize lightly once a month","Pinch flowers off to keep leaf production going"],
+    commonMistakes:["Overwatering right after transplanting","Burying the crown below soil level","Harvesting too aggressively right after moving"],
+  },
+  {
+    id:"lettuce", name:"Lettuce & Greens", emoji:"🥬", matchNames:["lettuce","spinach","kale","chard","greens"],
+    freePreview:"Lettuce is one of the easiest plants to transplant. The trick is keeping it cool and moist — heat is its enemy during the transition.",
+    steps:[
+      { step:"Transplant in the evening", desc:"Cool evening temps reduce wilting stress dramatically for lettuce." },
+      { step:"Soak root ball first", desc:"Dip the whole root ball in water for a few minutes before moving — lettuce loves this." },
+      { step:"Space generously", desc:"Give each plant 6\" of space. Crowded lettuce bolts faster and gets disease." },
+      { step:"Plant at same depth", desc:"Keep the crown right at soil level — not buried, not raised." },
+      { step:"Water immediately", desc:"Lettuce needs moisture right away. Water thoroughly after planting." },
+      { step:"Shade for 2 days", desc:"Cover with a cloth or put in shade for 2 days, especially in warm weather." },
+    ],
+    aftercare:["Keep soil consistently moist — never let it dry out","Harvest outer leaves first to extend the plant's life","Watch for bolting in heat — harvest immediately if it starts"],
+    commonMistakes:["Transplanting in hot afternoon sun","Letting soil dry out after transplanting","Planting too deep"],
+  },
+  {
+    id:"potato", name:"Potatoes", emoji:"🥔", matchNames:["potato","potatoes"],
+    freePreview:"Potatoes aren't transplanted the traditional way — they're 'hilled' as they grow. Each time vines get 6\" tall, add more soil. More buried stem = more potatoes!",
+    steps:[
+      { step:"Start with 4\" of soil", desc:"Place seed potato on 4\" of potting mix + compost in your basket or bucket." },
+      { step:"First hilling at 6\" growth", desc:"When vines reach 6\" tall, add 3–4\" more soil to bury the lower stem. Leave the top few leaves showing." },
+      { step:"Hill again at next 6\"", desc:"Keep hilling every time vines grow another 6\". Each buried node makes more potatoes." },
+      { step:"Stop hilling at container top", desc:"Once soil reaches the top, let the vines grow freely." },
+      { step:"Water consistently", desc:"Keep soil evenly moist during flowering — this is when potatoes are forming." },
+      { step:"Harvest when vines die back", desc:"When vines yellow and die, wait 2 more weeks, then tip out the container and dig!" },
+    ],
+    aftercare:["Water deeply every 2 days","Fertilize when flowers appear","Don't let soil dry out during flowering","Cure harvested potatoes in a cool dark place for 2 weeks"],
+    commonMistakes:["Not hilling often enough — #1 reason for small harvests","Overwatering before vines establish","Harvesting too soon"],
+  },
 ];
 
 const WATERING_METHODS = [
@@ -290,11 +509,15 @@ function getSoilRec(plantId, plantName, container) {
 
 function getTS(plant, days) {
   const td = TRANSPLANT_MAP[plant.container] || { next:"Larger Container", nextVol:"2× current", daysMin:30, daysMax:45 };
-  const signs = (plant.transplantSigns || []).length;
-  const urgency = days >= td.daysMax || signs >= 3 ? "urgent"
-    : (days >= td.daysMin && signs >= 1) || signs >= 2 ? "ready"
-    : days >= td.daysMin ? "watch" : "growing";
-  return { ...td, urgency, signs };
+  const checkedSigns = plant.transplantSigns || [];
+  const score = checkedSigns.reduce((sum, id) => {
+    const sign = TRANSPLANT_SIGNS.find(s => s.id === id);
+    return sum + (sign ? sign.weight : 1);
+  }, 0);
+  const urgency = days >= td.daysMax || score >= 8 ? "urgent"
+    : (days >= td.daysMin && score >= 3) || score >= 5 ? "ready"
+    : days >= td.daysMin || score >= 3 ? "watch" : "growing";
+  return { ...td, urgency, score };
 }
 
 function calcFit(cont, plant, cVol, cDiam, cDepth) {
@@ -462,6 +685,8 @@ export default function App() {
   const [guidesTab,        setGuidesTab]        = useState("indoor");
   const [selectedGuide,    setSelectedGuide]    = useState(null);
   const [selectedWatering, setSelectedWatering] = useState(null);
+  const [selectedTrouble,  setSelectedTrouble]  = useState(null);
+  const [showTransplantPro, setShowTransplantPro] = useState(false);
   const [zoneDetail,       setZoneDetail]       = useState(null);
   const [calcCont,         setCalcCont]         = useState(null);
   const [calcPlant,        setCalcPlant]        = useState(null);
@@ -582,9 +807,9 @@ export default function App() {
 
       {/* ── TAB BAR ── */}
       <div style={{ display:"flex", background:"#fff", margin:"10px 12px 0", borderRadius:12, padding:3, boxShadow:"0 2px 8px #0001" }}>
-        {[["garden","🌱","Garden"],["calendar","📅","Calendar"],["guides","📖","Guides"],["zones","🗺️","Zones"],["calc","🧮","Calc"]].map(([k,icon,label]) => (
+        {[["garden","🌱","Garden"],["calc","🧮","Calc"],["calendar","📅","Calendar"],["guides","📖","Guides"]].map(([k,icon,label]) => (
           <button key={k} onClick={() => setTab(k)}
-            style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"6px 2px", fontWeight:800, fontSize:9, cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
+            style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"6px 2px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
             <span style={{ fontSize:15 }}>{icon}</span>
             <span>{label}</span>
           </button>
@@ -1039,16 +1264,107 @@ export default function App() {
         })()}
 
         {/* ══ GUIDES ══ */}
-        {tab === "guides" && !selectedGuide && !selectedWatering && (
+        {tab === "guides" && !selectedGuide && !selectedWatering && !selectedTrouble && (
           <div>
             <div style={{ display:"flex", background:"#fff", borderRadius:11, padding:3, marginBottom:10, gap:3 }}>
-              {[["indoor","🏠 Indoor"],["watering","💧 Watering"]].map(([k,l]) => (
+              {[["indoor","🏠 Indoor"],["watering","💧 Water"],["zones","🗺️ Zones"],["trouble","🚑 Help"]].map(([k,l]) => (
                 <button key={k} onClick={() => setGuidesTab(k)}
-                  style={{ flex:1, background:guidesTab===k?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"transparent", color:guidesTab===k?"#fff":"#666", border:"none", borderRadius:9, padding:"7px 4px", fontWeight:800, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
+                  style={{ flex:1, background:guidesTab===k?"linear-gradient(135deg,#29b6f6,#4dd0e1)":"transparent", color:guidesTab===k?"#fff":"#666", border:"none", borderRadius:9, padding:"7px 2px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit" }}>
                   {l}
                 </button>
               ))}
             </div>
+
+            {guidesTab === "trouble" && (
+              <div>
+                <div style={{ fontWeight:900, fontSize:14, color:"#c62828", marginBottom:4 }}>🚑 Troubleshooting</div>
+                <div style={{ fontSize:11, color:"#888", marginBottom:10 }}>Something went wrong? Find it here!</div>
+                {TROUBLESHOOTING.map(t => (
+                  <button key={t.id} onClick={() => setSelectedTrouble(t)}
+                    style={{ ...card, width:"100%", textAlign:"left", cursor:"pointer", display:"flex", gap:11, alignItems:"center", background:`linear-gradient(135deg,${t.color},white)`, border:`1.5px solid ${t.tc}20` }}>
+                    <span style={{ fontSize:30 }}>{t.emoji}</span>
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:"flex", gap:6, alignItems:"center" }}>
+                        <span style={{ fontWeight:900, fontSize:13, color:t.tc }}>{t.title}</span>
+                        {t.urgent && <span style={{ background:"#ffebee", color:"#c62828", borderRadius:6, padding:"1px 6px", fontSize:9, fontWeight:800 }}>⚡ Act fast</span>}
+                      </div>
+                      <div style={{ fontSize:10, color:"#888", marginTop:2 }}>{t.looks.slice(0,55)}…</div>
+                    </div>
+                    <span style={{ fontSize:16, color:"#ccc" }}>›</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {guidesTab === "zones" && !zoneDetail && (
+              <div>
+                {myZone && (
+                  <div style={{ ...card, background:`linear-gradient(135deg,${myZone.color},white)`, border:`1.5px solid ${myZone.tc}20`, display:"flex", alignItems:"center", gap:9, marginBottom:10 }}>
+                    <span style={{ fontSize:22 }}>{myZone.emoji}</span>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontSize:9, color:"#888" }}>Your current zone</div>
+                      <div style={{ fontWeight:900, fontSize:13, color:myZone.tc }}>Zone {myZone.zone} · {myZone.region}</div>
+                      <div style={{ fontSize:10, color:"#666" }}>🗓 {myZone.plantingTime}</div>
+                    </div>
+                    <button onClick={() => setShowZonePicker(true)} style={{ ...btn("transparent",myZone.tc), border:`1.5px solid ${myZone.tc}40`, padding:"4px 9px", fontSize:10 }}>Change</button>
+                  </div>
+                )}
+                <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#c8e6c9)", fontSize:10, color:"#2e7d32", marginBottom:10 }}>💡 Not sure of your zone? Search "USDA zone [your zip code]"</div>
+                <div style={{ fontWeight:800, fontSize:11, color:"#555", marginBottom:7 }}>Tap any zone to explore planting tips:</div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7 }}>
+                  {ZONES.map(z => (
+                    <button key={z.zone} onClick={() => setZoneDetail(z)}
+                      style={{ background:myZone?.zone===z.zone?z.tc:z.color, border:`2px solid ${z.tc}20`, borderRadius:12, padding:"9px 7px", textAlign:"left", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:7, boxShadow:"0 2px 7px #0001" }}>
+                      <span style={{ fontSize:18 }}>{z.emoji}</span>
+                      <div>
+                        <div style={{ fontWeight:900, fontSize:12, color:myZone?.zone===z.zone?"#fff":z.tc }}>Zone {z.zone}</div>
+                        <div style={{ fontSize:9, color:myZone?.zone===z.zone?"rgba(255,255,255,0.8)":z.tc, opacity:0.8 }}>{z.temp}</div>
+                        <div style={{ fontSize:9, color:myZone?.zone===z.zone?"rgba(255,255,255,0.6)":z.tc, opacity:0.6 }}>{z.region}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {guidesTab === "zones" && zoneDetail && (
+              <div>
+                <div style={{ display:"flex", gap:7, alignItems:"center", marginBottom:10 }}>
+                  <button onClick={() => setZoneDetail(null)} style={btn("#e8f5e9","#2e7d32")}>← All Zones</button>
+                  <button onClick={() => { setMyZone(zoneDetail); setZoneDetail(null); }} style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), fontSize:11 }}>✅ Set as My Zone</button>
+                </div>
+                <div style={{ ...card, background:`linear-gradient(135deg,${zoneDetail.color},white)`, border:`2px solid ${zoneDetail.tc}20` }}>
+                  <div style={{ display:"flex", gap:11, alignItems:"center" }}>
+                    <span style={{ fontSize:40 }}>{zoneDetail.emoji}</span>
+                    <div>
+                      <div style={{ fontWeight:900, fontSize:18, color:zoneDetail.tc }}>Zone {zoneDetail.zone}</div>
+                      <div style={{ fontSize:11, color:"#666" }}>📍 {zoneDetail.region} · 🌡️ {zoneDetail.temp}</div>
+                    </div>
+                  </div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7, marginTop:10 }}>
+                    <div style={{ background:"rgba(255,255,255,0.7)", borderRadius:9, padding:7, textAlign:"center" }}>
+                      <div>🌱</div><div style={{ fontWeight:800, fontSize:10, color:"#2e7d32" }}>Outdoors</div><div style={{ fontSize:10, color:"#555" }}>{zoneDetail.plantingTime}</div>
+                    </div>
+                    <div style={{ background:"rgba(255,255,255,0.7)", borderRadius:9, padding:7, textAlign:"center" }}>
+                      <div>🏠</div><div style={{ fontWeight:800, fontSize:10, color:"#e65100" }}>Indoor Start</div><div style={{ fontSize:10, color:"#555" }}>{zoneDetail.indoorStart}</div>
+                    </div>
+                  </div>
+                </div>
+                <div style={card}>
+                  <div style={{ fontWeight:900, fontSize:12, color:"#2e7d32", marginBottom:7 }}>🌿 Best Plants for Zone {zoneDetail.zone}</div>
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>{zoneDetail.plants.map(p => <span key={p} style={badge(zoneDetail.color,zoneDetail.tc)}>{p}</span>)}</div>
+                </div>
+                <div style={card}>
+                  <div style={{ fontWeight:900, fontSize:12, color:"#2e7d32", marginBottom:7 }}>🥛 Container Tips</div>
+                  {zoneDetail.tips.map((t,i) => (
+                    <div key={i} style={{ display:"flex", gap:7, background:"#f9fbe7", borderRadius:7, padding:"6px 8px", marginBottom:5 }}>
+                      <span style={{ color:"#43a047", fontWeight:900, flexShrink:0 }}>✓</span>
+                      <span style={{ fontSize:11, color:"#444" }}>{t}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {guidesTab === "indoor" && (
               <div>
@@ -1205,61 +1521,30 @@ export default function App() {
           </div>
         )}
 
-        {/* ══ ZONES ══ */}
-        {tab === "zones" && !zoneDetail && (
+        {tab === "guides" && selectedTrouble && (
           <div>
-            <div style={{ fontWeight:900, fontSize:15, color:"#2e7d32", marginBottom:4 }}>🗺️ Growing Zones</div>
-            <div style={{ fontSize:11, color:"#888", marginBottom:10 }}>Tap your zone for personalized tips!</div>
-            <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#c8e6c9)", fontSize:10, color:"#2e7d32", marginBottom:10 }}>💡 Not sure? Search "USDA zone [your zip]"</div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7 }}>
-              {ZONES.map(z => (
-                <button key={z.zone} onClick={() => setZoneDetail(z)}
-                  style={{ background:z.color, border:`2px solid ${z.tc}20`, borderRadius:12, padding:"9px 7px", textAlign:"left", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:7, boxShadow:"0 2px 7px #0001" }}>
-                  <span style={{ fontSize:18 }}>{z.emoji}</span>
-                  <div>
-                    <div style={{ fontWeight:900, fontSize:12, color:z.tc }}>Zone {z.zone}</div>
-                    <div style={{ fontSize:9, color:z.tc, opacity:0.7 }}>{z.temp}</div>
-                    <div style={{ fontSize:9, color:z.tc, opacity:0.5 }}>{z.region}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {tab === "zones" && zoneDetail && (
-          <div>
-            <div style={{ display:"flex", gap:7, alignItems:"center", marginBottom:10 }}>
-              <button onClick={() => setZoneDetail(null)} style={btn("#e8f5e9","#2e7d32")}>← All Zones</button>
-              <button onClick={() => { setMyZone(zoneDetail); setZoneDetail(null); }} style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), fontSize:11 }}>✅ Set as My Zone</button>
-            </div>
-            <div style={{ ...card, background:`linear-gradient(135deg,${zoneDetail.color},white)`, border:`2px solid ${zoneDetail.tc}20` }}>
-              <div style={{ display:"flex", gap:11, alignItems:"center" }}>
-                <span style={{ fontSize:40 }}>{zoneDetail.emoji}</span>
-                <div>
-                  <div style={{ fontWeight:900, fontSize:18, color:zoneDetail.tc }}>Zone {zoneDetail.zone}</div>
-                  <div style={{ fontSize:11, color:"#666" }}>📍 {zoneDetail.region} · 🌡️ {zoneDetail.temp}</div>
-                </div>
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7, marginTop:10 }}>
-                <div style={{ background:"rgba(255,255,255,0.7)", borderRadius:9, padding:7, textAlign:"center" }}>
-                  <div>🌱</div><div style={{ fontWeight:800, fontSize:10, color:"#2e7d32" }}>Outdoors</div><div style={{ fontSize:10, color:"#555" }}>{zoneDetail.plantingTime}</div>
-                </div>
-                <div style={{ background:"rgba(255,255,255,0.7)", borderRadius:9, padding:7, textAlign:"center" }}>
-                  <div>🏠</div><div style={{ fontWeight:800, fontSize:10, color:"#e65100" }}>Indoor Start</div><div style={{ fontSize:10, color:"#555" }}>{zoneDetail.indoorStart}</div>
-                </div>
-              </div>
+            <button onClick={() => setSelectedTrouble(null)} style={{ ...btn("#ffebee","#c62828"), marginBottom:10 }}>← Back</button>
+            <div style={{ ...card, background:`linear-gradient(135deg,${selectedTrouble.color},white)`, border:`2px solid ${selectedTrouble.tc}20` }}>
+              <div style={{ textAlign:"center", fontSize:48 }}>{selectedTrouble.emoji}</div>
+              <div style={{ textAlign:"center", fontWeight:900, fontSize:17, color:selectedTrouble.tc, marginTop:5 }}>{selectedTrouble.title}</div>
+              {selectedTrouble.urgent && (
+                <div style={{ textAlign:"center", marginTop:5 }}><span style={badge("#ffebee","#c62828")}>⚡ Act fast — don't wait!</span></div>
+              )}
             </div>
             <div style={card}>
-              <div style={{ fontWeight:900, fontSize:12, color:"#2e7d32", marginBottom:7 }}>🌿 Best Plants for Zone {zoneDetail.zone}</div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>{zoneDetail.plants.map(p => <span key={p} style={badge(zoneDetail.color,zoneDetail.tc)}>{p}</span>)}</div>
+              <div style={{ fontWeight:900, fontSize:12, color:"#555", marginBottom:5 }}>👀 What it looks like</div>
+              <div style={{ fontSize:11, color:"#444", lineHeight:1.6, background:"#f9f9f9", borderRadius:9, padding:"8px 10px" }}>{selectedTrouble.looks}</div>
             </div>
             <div style={card}>
-              <div style={{ fontWeight:900, fontSize:12, color:"#2e7d32", marginBottom:7 }}>🥛 Container Tips</div>
-              {zoneDetail.tips.map((t,i) => (
-                <div key={i} style={{ display:"flex", gap:7, background:"#f9fbe7", borderRadius:7, padding:"6px 8px", marginBottom:5 }}>
-                  <span style={{ color:"#43a047", fontWeight:900, flexShrink:0 }}>✓</span>
-                  <span style={{ fontSize:11, color:"#444" }}>{t}</span>
+              <div style={{ fontWeight:900, fontSize:12, color:"#555", marginBottom:5 }}>🤔 Why it happened</div>
+              <div style={{ fontSize:11, color:"#444", lineHeight:1.6, background:"#f9f9f9", borderRadius:9, padding:"8px 10px" }}>{selectedTrouble.why}</div>
+            </div>
+            <div style={card}>
+              <div style={{ fontWeight:900, fontSize:12, color:selectedTrouble.tc, marginBottom:8 }}>✅ How to fix it</div>
+              {selectedTrouble.fixes.map((f,i) => (
+                <div key={i} style={{ display:"flex", gap:9, background:`${selectedTrouble.color}80`, borderRadius:9, padding:"8px 10px", marginBottom:6 }}>
+                  <span style={{ fontWeight:900, color:selectedTrouble.tc, flexShrink:0, fontSize:12 }}>{i+1}.</span>
+                  <span style={{ fontSize:11, color:"#444", lineHeight:1.5 }}>{f}</span>
                 </div>
               ))}
             </div>
@@ -1526,25 +1811,104 @@ export default function App() {
               })()}
 
               <div style={{ ...card, background:ur.bg, border:`2px solid ${ur.border}`, marginBottom:9 }}>
-                <div style={{ fontWeight:900, fontSize:12, color:ur.color, marginBottom:9 }}>🪴 Status: {ur.label}</div>
-                <div style={{ fontSize:10, color:"#888", marginBottom:7 }}>Check off signs you observe:</div>
-                {VISUAL_SIGNS.map(sign => {
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
+                  <div style={{ fontWeight:900, fontSize:12, color:ur.color }}>🪴 {ur.label}</div>
+                  <div style={{ fontSize:9, color:ur.color, fontWeight:700, background:"rgba(255,255,255,0.6)", borderRadius:6, padding:"2px 7px" }}>Score: {ts.score}/10</div>
+                </div>
+                <div style={{ fontSize:10, color:"#666", marginBottom:8 }}>Check off every sign you see. More checkmarks = closer to transplant time!</div>
+                {TRANSPLANT_SIGNS.map(sign => {
                   const checked = (p.transplantSigns||[]).includes(sign.id);
                   return (
-                    <button key={sign.id} onClick={() => toggleSign(p.id, sign.id)}
-                      style={{ display:"flex", alignItems:"center", gap:7, background:checked?"#fff3e0":"rgba(255,255,255,0.8)", border:checked?"2px solid #ff9800":"2px solid #e0e0e0", borderRadius:8, padding:"6px 9px", cursor:"pointer", width:"100%", marginBottom:4 }}>
-                      <span style={{ fontSize:15 }}>{checked?"✅":"⬜"}</span>
-                      <span style={{ fontSize:10 }}>{sign.icon} {sign.label}</span>
-                    </button>
+                    <div key={sign.id} style={{ marginBottom:6 }}>
+                      <button onClick={() => toggleSign(p.id, sign.id)}
+                        style={{ display:"flex", alignItems:"center", gap:8, background:checked?"rgba(255,255,255,0.9)":"rgba(255,255,255,0.5)", border:checked?`2px solid ${ur.border}`:"2px solid #e0e0e0", borderRadius:10, padding:"8px 10px", cursor:"pointer", width:"100%", textAlign:"left" }}>
+                        <span style={{ fontSize:18, flexShrink:0 }}>{checked?"✅":"⬜"}</span>
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontSize:11, fontWeight:checked?800:500, color:checked?ur.color:"#444" }}>{sign.icon} {sign.label}</div>
+                          {checked && <div style={{ fontSize:9, color:"#777", marginTop:2, lineHeight:1.4 }}>💡 {sign.tip}</div>}
+                        </div>
+                        <div style={{ fontSize:9, color:ur.color, fontWeight:800, opacity:0.6 }}>+{sign.weight}</div>
+                      </button>
+                    </div>
                   );
                 })}
                 {ts.urgency !== "growing" && (
-                  <div style={{ background:"rgba(255,255,255,0.8)", borderRadius:8, padding:"7px 9px", marginTop:5, fontSize:10, color:"#555" }}>
-                    ➡️ Next: <b>{ts.next}</b> ({ts.nextVol})
+                  <div style={{ background:"rgba(255,255,255,0.8)", borderRadius:9, padding:"8px 10px", marginTop:6, fontSize:10, color:"#555" }}>
+                    ➡️ Ready for: <b>{ts.next}</b> ({ts.nextVol})
+                  </div>
+                )}
+                {ts.urgency === "growing" && (
+                  <div style={{ background:"rgba(255,255,255,0.6)", borderRadius:9, padding:"7px 10px", marginTop:6, fontSize:10, color:"#888" }}>
+                    🌱 Keep growing! Check back when you see 2–3 sets of true leaves.
                   </div>
                 )}
                 <button onClick={() => markTransplanted(p.id)} style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", marginTop:10 }}>✅ Mark as Transplanted</button>
               </div>
+
+              {/* Transplant Pro Teaser */}
+              {(ts.urgency === "ready" || ts.urgency === "urgent") && (() => {
+                const plantName = p.name.toLowerCase();
+                const guide = TRANSPLANT_GUIDES.find(g =>
+                  g.matchNames.some(n => plantName.includes(n))
+                );
+                return (
+                  <div style={{ ...card, background:"linear-gradient(135deg,#1b5e20,#2e7d32)", border:"none", marginBottom:9 }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:9, marginBottom:10 }}>
+                      <span style={{ fontSize:28 }}>{guide ? guide.emoji : "🪴"}</span>
+                      <div>
+                        <div style={{ color:"#fff", fontWeight:900, fontSize:13 }}>
+                          Ready to transplant your {p.name}?
+                        </div>
+                        <div style={{ color:"#a5d6a7", fontSize:10, marginTop:2 }}>
+                          Move to: <b style={{ color:"#fff" }}>{ts.next}</b> ({ts.nextVol})
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Free preview tip */}
+                    {guide && (
+                      <div style={{ background:"rgba(255,255,255,0.12)", borderRadius:10, padding:"9px 11px", marginBottom:10 }}>
+                        <div style={{ color:"#c8e6c9", fontSize:9, fontWeight:700, marginBottom:4 }}>💡 FREE TIP</div>
+                        <div style={{ color:"#fff", fontSize:11, lineHeight:1.5 }}>{guide.freePreview}</div>
+                      </div>
+                    )}
+
+                    {/* Paid stub — locked content preview */}
+                    <div style={{ background:"rgba(0,0,0,0.2)", borderRadius:10, padding:"11px 12px", marginBottom:10, border:"1.5px solid rgba(255,255,255,0.15)" }}>
+                      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
+                        <div style={{ color:"#fff", fontWeight:900, fontSize:12 }}>🌱 Transplant Pro Guide</div>
+                        <span style={{ background:"#ff9800", color:"#fff", borderRadius:6, padding:"2px 8px", fontSize:9, fontWeight:800 }}>PRO</span>
+                      </div>
+                      {guide && guide.steps.slice(0, 2).map((s, i) => (
+                        <div key={i} style={{ display:"flex", gap:8, marginBottom:6, opacity: i === 1 ? 0.4 : 1 }}>
+                          <span style={{ color:"#a5d6a7", fontWeight:900, fontSize:11, flexShrink:0 }}>{i+1}.</span>
+                          <div>
+                            <div style={{ color:"#fff", fontSize:11, fontWeight:700 }}>{s.step}</div>
+                            {i === 0 && <div style={{ color:"#c8e6c9", fontSize:10, marginTop:1 }}>{s.desc}</div>}
+                          </div>
+                        </div>
+                      ))}
+                      {/* Blurred locked steps */}
+                      <div style={{ background:"rgba(0,0,0,0.3)", borderRadius:8, padding:"8px 10px", filter:"blur(2px)", pointerEvents:"none", marginBottom:8 }}>
+                        <div style={{ color:"#fff", fontSize:10 }}>3. Bury the stem deep...</div>
+                        <div style={{ color:"#fff", fontSize:10, marginTop:4 }}>4. Firm soil and water...</div>
+                        <div style={{ color:"#fff", fontSize:10, marginTop:4 }}>5. Shade for 3 days...</div>
+                      </div>
+                      <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:8 }}>
+                        {["📋 Step-by-step guide","🌿 Aftercare calendar","⚠️ Common mistakes","🌡️ Zone-specific timing"].map(f => (
+                          <span key={f} style={{ background:"rgba(255,255,255,0.1)", borderRadius:6, padding:"3px 7px", fontSize:9, color:"#c8e6c9" }}>{f}</span>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => setShowTransplantPro(true)}
+                        style={{ width:"100%", background:"linear-gradient(135deg,#ff9800,#ff6f00)", border:"none", borderRadius:10, padding:"11px", color:"#fff", fontWeight:900, fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>
+                        🔓 Unlock Transplant Pro Guide
+                      </button>
+                    </div>
+                    <div style={{ color:"#a5d6a7", fontSize:9, textAlign:"center" }}>Free tip above is yours — unlock the full guide for step-by-step help!</div>
+                  </div>
+                );
+              })()}
 
               {/* Plant timeline */}
               {(() => {
@@ -1606,6 +1970,64 @@ export default function App() {
           </div>
         );
       })()}
+
+      {/* ── TRANSPLANT PRO MODAL ── */}
+      {showTransplantPro && (
+        <div style={{ position:"fixed", inset:0, background:"#000a", zIndex:400, display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+          onClick={() => setShowTransplantPro(false)}>
+          <div style={{ background:"#fff", borderRadius:"22px 22px 0 0", width:"100%", maxWidth:480, maxHeight:"88vh", overflowY:"auto", paddingBottom:30 }}
+            onClick={ev => ev.stopPropagation()}>
+            <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:"22px 22px 0 0", padding:"20px 18px 18px" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+                <div>
+                  <div style={{ color:"#fff", fontWeight:900, fontSize:20 }}>🌱 Transplant Pro</div>
+                  <div style={{ color:"#a5d6a7", fontSize:11, marginTop:3 }}>Step-by-step guides for every plant</div>
+                </div>
+                <button onClick={() => setShowTransplantPro(false)}
+                  style={{ background:"rgba(255,255,255,0.2)", border:"none", borderRadius:8, padding:"4px 10px", color:"#fff", cursor:"pointer", fontFamily:"inherit", fontWeight:700, fontSize:12 }}>✕</button>
+              </div>
+              <div style={{ display:"flex", gap:6, marginTop:12, flexWrap:"wrap" }}>
+                {["📋 Full step-by-step guides","🌿 Post-transplant care","⚠️ Common mistakes","🌡️ Zone-timed windows","🥵 Hardening off guide","🪴 5 plant guides included"].map(f => (
+                  <span key={f} style={{ background:"rgba(255,255,255,0.15)", borderRadius:7, padding:"3px 9px", fontSize:10, color:"#fff" }}>{f}</span>
+                ))}
+              </div>
+            </div>
+            <div style={{ padding:"18px 18px 0" }}>
+              {/* Guide previews */}
+              {TRANSPLANT_GUIDES.map(g => (
+                <div key={g.id} style={{ background:"#f9fbe7", borderRadius:12, padding:"12px 14px", marginBottom:10, border:"1.5px solid #c8e6c9" }}>
+                  <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
+                    <span style={{ fontSize:24 }}>{g.emoji}</span>
+                    <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20" }}>{g.name}</div>
+                    <span style={{ background:"#ff9800", color:"#fff", borderRadius:6, padding:"1px 7px", fontSize:9, fontWeight:800, marginLeft:"auto" }}>PRO</span>
+                  </div>
+                  <div style={{ fontSize:10, color:"#555", marginBottom:6 }}>{g.freePreview}</div>
+                  <div style={{ display:"flex", gap:5, flexWrap:"wrap" }}>
+                    <span style={{ background:"#e8f5e9", color:"#2e7d32", borderRadius:5, padding:"2px 6px", fontSize:9 }}>📋 {g.steps.length} steps</span>
+                    <span style={{ background:"#e3f2fd", color:"#1565c0", borderRadius:5, padding:"2px 6px", fontSize:9 }}>🌿 {g.aftercare.length} aftercare tips</span>
+                    <span style={{ background:"#ffebee", color:"#c62828", borderRadius:5, padding:"2px 6px", fontSize:9 }}>⚠️ {g.commonMistakes.length} mistakes to avoid</span>
+                  </div>
+                </div>
+              ))}
+
+              {/* Coming soon note */}
+              <div style={{ background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", borderRadius:12, padding:"14px", marginBottom:14, border:"1.5px solid #a5d6a7", textAlign:"center" }}>
+                <div style={{ fontSize:28, marginBottom:6 }}>🚧</div>
+                <div style={{ fontWeight:900, fontSize:14, color:"#1b5e20", marginBottom:4 }}>Coming Soon!</div>
+                <div style={{ fontSize:11, color:"#555", lineHeight:1.6 }}>Transplant Pro is in development. Want early access or to be notified when it launches?</div>
+                <div style={{ marginTop:10, background:"#fff", borderRadius:9, padding:"8px 10px", fontSize:10, color:"#888" }}>
+                  💌 Leave your email at <b style={{ color:"#2e7d32" }}>lazybrie.com</b> to get notified first!
+                </div>
+              </div>
+
+              <button onClick={() => setShowTransplantPro(false)}
+                style={{ ...btn("#f5f5f5","#888"), width:"100%", fontSize:12, marginBottom:8 }}>
+                Close — I'll check back later
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── ZONE PICKER SHEET ── */}
       {showZonePicker && (
