@@ -1,14 +1,43 @@
 {
-  "name": "Lazy Gardening",
-  "short_name": "Lazy Gardening",
-  "description": "Milk jugs, containers & budget-friendly gardening — made simple",
-  "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
-  ],
-  "theme_color": "#43a047",
-  "background_color": "#fffde7",
-  "display": "standalone",
+  "name": "Lazy Sprout",
+  "short_name": "Lazy Sprout",
+  "description": "Beginner garden tracker by Lazy Brie — track watering, sprouting, and plant growth without the guesswork",
   "start_url": "/",
-  "orientation": "portrait"
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1b5e20",
+  "theme_color": "#43a047",
+  "categories": ["lifestyle", "health", "utilities"],
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Add a Plant",
+      "short_name": "Add Plant",
+      "description": "Add a new plant to your garden",
+      "url": "/?action=add",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Garden",
+      "short_name": "My Garden",
+      "description": "View your garden",
+      "url": "/",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
 }
