@@ -673,6 +673,7 @@ function AutoDetectZone({ onDetected }) {
 
 export default function App() {
   const [tab, setTab] = useState("garden");
+  const [showSplash, setShowSplash] = useState(() => localStorage.getItem('lazygarden_splashSeen') === null);
 
   const [onboarding, setOnboarding] = useState(() => localStorage.getItem('jugGarden_myZone') === null);
   const [showZonePicker, setShowZonePicker] = useState(false);
@@ -753,13 +754,103 @@ export default function App() {
   return (
     <div style={{ fontFamily:"'Quicksand',sans-serif", background:"linear-gradient(135deg,#fffde7,#e8f5e9,#e3f2fd)", minHeight:"100vh", maxWidth:480, margin:"0 auto", position:"relative" }}>
 
+      {/* ── SPLASH SCREEN ── */}
+      {showSplash && (
+        <div style={{ position:"fixed", inset:0, zIndex:500, maxWidth:480, margin:"0 auto", overflow:"hidden" }}>
+          <style>{`
+            @keyframes lgFadeIn { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+            @keyframes lgPop { 0%{transform:scale(0.4) rotate(-10deg);opacity:0} 65%{transform:scale(1.1) rotate(2deg)} 100%{transform:scale(1) rotate(0deg);opacity:1} }
+            @keyframes lgFloat { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-12px) rotate(5deg)} }
+            @keyframes lgFloat2 { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-8px) rotate(-4deg)} }
+            @keyframes lgBarGrow { from{width:0} to{width:100%} }
+            @keyframes lgFadeOut { from{opacity:1} to{opacity:0;pointer-events:none} }
+            @keyframes lgShimmer { 0%,100%{opacity:0.3} 50%{opacity:1} }
+            .lg-splash { animation: lgFadeOut 0.5s ease 2.8s both; }
+            .lg-logo { animation: lgPop 0.8s cubic-bezier(.36,.07,.19,.97) 0.3s both; }
+            .lg-title { animation: lgFadeIn 0.6s ease 0.9s both; }
+            .lg-sub { animation: lgFadeIn 0.6s ease 1.2s both; }
+            .lg-tagline { animation: lgFadeIn 0.6s ease 1.4s both; }
+            .lg-bar { animation: lgFadeIn 0.4s ease 1.6s both; }
+            .lg-skip { animation: lgFadeIn 0.4s ease 2s both; }
+            .lg-p1 { animation: lgFloat  3.1s ease-in-out 0.2s infinite; position:absolute; }
+            .lg-p2 { animation: lgFloat2 2.7s ease-in-out 0.5s infinite; position:absolute; }
+            .lg-p3 { animation: lgFloat  3.4s ease-in-out 0.0s infinite; position:absolute; }
+            .lg-p4 { animation: lgFloat2 2.9s ease-in-out 0.8s infinite; position:absolute; }
+            .lg-p5 { animation: lgFloat  2.5s ease-in-out 1.1s infinite; position:absolute; }
+            .lg-p6 { animation: lgFloat2 3.2s ease-in-out 0.3s infinite; position:absolute; }
+            .lg-dot { animation: lgShimmer 1.2s ease-in-out infinite; display:inline-block; width:7px; height:7px; background:rgba(255,255,255,0.5); border-radius:50%; margin:0 3px; }
+            .lg-dot:nth-child(2){animation-delay:0.2s} .lg-dot:nth-child(3){animation-delay:0.4s}
+          `}</style>
+          <div className="lg-splash" onAnimationEnd={() => { localStorage.setItem('lazygarden_splashSeen','true'); setShowSplash(false); }}
+            style={{ width:"100%", height:"100%", background:"linear-gradient(160deg,#1b5e20 0%,#2e7d32 45%,#33691e 75%,#1b5e20 100%)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", position:"relative" }}>
+
+            {/* Background circles */}
+            <div style={{ position:"absolute", width:320, height:320, borderRadius:"50%", background:"rgba(255,255,255,0.03)", top:-80, right:-80 }} />
+            <div style={{ position:"absolute", width:220, height:220, borderRadius:"50%", background:"rgba(255,255,255,0.03)", bottom:-60, left:-60 }} />
+            <div style={{ position:"absolute", width:150, height:150, borderRadius:"50%", background:"rgba(255,255,255,0.04)", top:"30%", left:-40 }} />
+
+            {/* Floating real plants */}
+            <span className="lg-p1" style={{ top:"8%",  left:"6%",  fontSize:32 }}>🍅</span>
+            <span className="lg-p2" style={{ top:"12%", right:"8%", fontSize:26 }}>🌿</span>
+            <span className="lg-p3" style={{ top:"42%", left:"4%",  fontSize:28 }}>🥬</span>
+            <span className="lg-p4" style={{ top:"38%", right:"5%", fontSize:24 }}>🫑</span>
+            <span className="lg-p5" style={{ bottom:"18%",left:"8%",  fontSize:26 }}>🥒</span>
+            <span className="lg-p6" style={{ bottom:"14%",right:"7%", fontSize:30 }}>🌱</span>
+
+            {/* Logo */}
+            <div className="lg-logo" style={{ marginBottom:18 }}>
+              <img src="/icon-512.png" alt="Lazy Gardening"
+                style={{ width:110, height:110, borderRadius:"50%", border:"3px solid rgba(255,255,255,0.3)", objectFit:"cover", display:"block", boxShadow:"0 8px 32px rgba(0,0,0,0.3)" }} />
+            </div>
+
+            {/* App name */}
+            <div className="lg-title" style={{ textAlign:"center", marginBottom:6 }}>
+              <div style={{ color:"#fff", fontWeight:900, fontSize:34, fontFamily:"'Quicksand',sans-serif", letterSpacing:-0.5 }}>Lazy Gardening</div>
+              <div style={{ color:"#a5d6a7", fontSize:13, fontWeight:700, marginTop:3, fontFamily:"'Quicksand',sans-serif" }}>by Lazy Brie</div>
+            </div>
+
+            {/* Tagline */}
+            <div className="lg-sub" style={{ textAlign:"center", marginBottom:6, padding:"0 32px" }}>
+              <div style={{ color:"#c8e6c9", fontSize:12, lineHeight:1.6, fontFamily:"'Quicksand',sans-serif" }}>
+                Milk jugs, containers & budget-friendly
+              </div>
+            </div>
+            <div className="lg-tagline" style={{ textAlign:"center", marginBottom:30, padding:"0 32px" }}>
+              <div style={{ color:"#81c784", fontSize:12, fontWeight:700, fontFamily:"'Quicksand',sans-serif" }}>
+                gardening — made simple 🌱
+              </div>
+            </div>
+
+            {/* Loading bar */}
+            <div className="lg-bar" style={{ width:180, marginBottom:16 }}>
+              <div style={{ height:3, background:"rgba(255,255,255,0.15)", borderRadius:4, overflow:"hidden" }}>
+                <div style={{ height:"100%", background:"#a5d6a7", borderRadius:4, animation:"lgBarGrow 2s cubic-bezier(0.4,0,0.2,1) 1.6s both" }} />
+              </div>
+            </div>
+
+            {/* Dots + loading text */}
+            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+              <span className="lg-dot" /><span className="lg-dot" /><span className="lg-dot" />
+              <span style={{ color:"rgba(255,255,255,0.45)", fontSize:11, fontFamily:"'Quicksand',sans-serif" }}>Growing your garden</span>
+            </div>
+
+            {/* Skip button */}
+            <button className="lg-skip"
+              onClick={() => { localStorage.setItem('lazygarden_splashSeen','true'); setShowSplash(false); }}
+              style={{ background:"rgba(255,255,255,0.12)", border:"1.5px solid rgba(255,255,255,0.2)", borderRadius:20, padding:"6px 18px", color:"rgba(255,255,255,0.6)", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"'Quicksand',sans-serif" }}>
+              Tap to skip
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── ONBOARDING ── */}
       {onboarding && (
         <div style={{ position:"fixed", inset:0, zIndex:300, background:"linear-gradient(160deg,#e8f5e9,#fffde7)", overflowY:"auto", maxWidth:480, margin:"0 auto" }}>
           <div style={{ padding:"36px 18px 40px" }}>
             <div style={{ textAlign:"center", marginBottom:22 }}>
               <div style={{ fontSize:52 }}>🪴</div>
-              <div style={{ fontWeight:900, fontSize:22, color:"#1b5e20", marginTop:8 }}>Welcome to JugGarden!</div>
+              <div style={{ fontWeight:900, fontSize:22, color:"#1b5e20", marginTop:8 }}>Welcome to Lazy Gardening!</div>
               <div style={{ fontSize:12, color:"#666", marginTop:5, lineHeight:1.5 }}>Pick your <b>USDA Hardiness Zone</b> to personalize everything for your climate.</div>
 
               {/* ── AUTO DETECT BUTTON ── */}
@@ -788,12 +879,13 @@ export default function App() {
       )}
 
       {/* ── HEADER ── */}
-      <div style={{ background:"linear-gradient(90deg,#43a047,#66bb6a)", padding:"14px 14px 11px", borderRadius:"0 0 22px 22px", boxShadow:"0 4px 18px #43a04740" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:9 }}>
-          <span style={{ fontSize:30 }}>🪴</span>
+      <div style={{ background:"linear-gradient(90deg,#43a047,#66bb6a)", padding:"12px 14px 10px", borderRadius:"0 0 22px 22px", boxShadow:"0 4px 18px #43a04740" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+          <img src="/icon-192.png" alt="Lazy Gardening logo"
+            style={{ width:42, height:42, borderRadius:"50%", border:"2px solid rgba(255,255,255,0.3)", objectFit:"cover", flexShrink:0 }} />
           <div style={{ flex:1 }}>
-            <div style={{ color:"#fff", fontWeight:900, fontSize:18 }}>JugGarden</div>
-            <div style={{ color:"#c8e6c9", fontSize:10 }}>Container & Milk Jug Gardening</div>
+            <div style={{ color:"#fff", fontWeight:900, fontSize:17, lineHeight:1.1 }}>Lazy Gardening</div>
+            <div style={{ color:"#c8e6c9", fontSize:9, lineHeight:1.3 }}>Budget gardening, made simple 🌱</div>
           </div>
           <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:3 }}>
             {thirstyCount > 0 && <span style={{ background:"#ff7043", color:"#fff", borderRadius:20, padding:"2px 9px", fontSize:10, fontWeight:800 }}>💧 {thirstyCount} thirsty</span>}
@@ -807,7 +899,7 @@ export default function App() {
 
       {/* ── TAB BAR ── */}
       <div style={{ display:"flex", background:"#fff", margin:"10px 12px 0", borderRadius:12, padding:3, boxShadow:"0 2px 8px #0001" }}>
-        {[["garden","🌱","Garden"],["calc","🧮","Calc"],["calendar","📅","Calendar"],["guides","📖","Guides"]].map(([k,icon,label]) => (
+        {[["garden","🌱","My Garden"],["calc","🧮","Calc"],["calendar","📅","Calendar"],["guides","📖","Guides"]].map(([k,icon,label]) => (
           <button key={k} onClick={() => setTab(k)}
             style={{ flex:1, background:tab===k?"linear-gradient(135deg,#43a047,#66bb6a)":"transparent", color:tab===k?"#fff":"#999", border:"none", borderRadius:10, padding:"6px 2px", fontWeight:800, fontSize:10, cursor:"pointer", fontFamily:"inherit", display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
             <span style={{ fontSize:15 }}>{icon}</span>
@@ -892,7 +984,7 @@ export default function App() {
               /* Empty state command center */
               <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:18, padding:"24px 16px", marginBottom:12, textAlign:"center" }}>
                 <div style={{ fontSize:48, marginBottom:8 }}>🪴</div>
-                <div style={{ color:"#fff", fontWeight:900, fontSize:18, marginBottom:4 }}>Welcome to JugGarden!</div>
+                <div style={{ color:"#fff", fontWeight:900, fontSize:18, marginBottom:4 }}>Welcome to Lazy Gardening!</div>
                 <div style={{ color:"#a5d6a7", fontSize:11, marginBottom:14, lineHeight:1.5 }}>Your garden command center. Add your first plant to get started!</div>
                 {!myZone && (
                   <button onClick={() => setShowZonePicker(true)}
@@ -953,7 +1045,7 @@ export default function App() {
 
             {/* ── PLANT LIST HEADER ── */}
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:9 }}>
-              <div style={{ fontWeight:900, fontSize:14, color:"#2e7d32" }}>🌿 My Plants ({plants.length})</div>
+              <div style={{ fontWeight:900, fontSize:14, color:"#2e7d32" }}>🌿 My Garden ({plants.length})</div>
               <button onClick={() => setShowAdd(true)} style={btn("linear-gradient(135deg,#ff7043,#ff8a65)")}>+ Add Plant</button>
             </div>
 
