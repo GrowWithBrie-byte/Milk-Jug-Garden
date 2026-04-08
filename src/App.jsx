@@ -782,13 +782,22 @@ export default function App() {
             @keyframes lgBarGrow { from{width:0} to{width:100%} }
             @keyframes lgFadeOut { from{opacity:1} to{opacity:0;pointer-events:none} }
             @keyframes lgShimmer { 0%,100%{opacity:0.3} 50%{opacity:1} }
-            .lg-splash { animation: lgFadeOut 0.8s ease 5.5s both; }
-            .lg-logo { animation: lgPop 1s cubic-bezier(.36,.07,.19,.97) 0.4s both; }
-            .lg-title { animation: lgFadeIn 0.9s ease 1.2s both; }
-            .lg-sub { animation: lgFadeIn 0.9s ease 1.8s both; }
-            .lg-tagline { animation: lgFadeIn 0.9s ease 2.2s both; }
-            .lg-bar { animation: lgFadeIn 0.6s ease 2.8s both; }
-            .lg-skip { animation: lgFadeIn 0.6s ease 3.5s both; }
+            .lg-splash-ready .lg-logo { animation: lgPop 1s cubic-bezier(.36,.07,.19,.97) 0.2s both; }
+            .lg-splash-ready .lg-title { animation: lgFadeIn 0.9s ease 0.9s both; }
+            .lg-splash-ready .lg-sub { animation: lgFadeIn 0.9s ease 1.5s both; }
+            .lg-splash-ready .lg-tagline { animation: lgFadeIn 0.9s ease 1.9s both; }
+            .lg-splash-ready .lg-bar { animation: lgFadeIn 0.6s ease 2.4s both; }
+            .lg-splash-ready .lg-skip { animation: lgFadeIn 0.6s ease 3.2s both; }
+            .lg-splash-ready .lg-dots { animation: lgFadeIn 0.6s ease 2.6s both; }
+            .lg-splash-ready.lg-do-exit { animation: lgFadeOut 0.8s ease both; }
+            .lg-splash-ready .lg-bar-fill { animation: lgBarGrow 3s cubic-bezier(0.4,0,0.2,1) 2.4s both; }
+            .lg-logo { opacity:0; }
+            .lg-title { opacity:0; }
+            .lg-sub { opacity:0; }
+            .lg-tagline { opacity:0; }
+            .lg-bar { opacity:0; }
+            .lg-skip { opacity:0; }
+            .lg-dots { opacity:0; }
             .lg-p1 { animation: lgFloat  3.8s ease-in-out 0.2s infinite; position:absolute; }
             .lg-p2 { animation: lgFloat2 3.4s ease-in-out 0.5s infinite; position:absolute; }
             .lg-p3 { animation: lgFloat  4.1s ease-in-out 0.0s infinite; position:absolute; }
@@ -798,7 +807,7 @@ export default function App() {
             .lg-dot { animation: lgShimmer 1.6s ease-in-out infinite; display:inline-block; width:7px; height:7px; background:rgba(255,255,255,0.5); border-radius:50%; margin:0 3px; }
             .lg-dot:nth-child(2){animation-delay:0.3s} .lg-dot:nth-child(3){animation-delay:0.6s}
           `}</style>
-          <div className="lg-splash" onAnimationEnd={() => { localStorage.setItem('lazygarden_splashSeen','true'); setShowSplash(false); }}
+          <div id="lg-splash-root"
             style={{ width:"100%", height:"100%", background:"linear-gradient(160deg,#1b5e20 0%,#2e7d32 45%,#33691e 75%,#1b5e20 100%)", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", position:"relative" }}>
 
             {/* Background circles */}
@@ -806,7 +815,7 @@ export default function App() {
             <div style={{ position:"absolute", width:220, height:220, borderRadius:"50%", background:"rgba(255,255,255,0.03)", bottom:-60, left:-60 }} />
             <div style={{ position:"absolute", width:150, height:150, borderRadius:"50%", background:"rgba(255,255,255,0.04)", top:"30%", left:-40 }} />
 
-            {/* Floating real plants */}
+            {/* Floating plants */}
             <span className="lg-p1" style={{ top:"8%",  left:"6%",  fontSize:32 }}>🍅</span>
             <span className="lg-p2" style={{ top:"12%", right:"8%", fontSize:26 }}>🌿</span>
             <span className="lg-p3" style={{ top:"42%", left:"4%",  fontSize:28 }}>🥬</span>
@@ -816,8 +825,24 @@ export default function App() {
 
             {/* Logo */}
             <div className="lg-logo" style={{ marginBottom:18 }}>
-              <img src="/icon-512.png" alt="Lazy Gardening"
-                style={{ width:110, height:110, borderRadius:"50%", border:"3px solid rgba(255,255,255,0.3)", objectFit:"cover", display:"block", boxShadow:"0 8px 32px rgba(0,0,0,0.3)" }} />
+              <img
+                src="/icon-512.png"
+                alt="Lazy Gardening"
+                onLoad={() => {
+                  const root = document.getElementById('lg-splash-root');
+                  if (root) {
+                    root.classList.add('lg-splash-ready');
+                    setTimeout(() => {
+                      root.classList.add('lg-do-exit');
+                      setTimeout(() => {
+                        localStorage.setItem('lazygarden_splashSeen','true');
+                        setShowSplash(false);
+                      }, 800);
+                    }, 5500);
+                  }
+                }}
+                style={{ width:110, height:110, borderRadius:"50%", border:"3px solid rgba(255,255,255,0.3)", objectFit:"cover", display:"block", boxShadow:"0 8px 32px rgba(0,0,0,0.3)" }}
+              />
             </div>
 
             {/* App name */}
@@ -841,12 +866,12 @@ export default function App() {
             {/* Loading bar */}
             <div className="lg-bar" style={{ width:180, marginBottom:16 }}>
               <div style={{ height:3, background:"rgba(255,255,255,0.15)", borderRadius:4, overflow:"hidden" }}>
-                <div style={{ height:"100%", background:"#a5d6a7", borderRadius:4, animation:"lgBarGrow 3s cubic-bezier(0.4,0,0.2,1) 2.8s both" }} />
+                <div className="lg-bar-fill" style={{ height:"100%", background:"#a5d6a7", borderRadius:4 }} />
               </div>
             </div>
 
-            {/* Dots + loading text */}
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
+            {/* Dots */}
+            <div className="lg-dots" style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
               <span className="lg-dot" /><span className="lg-dot" /><span className="lg-dot" />
               <span style={{ color:"rgba(255,255,255,0.45)", fontSize:11, fontFamily:"'Quicksand',sans-serif" }}>Growing your garden</span>
             </div>
