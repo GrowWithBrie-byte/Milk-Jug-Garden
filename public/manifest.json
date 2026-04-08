@@ -1,7 +1,7 @@
 {
-  "name": "JugGarden",
-  "short_name": "JugGarden",
-  "description": "Container & milk jug gardening tracker",
+  "name": "Lazy Gardening",
+  "short_name": "Lazy Gardening",
+  "description": "Milk jugs, containers & budget-friendly gardening — made simple",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
