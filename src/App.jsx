@@ -359,6 +359,59 @@ const TRANSPLANT_GUIDES = [
     aftercare:["Water deeply every 2 days","Fertilize when flowers appear","Don't let soil dry out during flowering","Cure harvested potatoes in a cool dark place for 2 weeks"],
     commonMistakes:["Not hilling often enough — #1 reason for small harvests","Overwatering before vines establish","Harvesting too soon"],
   },
+  {
+    id:"fruits", name:"Fruits (Strawberries & Melons)", emoji:"🍓", matchNames:["strawberry","strawberries","watermelon","melon","cantaloupe","citrus","lemon","lime","orange","fruit"],
+    freePreview:"Fruits are more sensitive to transplant stress than vegetables — the trick is to disturb the roots as little as possible and keep them hydrated for the first week.",
+    steps:[
+      { step:"Time it right", desc:"Transplant on a cloudy day or in the evening. Fruits stress badly in hot midday sun right after moving." },
+      { step:"Water thoroughly the night before", desc:"A well-hydrated plant handles transplant shock much better. Don't transplant a thirsty plant!" },
+      { step:"Prepare container with rich mix", desc:"Use potting mix + 20% compost. Fruits are heavy feeders and need nutrients from day one. Make sure drainage is excellent." },
+      { step:"Remove with maximum care", desc:"Squeeze container sides to loosen, tip gently — never pull by the stem. Keep the entire root ball intact. Even small root damage sets fruits back weeks." },
+      { step:"Plant at the right depth", desc:"Strawberries: crown should sit just at soil level — never buried, never raised. Melons: same depth as original container. Citrus: plant slightly higher than original soil line to prevent crown rot." },
+      { step:"Water slowly and deeply", desc:"Water immediately after planting, slowly and deeply. For strawberries, avoid wetting the crown. For melons, water at the base only." },
+      { step:"Protect for one full week", desc:"Shade from direct sun for 5–7 days. Cover with a cloth or move to bright indirect light. Fruits take longer than vegetables to establish." },
+    ],
+    aftercare:[
+      "Water every 1–2 days for the first 2 weeks — fruits need consistent moisture to establish",
+      "Pinch off first flowers on strawberries for 2 weeks after transplanting — it feels wrong but builds stronger roots",
+      "Fertilize with a bloom fertilizer (high middle number) 3 weeks after transplanting",
+      "Watch for runner vines on strawberries — redirect them or snip to keep plant energy focused",
+      "For melons: add a trellis or sling support early — fruit gets heavy fast",
+    ],
+    commonMistakes:[
+      "Burying the strawberry crown — it will rot, every time",
+      "Transplanting in direct afternoon sun — wait for evening or a cloudy day",
+      "Fertilizing too soon — wait at least 3 weeks so roots aren't burned",
+      "Letting soil dry out in the first 2 weeks — fruits are unforgiving about this",
+    ],
+  },
+  {
+    id:"general", name:"General Guide (Any Plant)", emoji:"🌿", matchNames:[],
+    freePreview:"Don't see your specific plant? These universal transplanting rules work for almost any container plant. When in doubt, follow these steps.",
+    steps:[
+      { step:"Check readiness first", desc:"Look for 2–3 sets of true leaves, roots poking out of drainage holes, or soil drying out extremely fast. If you see any of these, it's time." },
+      { step:"Water 12–24 hours before", desc:"This is the single most important prep step. Moist soil holds together, protects roots, and helps the plant handle stress. Never transplant a dry plant." },
+      { step:"Prepare the new container first", desc:"Have your new container ready before you start. Fill it ⅓ with fresh potting mix. Make a hole roughly the size of the root ball. Don't rush this step." },
+      { step:"Remove gently", desc:"Squeeze flexible containers to loosen. For rigid pots, run a butter knife around the inside edge. Tip upside down, support the base with your palm, and let gravity do the work. Never yank the stem." },
+      { step:"Inspect the roots", desc:"Healthy roots are white or light tan. If you see brown mushy roots, trim them with clean scissors. If roots are tightly coiled, gently loosen the outer layer with your fingers." },
+      { step:"Set at the right depth", desc:"Most plants go in at the same depth they were growing. Exception: tomatoes and peppers can be buried deeper. Never bury the crown (where stem meets roots) of herbs or flowers." },
+      { step:"Fill, firm, and water", desc:"Fill gaps with fresh potting mix, press gently to remove air pockets (don't compact), then water slowly and thoroughly until drainage appears. No fertilizer for 2 weeks." },
+      { step:"Recovery period", desc:"Keep out of direct sun for 2–4 days. Some wilting is completely normal — the plant is adjusting. As long as it perks up in the evening, it's doing fine." },
+    ],
+    aftercare:[
+      "Check daily for the first week — wilting that recovers by evening is normal, wilting that doesn't recover means it needs water or more shade",
+      "Hold off on fertilizing for 2 full weeks — fresh potting mix has enough nutrients and roots are too stressed to absorb more",
+      "Resume normal watering schedule after the first week — but check more frequently than usual at first",
+      "First signs of new growth (a new leaf unfurling) means the plant has successfully established — celebrate! 🎉",
+    ],
+    commonMistakes:[
+      "Not watering before transplanting — biggest mistake beginners make",
+      "Pulling by the stem — always support from the bottom",
+      "Transplanting in midday heat — always morning or evening",
+      "Fertilizing too soon — wait 2 full weeks",
+      "Giving up during transplant shock — most plants look sad for 3–5 days and then bounce back completely",
+    ],
+  },
 ];
 
 const WATERING_METHODS = [
