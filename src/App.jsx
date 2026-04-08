@@ -45,17 +45,15 @@ const TRANSPLANT_MAP = {
 };
 
 const TRANSPLANT_SIGNS = [
-  { id:"leaves2", label:"Has 2 sets of true leaves",         icon:"🍃", weight:2, tip:"True leaves look different from the first seed leaves (cotyledons). They have the plant's actual shape." },
-  { id:"leaves3", label:"Has 3+ sets of true leaves",        icon:"🍃", weight:3, tip:"3 sets means the plant is strong enough to handle transplant stress. This is the ideal time for most herbs." },
-  { id:"roots",   label:"Roots poking out of drainage holes",icon:"🌿", weight:3, tip:"Visible roots at the bottom means the plant has outgrown its container — don't wait much longer!" },
-  { id:"rootball",label:"Soil holds shape when tipped out",  icon:"🪨", weight:2, tip:"Gently tip the plant out. If the roots hold the soil together in a ball shape, it's ready." },
-  { id:"slow",    label:"Growth has slowed or stalled",      icon:"🐌", weight:1, tip:"When a plant stops growing despite good water and light, it's usually root-bound and needs more space." },
-  { id:"heavy",   label:"Plant looks top-heavy for its pot", icon:"⚖️", weight:1, tip:"If the plant looks too big for the container, trust your eyes — it probably is!" },
-  { id:"dry",     label:"Soil dries out extremely fast",     icon:"🏜️", weight:2, tip:"When roots fill the container, there's less soil to hold water. Fast drying = root-bound plant." },
-  { id:"droop",   label:"Wilts quickly even after watering", icon:"😓", weight:2, tip:"If the plant perks up right after watering but wilts again within hours, roots are too crowded." },
+  { id:"leaves2", label:"Has 2 sets of true leaves",         icon:"🍃", tip:"True leaves look different from the first seed leaves (cotyledons). They have the plant's actual shape. 2 sets = you're in the window!" },
+  { id:"leaves3", label:"Has 3+ sets of true leaves",        icon:"🍃", tip:"3 sets means the plant is strong enough to handle transplant stress. This alone is your green light — go for it!" },
+  { id:"roots",   label:"Roots poking out of drainage holes",icon:"🌿", tip:"Visible roots at the bottom means the plant has outgrown its container — don't wait much longer!" },
+  { id:"rootball",label:"Soil holds shape when tipped out",  icon:"🪨", tip:"Gently tip the plant out. If the roots hold the soil together in a ball shape, it's ready." },
+  { id:"slow",    label:"Growth has slowed or stalled",      icon:"🐌", tip:"When a plant stops growing despite good water and light, it's usually root-bound and needs more space." },
+  { id:"heavy",   label:"Plant looks top-heavy for its pot", icon:"⚖️", tip:"If the plant looks too big for the container, trust your eyes — it probably is!" },
+  { id:"dry",     label:"Soil dries out extremely fast",     icon:"🏜️", tip:"When roots fill the container, there's less soil to hold water. Fast drying = root-bound plant." },
+  { id:"droop",   label:"Wilts quickly even after watering", icon:"😓", tip:"If the plant perks up right after watering but wilts again within hours, roots are too crowded." },
 ];
-
-// Score thresholds: 0-2 = growing, 3-4 = watch, 5-7 = ready, 8+ = urgent
 
 const EMOJI_PRESETS = {
   "🍅":{ name:"Tomatoes",     container:"Milk Jug",        waterEvery:2, sproutMin:5,  sproutMax:10 },
@@ -509,15 +507,28 @@ function getSoilRec(plantId, plantName, container) {
 
 function getTS(plant, days) {
   const td = TRANSPLANT_MAP[plant.container] || { next:"Larger Container", nextVol:"2× current", daysMin:30, daysMax:45 };
-  const checkedSigns = plant.transplantSigns || [];
-  const score = checkedSigns.reduce((sum, id) => {
-    const sign = TRANSPLANT_SIGNS.find(s => s.id === id);
-    return sum + (sign ? sign.weight : 1);
-  }, 0);
-  const urgency = days >= td.daysMax || score >= 8 ? "urgent"
-    : (days >= td.daysMin && score >= 3) || score >= 5 ? "ready"
-    : days >= td.daysMin || score >= 3 ? "watch" : "growing";
-  return { ...td, urgency, score };
+  const checked = plant.transplantSigns || [];
+
+  const hasLeaves2  = checked.includes("leaves2");
+  const hasLeaves3  = checked.includes("leaves3");
+  const hasRoots    = checked.includes("roots");
+  const hasDroop    = checked.includes("droop");
+  const hasRootball = checked.includes("rootball");
+
+  // True leaves are the primary signal
+  // Urgent: 3+ true leaves OR roots out OR wilting despite watering OR past deadline
+  const urgent = hasLeaves3 || hasRoots || (hasDroop && hasLeaves2) || days >= td.daysMax;
+  // Ready: 2 true leaves + any supporting sign, OR rootball holds shape, OR past min days with any sign
+  const ready  = !urgent && (
+    (hasLeaves2 && (hasRoots || hasRootball || hasDroop || checked.length >= 2)) ||
+    hasRootball ||
+    (days >= td.daysMin && checked.length >= 1)
+  );
+  // Watch: 2 true leaves alone, or past min days
+  const watch  = !urgent && !ready && (hasLeaves2 || days >= td.daysMin);
+
+  const urgency = urgent ? "urgent" : ready ? "ready" : watch ? "watch" : "growing";
+  return { ...td, urgency, checkedCount: checked.length };
 }
 
 function calcFit(cont, plant, cVol, cDiam, cDepth) {
@@ -688,6 +699,7 @@ export default function App() {
   const [selectedWatering, setSelectedWatering] = useState(null);
   const [selectedTrouble,  setSelectedTrouble]  = useState(null);
   const [showTransplantPro, setShowTransplantPro] = useState(false);
+  const [congratsPlant, setCongratsPlant] = useState(null);
   const [zoneDetail,       setZoneDetail]       = useState(null);
   const [calcCont,         setCalcCont]         = useState(null);
   const [calcPlant,        setCalcPlant]        = useState(null);
@@ -701,7 +713,12 @@ export default function App() {
 
   const waterPlant    = id => setPlants(ps => ps.map(p => p.id === id ? { ...p, lastWatered:TODAY, health:Math.min(100,p.health+15) } : p));
   const toggleSign    = (pid, sid) => setPlants(ps => ps.map(p => { if (p.id!==pid) return p; const s=p.transplantSigns||[]; return { ...p, transplantSigns: s.includes(sid)?s.filter(x=>x!==sid):[...s,sid] }; }));
-  const markTransplanted = id => { setPlants(ps => ps.map(p => p.id!==id ? p : { ...p, planted:TODAY, transplantSigns:[], health:Math.min(100,p.health+10), notes:(p.notes?p.notes+" · ":"")+"Transplanted!" })); setSelectedPlant(null); };
+  const markTransplanted = id => {
+    const plant = plants.find(p => p.id === id);
+    setPlants(ps => ps.map(p => p.id!==id ? p : { ...p, planted:TODAY, transplantSigns:[], health:Math.min(100,p.health+10), notes:(p.notes?p.notes+" · ":"")+"Transplanted!" }));
+    setSelectedPlant(null);
+    setCongratsPlant(plant);
+  };
   const deletePlant   = id => { setPlants(ps => ps.filter(p => p.id !== id)); setSelectedPlant(null); };
   const addPlant      = () => {
     if (!newPlant.name.trim()) return;
@@ -1922,25 +1939,34 @@ export default function App() {
               <div style={{ ...card, background:ur.bg, border:`2px solid ${ur.border}`, marginBottom:9 }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6 }}>
                   <div style={{ fontWeight:900, fontSize:12, color:ur.color }}>🪴 {ur.label}</div>
-                  <div style={{ fontSize:9, color:ur.color, fontWeight:700, background:"rgba(255,255,255,0.6)", borderRadius:6, padding:"2px 7px" }}>Score: {ts.score}/10</div>
                 </div>
-                <div style={{ fontSize:10, color:"#666", marginBottom:8 }}>Check off every sign you see. More checkmarks = closer to transplant time!</div>
+
+                {/* Clear primary instruction */}
+                <div style={{ background:"rgba(255,255,255,0.8)", borderRadius:9, padding:"8px 11px", marginBottom:10, fontSize:11, color:"#444", lineHeight:1.6 }}>
+                  <b style={{ color:"#1b5e20" }}>The main signal:</b> When your plant has <b>2–3 sets of true leaves</b> it's ready to transplant. The other signs below are helpful extras — you don't need all of them!
+                </div>
+
+                <div style={{ fontSize:10, color:"#666", marginBottom:8, fontWeight:700 }}>Check off what you see:</div>
                 {TRANSPLANT_SIGNS.map(sign => {
                   const checked = (p.transplantSigns||[]).includes(sign.id);
+                  const isPrimary = sign.id === "leaves2" || sign.id === "leaves3";
                   return (
                     <div key={sign.id} style={{ marginBottom:6 }}>
                       <button onClick={() => toggleSign(p.id, sign.id)}
-                        style={{ display:"flex", alignItems:"center", gap:8, background:checked?"rgba(255,255,255,0.9)":"rgba(255,255,255,0.5)", border:checked?`2px solid ${ur.border}`:"2px solid #e0e0e0", borderRadius:10, padding:"8px 10px", cursor:"pointer", width:"100%", textAlign:"left" }}>
+                        style={{ display:"flex", alignItems:"center", gap:8, background:checked?"rgba(255,255,255,0.9)":"rgba(255,255,255,0.5)", border:checked?`2px solid ${ur.border}`:isPrimary?"2px solid #a5d6a7":"2px solid #e0e0e0", borderRadius:10, padding:"8px 10px", cursor:"pointer", width:"100%", textAlign:"left" }}>
                         <span style={{ fontSize:18, flexShrink:0 }}>{checked?"✅":"⬜"}</span>
                         <div style={{ flex:1 }}>
-                          <div style={{ fontSize:11, fontWeight:checked?800:500, color:checked?ur.color:"#444" }}>{sign.icon} {sign.label}</div>
+                          <div style={{ display:"flex", alignItems:"center", gap:5 }}>
+                            <span style={{ fontSize:11, fontWeight:checked?800:500, color:checked?ur.color:"#444" }}>{sign.icon} {sign.label}</span>
+                            {isPrimary && <span style={{ background:"#e8f5e9", color:"#2e7d32", borderRadius:5, padding:"1px 5px", fontSize:8, fontWeight:800 }}>KEY SIGN</span>}
+                          </div>
                           {checked && <div style={{ fontSize:9, color:"#777", marginTop:2, lineHeight:1.4 }}>💡 {sign.tip}</div>}
                         </div>
-                        <div style={{ fontSize:9, color:ur.color, fontWeight:800, opacity:0.6 }}>+{sign.weight}</div>
                       </button>
                     </div>
                   );
                 })}
+
                 {ts.urgency !== "growing" && (
                   <div style={{ background:"rgba(255,255,255,0.8)", borderRadius:9, padding:"8px 10px", marginTop:6, fontSize:10, color:"#555" }}>
                     ➡️ Ready for: <b>{ts.next}</b> ({ts.nextVol})
@@ -1948,7 +1974,7 @@ export default function App() {
                 )}
                 {ts.urgency === "growing" && (
                   <div style={{ background:"rgba(255,255,255,0.6)", borderRadius:9, padding:"7px 10px", marginTop:6, fontSize:10, color:"#888" }}>
-                    🌱 Keep growing! Check back when you see 2–3 sets of true leaves.
+                    🌱 Keep growing! Check back when you see <b>2 sets of true leaves</b> — that's your green light.
                   </div>
                 )}
                 <button onClick={() => markTransplanted(p.id)} style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", marginTop:10 }}>✅ Mark as Transplanted</button>
@@ -2079,6 +2105,85 @@ export default function App() {
           </div>
         );
       })()}
+
+      {/* ── TRANSPLANT CONGRATS MODAL ── */}
+      {congratsPlant && (
+        <div style={{ position:"fixed", inset:0, background:"#000a", zIndex:450, display:"flex", alignItems:"center", justifyContent:"center", padding:24 }}
+          onClick={() => setCongratsPlant(null)}>
+          <div style={{ background:"#fff", borderRadius:24, width:"100%", maxWidth:420, overflow:"hidden", boxShadow:"0 20px 60px rgba(0,0,0,0.3)" }}
+            onClick={ev => ev.stopPropagation()}>
+
+            {/* Celebration header */}
+            <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", padding:"24px 20px 20px", textAlign:"center" }}>
+              <div style={{ fontSize:52, marginBottom:8 }}>🎉</div>
+              <div style={{ color:"#fff", fontWeight:900, fontSize:20, marginBottom:4 }}>
+                You transplanted {congratsPlant.emoji} {congratsPlant.name}!
+              </div>
+              <div style={{ color:"#a5d6a7", fontSize:12, lineHeight:1.5 }}>
+                Amazing milestone — your plant just leveled up! 🌱
+              </div>
+            </div>
+
+            <div style={{ padding:"18px 20px" }}>
+              {/* What just happened */}
+              <div style={{ background:"#e8f5e9", borderRadius:12, padding:"12px 14px", marginBottom:14 }}>
+                <div style={{ fontWeight:900, fontSize:12, color:"#2e7d32", marginBottom:6 }}>✅ What was updated</div>
+                <div style={{ fontSize:11, color:"#444", lineHeight:1.7 }}>
+                  • Planting date reset to today<br/>
+                  • Transplant signs cleared<br/>
+                  • Health +10 boost applied<br/>
+                  • Timeline restarted from Day 1
+                </div>
+              </div>
+
+              {/* What's next free tip */}
+              {(() => {
+                const guide = TRANSPLANT_GUIDES.find(g =>
+                  g.matchNames.some(n => (congratsPlant.name||"").toLowerCase().includes(n))
+                );
+                return (
+                  <div style={{ background:"#fff9c4", borderRadius:12, padding:"12px 14px", marginBottom:14, border:"1.5px solid #f9a825" }}>
+                    <div style={{ fontWeight:900, fontSize:12, color:"#f57f17", marginBottom:5 }}>💡 Free aftercare tip</div>
+                    {guide ? (
+                      <>
+                        <div style={{ fontSize:11, color:"#444", lineHeight:1.6, marginBottom:6 }}>{guide.aftercare[0]}</div>
+                        <div style={{ fontSize:10, color:"#888" }}>+ {guide.aftercare.length - 1} more aftercare tips in Transplant Pro →</div>
+                      </>
+                    ) : (
+                      <div style={{ fontSize:11, color:"#444", lineHeight:1.6 }}>
+                        Keep out of direct sun for 2–3 days and water gently. Your plant needs time to settle in its new home!
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Pro upsell */}
+              <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:12, padding:"14px", marginBottom:14 }}>
+                <div style={{ color:"#fff", fontWeight:900, fontSize:13, marginBottom:4 }}>🌱 What happens next?</div>
+                <div style={{ color:"#a5d6a7", fontSize:11, lineHeight:1.6, marginBottom:10 }}>
+                  Get the full step-by-step aftercare guide — what to do on Day 1, Day 3, Day 7, and beyond. Plus common mistakes to avoid right after transplanting.
+                </div>
+                <div style={{ display:"flex", gap:5, flexWrap:"wrap", marginBottom:12 }}>
+                  {["🌿 Full aftercare plan","⚠️ Common mistakes","💧 Watering adjustments","🌡️ Recovery signs"].map(f => (
+                    <span key={f} style={{ background:"rgba(255,255,255,0.15)", borderRadius:6, padding:"3px 8px", fontSize:9, color:"#c8e6c9" }}>{f}</span>
+                  ))}
+                </div>
+                <button
+                  onClick={() => { setCongratsPlant(null); setShowTransplantPro(true); }}
+                  style={{ width:"100%", background:"linear-gradient(135deg,#ff9800,#ff6f00)", border:"none", borderRadius:10, padding:"12px", color:"#fff", fontWeight:900, fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>
+                  🔓 Unlock Transplant Pro Guide
+                </button>
+              </div>
+
+              <button onClick={() => setCongratsPlant(null)}
+                style={{ width:"100%", background:"#f5f5f5", border:"none", borderRadius:10, padding:"11px", color:"#888", fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
+                I'm good for now — back to my garden
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── TRANSPLANT PRO MODAL ── */}
       {showTransplantPro && (
