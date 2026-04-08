@@ -879,8 +879,8 @@ export default function App() {
       )}
 
       {/* ── HEADER ── */}
-      <div style={{ background:"linear-gradient(90deg,#43a047,#66bb6a)", padding:"12px 14px 10px", borderRadius:"0 0 22px 22px", boxShadow:"0 4px 18px #43a04740" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+      <div style={{ background:"linear-gradient(90deg,#43a047,#66bb6a)", padding:"12px 14px 0", borderRadius:"0 0 22px 22px", boxShadow:"0 4px 18px #43a04740", overflow:"hidden" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10 }}>
           <img src="/icon-192.png" alt="Lazy Gardening logo"
             style={{ width:42, height:42, borderRadius:"50%", border:"2px solid rgba(255,255,255,0.3)", objectFit:"cover", flexShrink:0 }} />
           <div style={{ flex:1 }}>
@@ -893,6 +893,23 @@ export default function App() {
               style={{ background:myZone?myZone.color:"rgba(255,255,255,0.25)", color:myZone?myZone.tc:"#fff", border:"none", borderRadius:20, padding:"2px 9px", fontSize:10, fontWeight:800, cursor:"pointer", fontFamily:"inherit" }}>
               {myZone ? `${myZone.emoji} Zone ${myZone.zone}` : "🗺️ Set My Zone"}
             </button>
+          </div>
+        </div>
+
+        {/* ── SCROLLING PLANT STRIP ── */}
+        <style>{`
+          @keyframes lgScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .lg-plant-strip { animation: lgScroll 18s linear infinite; display:flex; width:max-content; }
+          .lg-plant-strip:hover { animation-play-state: paused; }
+        `}</style>
+        <div style={{ overflow:"hidden", marginLeft:-14, marginRight:-14, marginBottom:0, paddingBottom:10 }}>
+          <div className="lg-plant-strip">
+            {["🍅","🥬","🫑","🥒","🌿","🍓","🥔","🌱","🍠","🧄","🌸","🫚","🌾","🥕","🫘","🧅","🥦","🌻","🍅","🥬","🫑","🥒","🌿","🍓","🥔","🌱","🍠","🧄","🌸","🫚","🌾","🥕","🫘","🧅","🥦","🌻"].map((e,i) => (
+              <span key={i} style={{ fontSize:20, padding:"0 10px", opacity:0.85 }}>{e}</span>
+            ))}
           </div>
         </div>
       </div>
