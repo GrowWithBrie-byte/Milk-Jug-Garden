@@ -1076,76 +1076,46 @@ export default function App() {
             <span className="lg-p5" style={{ bottom:"18%",left:"8%",  fontSize:26 }}>🥒</span>
             <span className="lg-p6" style={{ bottom:"14%",right:"7%", fontSize:30 }}>🌱</span>
 
-            {/* Logo sprouting animation */}
+            {/* Logo */}
             <div className="lg-logo" style={{ marginBottom:16, display:"flex", flexDirection:"column", alignItems:"center" }}>
               <style>{`
-                @keyframes lgSoilPop { 0%{opacity:0;transform:scaleX(0)} 100%{opacity:1;transform:scaleX(1)} }
-                @keyframes lgJugRise { 0%{opacity:0;transform:translateY(40px)} 100%{opacity:1;transform:translateY(0)} }
-                @keyframes lgStemGrow { 0%{transform:scaleY(0);transform-origin:bottom center;opacity:0} 100%{transform:scaleY(1);transform-origin:bottom center;opacity:1} }
-                @keyframes lgLeafPop { 0%{transform:scale(0) rotate(-30deg);opacity:0} 70%{transform:scale(1.15) rotate(5deg)} 100%{transform:scale(1) rotate(0deg);opacity:1} }
                 @keyframes lgLogoPop { 0%{transform:scale(0) rotate(-10deg);opacity:0} 65%{transform:scale(1.1) rotate(3deg)} 100%{transform:scale(1) rotate(0deg);opacity:1} }
                 @keyframes lgSway { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
                 @keyframes lgDrop { 0%{opacity:0;transform:translateY(0)} 50%{opacity:0.8} 100%{opacity:0;transform:translateY(14px)} }
                 @keyframes lgSparkle { 0%,100%{opacity:0;transform:scale(0.5)} 50%{opacity:1;transform:scale(1)} }
-                .lg-soil { animation: lgSoilPop 0.5s ease 0.2s both; transform-origin:center; }
-                .lg-jug  { animation: lgJugRise 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.4s both; }
-                .lg-logo-img { animation: lgLogoPop 0.9s cubic-bezier(0.34,1.56,0.64,1) 1.1s both; transform-origin: bottom center; }
-                .lg-stem { animation: lgStemGrow 0.8s cubic-bezier(0.34,1.56,0.64,1) 1.8s both; }
-                .lg-leafl { animation: lgLeafPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 2.4s both; transform-origin: bottom right; }
-                .lg-leafr { animation: lgLeafPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 2.7s both; transform-origin: bottom left; }
-                .lg-bud   { animation: lgLeafPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 3.0s both; }
-                .lg-sway  { animation: lgSway 3.5s ease-in-out 3.2s infinite; transform-origin: bottom center; }
-                .lg-drop1 { animation: lgDrop 2s ease-in 3.5s infinite; }
-                .lg-drop2 { animation: lgDrop 2s ease-in 4.2s infinite; }
-                .lg-spark1 { animation: lgSparkle 1.8s ease-in-out 3.8s infinite; }
-                .lg-spark2 { animation: lgSparkle 1.8s ease-in-out 4.4s infinite; }
-                .lg-spark3 { animation: lgSparkle 2.2s ease-in-out 4.0s infinite; }
+                .lg-logo-img { animation: lgLogoPop 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.3s both; }
+                .lg-sway  { animation: lgSway 3.5s ease-in-out 1.4s infinite; transform-origin: bottom center; }
+                .lg-drop1 { animation: lgDrop 2s ease-in 1.8s infinite; }
+                .lg-drop2 { animation: lgDrop 2s ease-in 2.5s infinite; }
+                .lg-spark1 { animation: lgSparkle 1.8s ease-in-out 1.5s infinite; }
+                .lg-spark2 { animation: lgSparkle 1.8s ease-in-out 2.1s infinite; }
+                .lg-spark3 { animation: lgSparkle 2.2s ease-in-out 1.8s infinite; }
               `}</style>
-              <svg width="220" height="240" viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg">
-                {/* Sparkles around logo */}
-                <text className="lg-spark1" x="28" y="155" fontSize="16" fill="rgba(255,179,0,0.9)" fontFamily="serif">✦</text>
-                <text className="lg-spark2" x="182" y="148" fontSize="12" fill="rgba(255,179,0,0.8)" fontFamily="serif">✦</text>
-                <text className="lg-spark3" x="170" y="195" fontSize="9"  fill="rgba(255,255,255,0.6)" fontFamily="serif">✦</text>
 
-                {/* Soil */}
-                <ellipse className="lg-soil" cx="110" cy="208" rx="70" ry="10" fill="#5d4037" opacity="0.6"/>
-
-                {/* Jug rises up from soil */}
-                <g className="lg-jug">
-                  <rect x="72" y="162" width="76" height="46" rx="10" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" strokeWidth="2"/>
-                  <path d="M148 170 Q164 170 164 183 Q164 196 148 196" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeLinecap="round"/>
-                  <rect x="88" y="152" width="44" height="14" rx="5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" strokeWidth="2"/>
-                  <rect x="96" y="142" width="28" height="12" rx="4" fill="#ffe082" stroke="#ffb300" strokeWidth="1.5"/>
-                  <rect x="72" y="192" width="76" height="16" fill="#5d4037" rx="0"/>
-                  <ellipse cx="110" cy="192" rx="38" ry="6" fill="#6d4c41"/>
-                </g>
-
-                {/* Logo image sprouting up from jug */}
-                <image
+              {/* Logo image */}
+              <div style={{ position:"relative", marginBottom:8 }}>
+                <img
                   className="lg-logo-img"
-                  href="/icon-512.png"
-                  x="45" y="62" width="130" height="130"
-                  style={{ borderRadius:"50%" }}
-                  clipPath="circle(65px at 65px 65px)"
+                  src="/icon-512.png"
+                  alt="Lazy Sprout"
+                  style={{ width:160, height:160, borderRadius:"50%", border:"4px solid rgba(255,255,255,0.35)", objectFit:"cover", display:"block", boxShadow:"0 8px 32px rgba(0,0,0,0.3)" }}
                 />
+                {/* Sparkles around logo */}
+                <span className="lg-spark1" style={{ position:"absolute", top:-4, left:10, fontSize:16, color:"rgba(255,200,0,0.9)" }}>✦</span>
+                <span className="lg-spark2" style={{ position:"absolute", top:8, right:4, fontSize:12, color:"rgba(255,200,0,0.8)" }}>✦</span>
+                <span className="lg-spark3" style={{ position:"absolute", bottom:10, right:-6, fontSize:10, color:"rgba(255,255,255,0.6)" }}>✦</span>
+              </div>
 
-                {/* Stem growing from logo top */}
+              {/* Stem + leaves growing from top of logo */}
+              <svg width="80" height="60" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg" style={{ marginTop:-16 }}>
                 <g className="lg-sway">
-                  <g className="lg-stem">
-                    <path d="M110 90 Q108 72 110 55" fill="none" stroke="#a5d6a7" strokeWidth="4" strokeLinecap="round"/>
-                  </g>
-                  <g className="lg-leafl">
-                    <path d="M109 74 Q92 66 86 53 Q98 58 108 72Z" fill="#c8e6c9"/>
-                  </g>
-                  <g className="lg-leafr">
-                    <path d="M110 70 Q128 62 134 49 Q122 55 111 69Z" fill="#e8f5e9"/>
-                  </g>
-                  <ellipse className="lg-bud" cx="110" cy="52" rx="6" ry="8" fill="#a5d6a7"/>
+                  <path d="M40 55 Q39 40 40 25" fill="none" stroke="#a5d6a7" strokeWidth="3.5" strokeLinecap="round"/>
+                  <path d="M39 42 Q26 35 22 22 Q32 27 38 40Z" fill="#c8e6c9"/>
+                  <path d="M40 38 Q53 31 57 18 Q47 24 41 37Z" fill="#e8f5e9"/>
+                  <ellipse cx="40" cy="23" rx="5" ry="7" fill="#a5d6a7"/>
+                  <ellipse cx="34" cy="54" rx="3" ry="4" fill="rgba(255,255,255,0.5)" className="lg-drop1" style={{ transformOrigin:"34px 50px" }}/>
+                  <ellipse cx="48" cy="56" rx="2.5" ry="3.5" fill="rgba(255,255,255,0.45)" className="lg-drop2" style={{ transformOrigin:"48px 52px" }}/>
                 </g>
-
-                {/* Water droplets */}
-                <ellipse className="lg-drop1" cx="84" cy="158" rx="3" ry="4" fill="rgba(255,255,255,0.6)"/>
-                <ellipse className="lg-drop2" cx="138" cy="162" rx="2.5" ry="3.5" fill="rgba(255,255,255,0.5)"/>
               </svg>
             </div>
 
