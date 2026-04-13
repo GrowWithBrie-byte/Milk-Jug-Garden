@@ -137,13 +137,13 @@ const INDOOR_GUIDES = [
 ];
 
 const ALLERGY_TIPS = [
-  { icon:"🤧", tip:"Keep soil surface moist to reduce dust and mold spores — dry soil kicks up particles when watered." },
-  { icon:"🪟", tip:"Garden indoors with windows closed on high pollen days. Check your local pollen count first!" },
-  { icon:"🧤", tip:"Wear gloves when handling soil — even indoors. Wash hands after tending plants." },
-  { icon:"💨", tip:"Use a HEPA air purifier near your indoor garden to catch any spores or particles." },
-  { icon:"🌱", tip:"Choose low-pollen herbs like basil, mint, and chives — they're pollinated by insects, not wind, so very little airborne pollen." },
-  { icon:"🚿", tip:"Rinse harvested herbs before using — even indoors, dust can settle on leaves." },
-  { icon:"🏠", tip:"Indoor gardening during allergy season means you control the environment — no wind, no outdoor pollen, no bees!" },
+  { icon:"💧", tip:"Keep the soil a little moist — dry soil kicks up dust everywhere when you water it and that's the last thing you need." },
+  { icon:"🪟", tip:"Close your windows on high pollen days. Check your weather app real quick before you open anything." },
+  { icon:"🧤", tip:"Use gloves if you can. And wash your hands after — even if you think you're fine." },
+  { icon:"💨", tip:"A small air purifier near your plants helps a lot, especially if you're sensitive to anything." },
+  { icon:"🌱", tip:"Stick with herbs like basil, mint, and chives — they don't throw pollen in the air like that." },
+  { icon:"🚿", tip:"Rinse your herbs before you use them. Dust still settles on stuff even indoors." },
+  { icon:"😌", tip:"Indoor gardening during allergy season is lowkey the cheat code — you control everything." },
 ];
 
 const TROUBLESHOOTING = [
@@ -286,6 +286,69 @@ const TROUBLESHOOTING = [
   },
 ];
 
+const GROWING_PATHS = [
+  {
+    id: "jugs",
+    emoji: "❄️",
+    label: "Milk Jug Start",
+    title: "Milk Jug Gardening",
+    subtitle: "Outdoor Seed Start",
+    desc: "Start seeds outside in covered jugs. Nature handles temperature changes, and seeds sprout when they're ready. No indoor setup needed.",
+    color: "#e3f2fd",
+    tc: "#0d47a1",
+    accent: "#1565c0",
+    defaultContainer: "Milk Jug",
+    defaultGuide: "winter",
+    waterTip: "You plant it outside and nature handles most of it. Rain + condensation usually do the watering for you. Only check if it looks really dry.",
+    taskLabel: "Check jugs",
+  },
+  {
+    id: "indoor",
+    emoji: "🪟",
+    label: "Indoor Grow",
+    title: "Indoor Jungle",
+    subtitle: "Windowsill + Grow Lights",
+    desc: "Start seeds inside using natural light or grow lights. Perfect for herbs, veggies, and early seed starting when it's still too cold outside.",
+    color: "#f3e5f5",
+    tc: "#6a1b9a",
+    accent: "#7b1fa2",
+    defaultContainer: "Yogurt Container",
+    defaultGuide: "indoor",
+    waterTip: "Indoor pots dry out faster than outdoor ones. Stick your finger 1\" in before watering — if it feels dry, water it.",
+    taskLabel: "Check indoor plants",
+  },
+  {
+    id: "beds",
+    emoji: "🌱",
+    label: "Garden Beds",
+    title: "Garden Beds",
+    subtitle: "In-Ground Growing",
+    desc: "Plant directly into outdoor soil or raised beds. Best for warm weather crops that grow strong in full sun and open space.",
+    color: "#e8f5e9",
+    tc: "#1b5e20",
+    accent: "#2e7d32",
+    defaultContainer: "Raised Bed",
+    defaultGuide: "zones",
+    waterTip: "Water deeply and less often — outdoor beds hold moisture longer. Check 2\" down before watering.",
+    taskLabel: "Check garden beds",
+  },
+  {
+    id: "containers",
+    emoji: "🪴",
+    label: "Container Pots",
+    title: "Patio Pots",
+    subtitle: "Container Growing",
+    desc: "Grow in pots, buckets, grow bags, or small spaces. Great for patios, apartments, or anywhere you don't have a yard.",
+    color: "#fff3e0",
+    tc: "#e65100",
+    accent: "#ff6f00",
+    defaultContainer: "Plastic Pot",
+    defaultGuide: "watering",
+    waterTip: "These dry out faster — especially in heat. Check them more often so they don't get thirsty. Bottom watering works really well here.",
+    taskLabel: "Check patio pots",
+  },
+];
+
 const TRANSPLANT_GUIDES = [
   {
     id:"tomato", name:"Tomatoes", emoji:"🍅", matchNames:["tomato","tomatoes","cherry tomato"],
@@ -416,31 +479,82 @@ const TRANSPLANT_GUIDES = [
 
 const WATERING_METHODS = [
   { id:"bottom", title:"Bottom Watering",        emoji:"🥛", badge:"⭐ Best for Milk Jugs",    badgeColor:"#43a047",
-    desc:"Set jug in a tray with 1–2\" of water. Soil wicks up from below over 20–30 min. Encourages deep roots and keeps leaves dry.",
-    steps:["Poke 4–6 drainage holes in the bottom of your jug","Set jug inside a shallow tray or second cut jug","Pour 1–2 inches of water into the tray","Let soak 20–30 min until top inch of soil feels moist","Remove and empty leftover tray water to prevent root rot"],
-    tip:"Stick finger 1\" into soil after 30 min — still dry? Add more water to tray.",
-    bestFor:["Milk Jug","Coffee Can","Plastic Pot","Yogurt Container"] },
-  { id:"top",    title:"Top Watering",            emoji:"🚿", badge:"Good for Most Containers", badgeColor:"#1976d2",
-    desc:"Pour slowly at base of plant until water drains from bottom holes. Best for larger containers.",
-    steps:["Ensure container has drainage holes","Use watering can with gentle rose head","Aim at soil base — avoid wetting leaves","Water slowly until drainage from bottom holes","Wait until top 1–2\" dry before watering again"],
-    tip:"Water in morning so leaves dry quickly. Avoid watering at night.",
-    bestFor:["5-Gal Bucket","Fabric Bag","Plastic Pot"] },
-  { id:"closedjug", title:"Closed Jug — No Finger Test", emoji:"🔒", badge:"Milk Jug Hack!", badgeColor:"#6d4c41",
-    desc:"When your jug is mostly sealed (like a winterized cold-start jug), you can't stick your finger in the soil. Here's how to tell when to water without opening it.",
+    desc:"Sit the jug in some water and let it soak from the bottom. It pulls the water up on its own — roots grow deeper and the top doesn't get all messy. Easiest method for jugs.",
     steps:[
-      "🏋️ Lift the jug — heavy means wet, light means dry. Learn your jug's 'thirsty weight' and water when it feels noticeably lighter",
-      "👀 Watch the leaves — slight drooping or dullness in color means it's time. Don't wait until leaves are crispy!",
-      "🌡️ Check the weather — if it's been hot and sunny for 2+ days with no rain, water even if unsure",
-      "🕳️ Peek at the drainage holes — if the soil near the holes looks pale or cracked, it's dry",
-      "📅 Keep a schedule — in Zone 8b, sealed jugs in summer usually need water every 1–2 days. In cooler months, every 3–5 days",
-      "💧 When you do water, pour slowly through the cap hole or spout until you see a little drainage from the bottom holes",
+      "Poke 4–6 holes in the bottom of your jug (if you haven't already)",
+      "Sit the jug in a shallow tray, container, or another cut jug",
+      "Add about 1–2 inches of water to the tray",
+      "Let it sit for like 10–20 minutes",
+      "Take it out and dump the extra water — don't let it just sit in it",
+      "Stick your finger in the top soil after 20 min — still dry? Add a little more water and let it sit 5–10 minutes longer",
     ],
-    tip:"The lift test is the easiest habit to build — pick up your jug every morning. You'll quickly learn what 'needs water' feels like!",
+    tip:"Still dry after all that? Your soil might be too compacted. Loosen the top layer a little next time before bottom watering.",
+    indoorTips:[
+      { icon:"💧", text:"Indoor pots dry out faster — check the tray daily in summer" },
+      { icon:"🪴", text:"Put a saucer under your container to make bottom watering even easier indoors" },
+      { icon:"🚫", text:"Don't leave water in the tray longer than 30 min — roots can rot" },
+    ],
+    outdoorTips:[
+      { icon:"🌧️", text:"Rain counts! If it rained recently, skip the watering tray" },
+      { icon:"☀️", text:"Hot days = faster drying — check your jugs more often in summer" },
+      { icon:"🥛", text:"Milk jugs with drainage holes are perfect for this method — they were basically made for it" },
+    ],
+    bestFor:["Milk Jug","Coffee Can","Plastic Pot","Yogurt Container"] },
+
+  { id:"top",    title:"Top Watering",            emoji:"🚿", badge:"Quick & Easy", badgeColor:"#1976d2",
+    desc:"This is the regular way — just water from the top. Simple, works for most containers.",
+    steps:[
+      "Pour water slowly around the edges of the container — not right in the middle",
+      "Let it soak in as you go — don't just dump it all at once",
+      "Stop when you see a little draining out the bottom",
+      "Don't let it sit in extra water after — dump the tray if there is one",
+    ],
+    tip:"If water keeps running straight through without soaking in, your soil might be too dry. Go slower and give it a minute between pours.",
+    indoorTips:[
+      { icon:"🪟", text:"Water near a sink so you can drain the tray easily — makes cleanup way less annoying" },
+      { icon:"💧", text:"Indoor plants dry out faster than you think — check soil every couple days" },
+      { icon:"🚫", text:"Avoid getting water on the leaves — especially indoors where it dries slower and can cause mold" },
+    ],
+    outdoorTips:[
+      { icon:"🌧️", text:"Rain does the work most of the time — only step in if it's been dry for a few days" },
+      { icon:"🌅", text:"Morning is the best time to water outside — gives leaves time to dry before night" },
+      { icon:"🥛", text:"For milk jugs, water slowly — the narrow opening means it takes a second to soak through" },
+    ],
+    bestFor:["5-Gal Bucket","Fabric Bag","Plastic Pot"] },
+
+  { id:"closedjug", title:"Closed Jug — No Finger Test", emoji:"🔒", badge:"🥛 Milk Jug Hack", badgeColor:"#6d4c41",
+    desc:"When your jug is sealed up, you can't stick your finger in the soil. So here's how to tell when it's thirsty without opening it.",
+    steps:[
+      "🏋️ Lift it — heavy = still wet, light = needs water. You'll start learning what your jug normally feels like",
+      "👀 Look at the leaves — dull or droopy? It's probably thirsty. Don't wait until they're crispy 😭",
+      "🌡️ Check the weather — been hot and sunny for a couple days with no rain? Go ahead and water it, even if you're not 100% sure",
+      "🕳️ Look at the bottom holes — if the soil near the holes looks dry or pale, it's time",
+      "💧 When you water — pour slowly through the top opening until you see a little drainage at the bottom. Don't rush it",
+    ],
+    tip:"The lift test is the easiest one to learn. Pick up your jug every day for a few seconds — after a while you'll just know what 'needs water' feels like.",
+    outdoorTips:[
+      { icon:"❄️", text:"Winter sowing jugs barely need watering — rain and snow handle most of it" },
+      { icon:"☀️", text:"Summer is different — check daily when it's hot, sealed jugs can dry out fast" },
+      { icon:"🌧️", text:"If it's been raining and your holes are at the bottom, you're probably fine" },
+    ],
     bestFor:["Milk Jug"] },
-  { id:"self",   title:"DIY Self-Watering Jug",   emoji:"💡", badge:"Lazy Girl Approved 😄",    badgeColor:"#7b1fa2",
-    desc:"Turn two milk jugs into a self-watering planter! Bottom jug = reservoir that wicks up to roots.",
-    steps:["Cut one milk jug in half — top half is planter, bottom is reservoir","Poke hole in cap, thread cotton fabric strip as wick","Fill top half with potting mix, wick dangling below cap","Flip top half into bottom half like a funnel in a cup","Fill bottom reservoir through spout; top off every few days"],
-    tip:"Use a strip of old cotton t-shirt as wick — works great!",
+
+  { id:"wintersow", title:"Winter Sowing — Simple Version", emoji:"❄️", badge:"Outdoor Only", badgeColor:"#1565c0",
+    desc:"Start seeds outside in milk jugs during winter. Nature handles the cold — they'll sprout when it's time. Don't overthink it.",
+    steps:[
+      "✂️ Cut your jug almost in half, leave a hinge on the handle side so the top flips open",
+      "🕳️ Poke drainage holes in the bottom",
+      "🪨 Add 3–4 inches of potting mix and plant your seeds",
+      "🏷️ Label the outside — trust me, you'll forget what's in there",
+      "🔒 Tape it closed with duct tape, leave the cap off for ventilation",
+      "🌨️ Set it outside and wait — seriously, just wait",
+    ],
+    tip:"If it's outside and labeled correctly, you're doing it right. They'll just sit there all winter and pop up when spring hits.",
+    outdoorTips:[
+      { icon:"🥛", text:"This method only works outdoors — the cold is the whole point" },
+      { icon:"🌧️", text:"Rain and snow water them for you — that's the beauty of it" },
+      { icon:"📅", text:"Want the full guide with zone timing and best plants? Check the ❄️ Winter tab in Guides" },
+    ],
     bestFor:["Milk Jug"] },
 ];
 
@@ -779,16 +893,27 @@ export default function App() {
   };
 
   const [onboarding, setOnboarding] = useState(() => localStorage.getItem('lazysprout_myZone') === null);
+  const [onboardingStep, setOnboardingStep] = useState(1);
   const [showZonePicker, setShowZonePicker] = useState(false);
+  const [showPathsPicker, setShowPathsPicker] = useState(false);
   const [myZone,  setMyZone]  = useState(() => { const s = localStorage.getItem('lazysprout_myZone');  return s ? JSON.parse(s) : null; });
+  const [growingPaths, setGrowingPaths] = useState(() => { const s = localStorage.getItem('lazysprout_paths'); return s ? JSON.parse(s) : []; });
   const [plants,  setPlants]  = useState(() => { const s = localStorage.getItem('lazysprout_plants');  return s ? JSON.parse(s) : [];   });
 
   const [selectedPlant,    setSelectedPlant]    = useState(null);
   const [showAdd,          setShowAdd]          = useState(false);
-  const [newPlant,         setNewPlant]         = useState({ name:"", container:"Milk Jug", waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY, indoor:false, sproutMin:7, sproutMax:14, jugNumber:"" });
-  const [guidesTab,        setGuidesTab]        = useState("indoor");
+  const primaryPath = GROWING_PATHS.find(p => p.id === growingPaths[0]);
+  const defaultContainer = primaryPath?.defaultContainer || "Milk Jug";
+  const [newPlant, setNewPlant] = useState({ name:"", container:defaultContainer, waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY, growingMethod:growingPaths[0]||"outdoor", sproutMin:7, sproutMax:14, jugNumber:"" });
+  const [guidesTab, setGuidesTab] = useState(() => {
+    const saved = localStorage.getItem('lazysprout_paths');
+    const paths = saved ? JSON.parse(saved) : [];
+    const primary = GROWING_PATHS.find(p => p.id === paths[0]);
+    return primary?.defaultGuide || "indoor";
+  });
   const [selectedGuide,    setSelectedGuide]    = useState(null);
   const [selectedWatering, setSelectedWatering] = useState(null);
+  const [guideMethod, setGuideMethod] = useState("outdoor"); // "indoor" | "outdoor"
   const [selectedTrouble,  setSelectedTrouble]  = useState(null);
   const [showTransplantPro, setShowTransplantPro] = useState(false);
   const [congratsPlant, setCongratsPlant] = useState(null);
@@ -823,6 +948,11 @@ export default function App() {
 
   useEffect(() => { localStorage.setItem('lazysprout_plants',  JSON.stringify(plants));  }, [plants]);
   useEffect(() => { localStorage.setItem('lazysprout_myZone',  JSON.stringify(myZone));  }, [myZone]);
+  useEffect(() => { localStorage.setItem('lazysprout_paths',   JSON.stringify(growingPaths)); }, [growingPaths]);
+
+  const togglePath = (id) => setGrowingPaths(prev =>
+    prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
+  );
 
   const waterPlant    = id => setPlants(ps => ps.map(p => p.id === id ? { ...p, lastWatered:TODAY, health:Math.min(100,p.health+15) } : p));
   const toggleSign    = (pid, sid) => setPlants(ps => ps.map(p => { if (p.id!==pid) return p; const s=p.transplantSigns||[]; return { ...p, transplantSigns: s.includes(sid)?s.filter(x=>x!==sid):[...s,sid] }; }));
@@ -847,7 +977,7 @@ export default function App() {
   const addPlant      = () => {
     if (!newPlant.name.trim()) return;
     setPlants(ps => [...ps, { ...newPlant, id:Date.now(), planted:newPlant.plantedDate||TODAY, lastWatered:TODAY, health:100, transplantSigns:[] }]);
-    setNewPlant({ name:"", container:"Milk Jug", waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY, indoor:false, sproutMin:7, sproutMax:14, jugNumber:"" });
+    setNewPlant({ name:"", container:defaultContainer, waterEvery:2, emoji:"🪴", notes:"", plantedDate:TODAY, growingMethod:growingPaths[0]||"outdoor", sproutMin:7, sproutMax:14, jugNumber:"" });
     setShowAdd(false);
   };
 
@@ -946,50 +1076,76 @@ export default function App() {
             <span className="lg-p5" style={{ bottom:"18%",left:"8%",  fontSize:26 }}>🥒</span>
             <span className="lg-p6" style={{ bottom:"14%",right:"7%", fontSize:30 }}>🌱</span>
 
-            {/* Sprout illustration */}
-            <div className="lg-logo" style={{ marginBottom:4, width:"100%", maxWidth:320 }}>
-              <svg width="100%" viewBox="0 0 680 420" xmlns="http://www.w3.org/2000/svg" style={{ display:"block" }}>
-                <style>{`
-                  @keyframes lgsway { 0%,100%{transform-origin:340px 340px;transform:rotate(-2deg)} 50%{transform-origin:340px 340px;transform:rotate(2deg)} }
-                  @keyframes lgleafL { 0%,100%{transform-origin:325px 280px;transform:rotate(-5deg)} 50%{transform-origin:325px 280px;transform:rotate(3deg)} }
-                  @keyframes lgleafR { 0%,100%{transform-origin:355px 270px;transform:rotate(5deg)} 50%{transform-origin:355px 270px;transform:rotate(-3deg)} }
-                  @keyframes lgdrop { 0%{opacity:0;transform:translateY(0)} 60%{opacity:1} 100%{opacity:0;transform:translateY(18px)} }
-                  .lgstem { animation: lgsway 3.5s ease-in-out infinite; }
-                  .lgleafl { animation: lgleafL 3.5s ease-in-out infinite; }
-                  .lgleafr { animation: lgleafR 3.5s ease-in-out 0.4s infinite; }
-                  .lgdrop1 { animation: lgdrop 2.2s ease-in 0.3s infinite; }
-                  .lgdrop2 { animation: lgdrop 2.2s ease-in 1.1s infinite; }
-                `}</style>
-                <rect x="0" y="0" width="680" height="420" fill="none"/>
-                <ellipse cx="340" cy="370" rx="180" ry="22" fill="#5d4037"/>
-                <ellipse cx="340" cy="362" rx="170" ry="16" fill="#6d4c41"/>
-                <rect x="268" y="295" width="144" height="80" rx="12" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/>
-                <path d="M412 305 Q445 305 445 330 Q445 355 412 355" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="3" strokeLinecap="round"/>
-                <rect x="310" y="272" width="60" height="28" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" strokeWidth="3"/>
-                <rect x="318" y="258" width="44" height="18" rx="5" fill="#a5d6a7" stroke="#c8e6c9" strokeWidth="2"/>
-                <rect x="268" y="340" width="144" height="35" fill="#5d4037"/>
-                <ellipse cx="340" cy="340" rx="72" ry="8" fill="#6d4c41"/>
-                <g className="lgstem">
-                  <path d="M340 338 Q337 310 336 280 Q335 250 340 220" fill="none" stroke="#a5d6a7" strokeWidth="5" strokeLinecap="round"/>
-                  <g className="lgleafl">
-                    <path d="M336 280 Q305 255 298 228 Q318 238 332 262 Q334 272 336 280Z" fill="#c8e6c9"/>
-                    <path d="M336 280 Q316 247 310 230" fill="none" stroke="#a5d6a7" strokeWidth="1.5" strokeLinecap="round"/>
-                  </g>
-                  <g className="lgleafr">
-                    <path d="M338 270 Q372 240 382 212 Q360 225 345 252 Q341 261 338 270Z" fill="#e8f5e9"/>
-                    <path d="M338 270 Q362 238 374 218" fill="none" stroke="#c8e6c9" strokeWidth="1.5" strokeLinecap="round"/>
-                  </g>
-                  <ellipse cx="340" cy="218" rx="8" ry="11" fill="#a5d6a7" transform="rotate(-5 340 218)"/>
-                  <ellipse cx="340" cy="213" rx="5" ry="7" fill="#e8f5e9" transform="rotate(-5 340 213)"/>
+            {/* Logo sprouting animation */}
+            <div className="lg-logo" style={{ marginBottom:16, display:"flex", flexDirection:"column", alignItems:"center" }}>
+              <style>{`
+                @keyframes lgSoilPop { 0%{opacity:0;transform:scaleX(0)} 100%{opacity:1;transform:scaleX(1)} }
+                @keyframes lgJugRise { 0%{opacity:0;transform:translateY(40px)} 100%{opacity:1;transform:translateY(0)} }
+                @keyframes lgStemGrow { 0%{transform:scaleY(0);transform-origin:bottom center;opacity:0} 100%{transform:scaleY(1);transform-origin:bottom center;opacity:1} }
+                @keyframes lgLeafPop { 0%{transform:scale(0) rotate(-30deg);opacity:0} 70%{transform:scale(1.15) rotate(5deg)} 100%{transform:scale(1) rotate(0deg);opacity:1} }
+                @keyframes lgLogoPop { 0%{transform:scale(0) rotate(-10deg);opacity:0} 65%{transform:scale(1.1) rotate(3deg)} 100%{transform:scale(1) rotate(0deg);opacity:1} }
+                @keyframes lgSway { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+                @keyframes lgDrop { 0%{opacity:0;transform:translateY(0)} 50%{opacity:0.8} 100%{opacity:0;transform:translateY(14px)} }
+                @keyframes lgSparkle { 0%,100%{opacity:0;transform:scale(0.5)} 50%{opacity:1;transform:scale(1)} }
+                .lg-soil { animation: lgSoilPop 0.5s ease 0.2s both; transform-origin:center; }
+                .lg-jug  { animation: lgJugRise 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.4s both; }
+                .lg-logo-img { animation: lgLogoPop 0.9s cubic-bezier(0.34,1.56,0.64,1) 1.1s both; transform-origin: bottom center; }
+                .lg-stem { animation: lgStemGrow 0.8s cubic-bezier(0.34,1.56,0.64,1) 1.8s both; }
+                .lg-leafl { animation: lgLeafPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 2.4s both; transform-origin: bottom right; }
+                .lg-leafr { animation: lgLeafPop 0.6s cubic-bezier(0.34,1.56,0.64,1) 2.7s both; transform-origin: bottom left; }
+                .lg-bud   { animation: lgLeafPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 3.0s both; }
+                .lg-sway  { animation: lgSway 3.5s ease-in-out 3.2s infinite; transform-origin: bottom center; }
+                .lg-drop1 { animation: lgDrop 2s ease-in 3.5s infinite; }
+                .lg-drop2 { animation: lgDrop 2s ease-in 4.2s infinite; }
+                .lg-spark1 { animation: lgSparkle 1.8s ease-in-out 3.8s infinite; }
+                .lg-spark2 { animation: lgSparkle 1.8s ease-in-out 4.4s infinite; }
+                .lg-spark3 { animation: lgSparkle 2.2s ease-in-out 4.0s infinite; }
+              `}</style>
+              <svg width="220" height="240" viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg">
+                {/* Sparkles around logo */}
+                <text className="lg-spark1" x="28" y="155" fontSize="16" fill="rgba(255,179,0,0.9)" fontFamily="serif">✦</text>
+                <text className="lg-spark2" x="182" y="148" fontSize="12" fill="rgba(255,179,0,0.8)" fontFamily="serif">✦</text>
+                <text className="lg-spark3" x="170" y="195" fontSize="9"  fill="rgba(255,255,255,0.6)" fontFamily="serif">✦</text>
+
+                {/* Soil */}
+                <ellipse className="lg-soil" cx="110" cy="208" rx="70" ry="10" fill="#5d4037" opacity="0.6"/>
+
+                {/* Jug rises up from soil */}
+                <g className="lg-jug">
+                  <rect x="72" y="162" width="76" height="46" rx="10" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" strokeWidth="2"/>
+                  <path d="M148 170 Q164 170 164 183 Q164 196 148 196" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" strokeLinecap="round"/>
+                  <rect x="88" y="152" width="44" height="14" rx="5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" strokeWidth="2"/>
+                  <rect x="96" y="142" width="28" height="12" rx="4" fill="#ffe082" stroke="#ffb300" strokeWidth="1.5"/>
+                  <rect x="72" y="192" width="76" height="16" fill="#5d4037" rx="0"/>
+                  <ellipse cx="110" cy="192" rx="38" ry="6" fill="#6d4c41"/>
                 </g>
-                <ellipse className="lgdrop1" cx="292" cy="292" rx="4" ry="6" fill="rgba(255,255,255,0.6)"/>
-                <ellipse className="lgdrop2" cx="384" cy="298" rx="3" ry="5" fill="rgba(255,255,255,0.5)"/>
-                <path d="M190 368 Q188 350 190 335" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M190 350 Q175 338 170 325 Q183 332 190 348Z" fill="rgba(255,255,255,0.2)"/>
-                <path d="M190 342 Q205 330 210 318 Q197 328 190 342Z" fill="rgba(255,255,255,0.15)"/>
-                <path d="M490 368 Q492 348 490 332" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M490 348 Q505 335 510 322 Q496 330 490 348Z" fill="rgba(255,255,255,0.2)"/>
-                <path d="M490 340 Q476 328 472 316 Q484 326 490 340Z" fill="rgba(255,255,255,0.15)"/>
+
+                {/* Logo image sprouting up from jug */}
+                <image
+                  className="lg-logo-img"
+                  href="/icon-512.png"
+                  x="45" y="62" width="130" height="130"
+                  style={{ borderRadius:"50%" }}
+                  clipPath="circle(65px at 65px 65px)"
+                />
+
+                {/* Stem growing from logo top */}
+                <g className="lg-sway">
+                  <g className="lg-stem">
+                    <path d="M110 90 Q108 72 110 55" fill="none" stroke="#a5d6a7" strokeWidth="4" strokeLinecap="round"/>
+                  </g>
+                  <g className="lg-leafl">
+                    <path d="M109 74 Q92 66 86 53 Q98 58 108 72Z" fill="#c8e6c9"/>
+                  </g>
+                  <g className="lg-leafr">
+                    <path d="M110 70 Q128 62 134 49 Q122 55 111 69Z" fill="#e8f5e9"/>
+                  </g>
+                  <ellipse className="lg-bud" cx="110" cy="52" rx="6" ry="8" fill="#a5d6a7"/>
+                </g>
+
+                {/* Water droplets */}
+                <ellipse className="lg-drop1" cx="84" cy="158" rx="3" ry="4" fill="rgba(255,255,255,0.6)"/>
+                <ellipse className="lg-drop2" cx="138" cy="162" rx="2.5" ry="3.5" fill="rgba(255,255,255,0.5)"/>
               </svg>
             </div>
 
@@ -1002,12 +1158,12 @@ export default function App() {
             {/* Tagline */}
             <div className="lg-sub" style={{ textAlign:"center", marginBottom:6, padding:"0 32px" }}>
               <div style={{ color:"#c8e6c9", fontSize:12, lineHeight:1.6, fontFamily:"'Quicksand',sans-serif" }}>
-                Milk jugs, containers & budget-friendly
+                Keep your plants alive 🌱
               </div>
             </div>
             <div className="lg-tagline" style={{ textAlign:"center", marginBottom:30, padding:"0 32px" }}>
               <div style={{ color:"#81c784", fontSize:12, fontWeight:700, fontFamily:"'Quicksand',sans-serif" }}>
-                gardening — made simple 🌱
+                Because forgetting to water is real
               </div>
             </div>
 
@@ -1021,14 +1177,14 @@ export default function App() {
             {/* Dots */}
             <div className="lg-dots" style={{ display:"flex", alignItems:"center", gap:8, marginBottom:20 }}>
               <span className="lg-dot" /><span className="lg-dot" /><span className="lg-dot" />
-              <span style={{ color:"rgba(255,255,255,0.45)", fontSize:11, fontFamily:"'Quicksand',sans-serif" }}>Growing your garden</span>
+              <span style={{ color:"rgba(255,255,255,0.45)", fontSize:11, fontFamily:"'Quicksand',sans-serif" }}>loading your garden...</span>
             </div>
 
             {/* Skip button */}
             <button className="lg-skip"
               onClick={() => { setSplashVisible(false); setTimeout(() => { localStorage.setItem('lazysprout_splashSeen','true'); setShowSplash(false); }, 800); }}
               style={{ background:"rgba(255,255,255,0.12)", border:"1.5px solid rgba(255,255,255,0.2)", borderRadius:20, padding:"6px 18px", color:"rgba(255,255,255,0.6)", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"'Quicksand',sans-serif" }}>
-              Tap to skip
+              skip →
             </button>
           </div>
         </div>
@@ -1036,42 +1192,97 @@ export default function App() {
 
       {/* ── ONBOARDING ── */}
       {onboarding && (
-        <div style={{ position:"fixed", inset:0, zIndex:300, background:"linear-gradient(160deg,#e8f5e9,#fffde7)", overflowY:"auto", maxWidth:480, margin:"0 auto" }}>
-          <div style={{ padding:"36px 18px 40px" }}>
-            <div style={{ textAlign:"center", marginBottom:22 }}>
-              <div style={{ fontSize:52 }}>🪴</div>
-              <div style={{ fontWeight:900, fontSize:22, color:"#1b5e20", marginTop:8 }}>Welcome to Lazy Sprout!</div>
-              <div style={{ fontSize:12, color:"#666", marginTop:5, lineHeight:1.5 }}>Pick your <b>USDA Hardiness Zone</b> to personalize everything for your climate.</div>
+        <div style={{ position:"fixed", inset:0, zIndex:300, background:"linear-gradient(160deg,#1b5e20,#2e7d32)", overflowY:"auto", maxWidth:480, margin:"0 auto" }}>
+          <div style={{ padding:"40px 20px 50px" }}>
 
-              {/* ── AUTO DETECT BUTTON ── */}
-              <AutoDetectZone onDetected={(z) => { setMyZone(z); setOnboarding(false); }} />
-
-              <div style={{ fontSize:10, color:"#777", marginTop:8 }}>— or pick manually below —</div>
-              <div style={{ fontSize:10, color:"#888", background:"#e8f5e9", borderRadius:8, padding:"4px 10px", display:"inline-block", marginTop:4 }}>💡 Not sure? Search "USDA zone [your zip code]"</div>
-            </div>
-            <div style={{ fontWeight:800, color:"#2e7d32", fontSize:12, marginBottom:8 }}>🗺️ Select Your Zone:</div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7, marginBottom:14 }}>
-              {ZONES.map(z => (
-                <button key={z.zone} onClick={() => { setMyZone(z); setOnboarding(false); }}
-                  style={{ background:z.color, border:`2px solid ${z.tc}20`, borderRadius:12, padding:"9px 7px", textAlign:"left", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:7 }}>
-                  <span style={{ fontSize:18 }}>{z.emoji}</span>
-                  <div>
-                    <div style={{ fontWeight:900, fontSize:12, color:z.tc }}>Zone {z.zone}</div>
-                    <div style={{ fontSize:10, color:z.tc, opacity:0.7, lineHeight:1.2 }}>{z.temp}</div>
-                    <div style={{ fontSize:10, color:z.tc, opacity:0.5, lineHeight:1.2 }}>{z.region}</div>
+            {/* Step 1 — Growing paths */}
+            {onboardingStep === 1 && (
+              <>
+                <div style={{ textAlign:"center", marginBottom:24 }}>
+                  <div style={{ fontSize:56, marginBottom:10 }}>🌱</div>
+                  <div style={{ fontWeight:900, fontSize:22, color:"#fff", marginBottom:8 }}>Hey! Let's set up your garden</div>
+                  <div style={{ fontSize:13, color:"#a5d6a7", lineHeight:1.7, marginBottom:4 }}>
+                    What are you growing?
                   </div>
+                  <div style={{ fontSize:11, color:"rgba(255,255,255,0.5)" }}>Pick all that apply 👇</div>
+                </div>
+
+                <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:24 }}>
+                  {GROWING_PATHS.map(path => {
+                    const selected = growingPaths.includes(path.id);
+                    return (
+                      <button key={path.id} onClick={() => togglePath(path.id)}
+                        style={{ background: selected ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.08)", border: selected ? "2.5px solid rgba(255,255,255,0.7)" : "2px solid rgba(255,255,255,0.15)", borderRadius:16, padding:"14px 16px", cursor:"pointer", fontFamily:"inherit", textAlign:"left", display:"flex", alignItems:"center", gap:14, transition:"all 0.15s" }}>
+                        <span style={{ fontSize:32, flexShrink:0 }}>{path.emoji}</span>
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontWeight:900, fontSize:15, color:"#fff", marginBottom:4 }}>{path.label}</div>
+                          <div style={{ fontSize:11, color:"#c8e6c9", lineHeight:1.5 }}>{path.waterTip}</div>
+                        </div>
+                        <div style={{ width:26, height:26, borderRadius:"50%", border: selected ? "none" : "2px solid rgba(255,255,255,0.3)", background: selected ? "#fff" : "transparent", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontSize:15, color:"#2e7d32", fontWeight:900 }}>
+                          {selected && "✓"}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={() => growingPaths.length > 0 ? setOnboardingStep(2) : null}
+                  style={{ width:"100%", background: growingPaths.length > 0 ? "linear-gradient(135deg,#ff6f00,#ff8f00)" : "rgba(255,255,255,0.15)", border:"none", borderRadius:14, padding:"16px", color:"#fff", fontWeight:900, fontSize:15, cursor: growingPaths.length > 0 ? "pointer" : "default", fontFamily:"inherit", transition:"all 0.2s", marginBottom:10 }}>
+                  {growingPaths.length === 0 ? "👆 tap one to get started" : `looks good — let's go! →`}
                 </button>
-              ))}
-            </div>
-            <button onClick={() => setOnboarding(false)} style={{ width:"100%", background:"transparent", border:"none", color:"#777", fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>Skip for now</button>
+                <button onClick={() => setOnboardingStep(2)} style={{ width:"100%", background:"transparent", border:"none", color:"rgba(255,255,255,0.45)", fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
+                  skip for now
+                </button>
+              </>
+            )}
+
+            {/* Step 2 — Zone picker */}
+            {onboardingStep === 2 && (
+              <>
+                <div style={{ textAlign:"center", marginBottom:22 }}>
+                  <button onClick={() => setOnboardingStep(1)}
+                    style={{ background:"rgba(255,255,255,0.15)", border:"none", borderRadius:10, padding:"6px 14px", color:"#fff", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit", marginBottom:16 }}>
+                    ← Back
+                  </button>
+                  <div style={{ fontSize:40, marginBottom:8 }}>🗺️</div>
+                  <div style={{ fontWeight:900, fontSize:20, color:"#fff", marginBottom:6 }}>What's your growing zone?</div>
+                  <div style={{ fontSize:12, color:"#a5d6a7", lineHeight:1.6, marginBottom:8 }}>
+                    This helps me show you the right planting windows and frost dates for where you live. Not sure? Google "USDA zone + your zip code" — takes 10 seconds.
+                  </div>
+                  <AutoDetectZone onDetected={(z) => { setMyZone(z); setOnboarding(false); }} />
+                  <div style={{ fontSize:10, color:"rgba(255,255,255,0.45)", marginTop:8 }}>— or pick manually below —</div>
+                  <div style={{ fontSize:10, color:"#a5d6a7", background:"rgba(255,255,255,0.1)", borderRadius:8, padding:"4px 10px", display:"inline-block", marginTop:4 }}>
+                    💡 Not sure? Search "USDA zone [your zip code]"
+                  </div>
+                </div>
+
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:7, marginBottom:14 }}>
+                  {ZONES.map(z => (
+                    <button key={z.zone} onClick={() => { setMyZone(z); setOnboarding(false); }}
+                      style={{ background:z.color, border:`2px solid ${z.tc}30`, borderRadius:12, padding:"9px 7px", textAlign:"left", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:7 }}>
+                      <span style={{ fontSize:18 }}>{z.emoji}</span>
+                      <div>
+                        <div style={{ fontWeight:900, fontSize:12, color:z.tc }}>Zone {z.zone}</div>
+                        <div style={{ fontSize:10, color:z.tc, opacity:0.7, lineHeight:1.2 }}>{z.temp}</div>
+                        <div style={{ fontSize:10, color:z.tc, opacity:0.5, lineHeight:1.2 }}>{z.region}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => setOnboarding(false)} style={{ width:"100%", background:"transparent", border:"none", color:"rgba(255,255,255,0.45)", fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
+                  Skip zone for now
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
 
       {/* ── HEADER ── */}
-      <div style={{ background:"linear-gradient(90deg,#43a047,#66bb6a)", padding:"12px 14px 0", borderRadius:"0 0 22px 22px", boxShadow:"0 4px 18px #43a04740", overflow:"hidden" }}>
+      <div style={{ background:"linear-gradient(90deg,#ff6f00,#ff8f00)", padding:"12px 14px 0", borderRadius:"0 0 22px 22px", boxShadow:"0 4px 18px #ff6f0040", overflow:"hidden" }}>
         <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:10 }}>
-          <img src="/icon-192.png" alt="Lazy Sprout logo"
+          <div style={{ width:46, height:46, borderRadius:"50%", border:"3px solid #fff", flexShrink:0, cursor:"pointer", boxShadow:"0 2px 12px rgba(0,0,0,0.2)", overflow:"hidden", background:"#2e7d32", display:"flex", alignItems:"center", justifyContent:"center" }}
             onClick={() => {
               const now = Date.now();
               if (!window._logoTaps) window._logoTaps = [];
@@ -1083,18 +1294,39 @@ export default function App() {
                 setSplashReady(false);
                 setShowSplash(true);
               }
-            }}
-            style={{ width:42, height:42, borderRadius:"50%", border:"2px solid rgba(255,255,255,0.3)", objectFit:"cover", flexShrink:0, cursor:"pointer" }} />
+            }}>
+            <img src="/icon-192.png" alt="Lazy Sprout"
+              onError={ev => { ev.target.style.display='none'; ev.target.nextSibling.style.display='flex'; }}
+              style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}/>
+            <span style={{ display:"none", fontSize:24, alignItems:"center", justifyContent:"center" }}>🌱</span>
+          </div>
           <div style={{ flex:1 }}>
-            <div style={{ color:"#fff", fontWeight:900, fontSize:17, lineHeight:1.1 }}>Lazy Sprout</div>
-            <div style={{ color:"#c8e6c9", fontSize:10, lineHeight:1.3 }}>Watch your garden grow 🌱</div>
+            <div style={{ color:"#fff", fontWeight:900, fontSize:18, lineHeight:1.1 }}>Lazy Sprout</div>
+            <div style={{ display:"flex", gap:4, marginTop:3, flexWrap:"wrap" }}>
+              {growingPaths.length > 0 ? growingPaths.map(id => {
+                const path = GROWING_PATHS.find(p => p.id === id);
+                return path ? (
+                  <span key={id} style={{ background:"rgba(255,255,255,0.2)", borderRadius:20, padding:"1px 7px", fontSize:9, color:"#fff", fontWeight:700 }}>
+                    {path.emoji} {path.label}
+                  </span>
+                ) : null;
+              }) : (
+                <span style={{ color:"rgba(255,255,255,0.6)", fontSize:10, fontWeight:600 }}>Keep your plants alive 🌱 Because forgetting to water is real</span>
+              )}
+            </div>
           </div>
           <div style={{ display:"flex", flexDirection:"column", alignItems:"flex-end", gap:3 }}>
-            {thirstyCount > 0 && <span style={{ background:"#ff7043", color:"#fff", borderRadius:20, padding:"2px 9px", fontSize:10, fontWeight:800 }}>💧 {thirstyCount} thirsty</span>}
-            <button onClick={() => setShowZonePicker(true)}
-              style={{ background:myZone?myZone.color:"rgba(255,255,255,0.25)", color:myZone?myZone.tc:"#fff", border:"none", borderRadius:20, padding:"2px 9px", fontSize:10, fontWeight:800, cursor:"pointer", fontFamily:"inherit" }}>
-              {myZone ? `${myZone.emoji} Zone ${myZone.zone}` : "🗺️ Set My Zone"}
-            </button>
+            {thirstyCount > 0 && <span style={{ background:"#ff7043", color:"#fff", borderRadius:20, padding:"2px 9px", fontSize:10, fontWeight:800 }}>💧 {thirstyCount} need water</span>}
+            <div style={{ display:"flex", gap:4 }}>
+              <button onClick={() => setShowPathsPicker(true)}
+                style={{ background:"rgba(255,255,255,0.2)", border:"none", borderRadius:20, padding:"3px 8px", fontSize:10, fontWeight:800, cursor:"pointer", fontFamily:"inherit", color:"#fff" }}>
+                🌿
+              </button>
+              <button onClick={() => setShowZonePicker(true)}
+                style={{ background:myZone?myZone.color:"rgba(255,255,255,0.25)", color:myZone?myZone.tc:"#fff", border:"none", borderRadius:20, padding:"3px 10px", fontSize:10, fontWeight:800, cursor:"pointer", fontFamily:"inherit" }}>
+                {myZone ? `${myZone.emoji} Zone ${myZone.zone}` : "🗺️ Zone"}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1107,7 +1339,7 @@ export default function App() {
           .lg-plant-strip { animation: lgScroll 18s linear infinite; display:flex; width:max-content; }
           .lg-plant-strip:hover { animation-play-state: paused; }
         `}</style>
-        <div style={{ overflow:"hidden", marginLeft:-14, marginRight:-14, marginBottom:0, paddingBottom:10 }}>
+        <div style={{ overflow:"hidden", marginLeft:-14, marginRight:-14, paddingBottom:8, borderTop:"1px solid rgba(255,255,255,0.2)", paddingTop:6 }}>
           <div className="lg-plant-strip">
             {["🍅","🥬","🫑","🥒","🌿","🍓","🥔","🌱","🍠","🧄","🌸","🫚","🌾","🥕","🫘","🧅","🥦","🌻","🍅","🥬","🫑","🥒","🌿","🍓","🥔","🌱","🍠","🧄","🌸","🫚","🌾","🥕","🫘","🧅","🥦","🌻"].map((e,i) => (
               <span key={i} style={{ fontSize:20, padding:"0 10px", opacity:0.85 }}>{e}</span>
@@ -1298,31 +1530,64 @@ export default function App() {
                     <path d="M490 288 Q505 275 510 262 Q496 270 490 288Z" fill="rgba(255,255,255,0.15)"/>
                   </svg>
                 </div>
-                <div style={{ color:"#fff", fontWeight:900, fontSize:21, marginBottom:6, lineHeight:1.3 }}>Watch your garden grow 🌱</div>
+                <div style={{ color:"#fff", fontWeight:900, fontSize:21, marginBottom:6, lineHeight:1.3 }}>
+                  {growingPaths.length > 0
+                    ? `🌱 Your ${GROWING_PATHS.find(p=>p.id===growingPaths[0])?.title || "Milk Jug Gardening"} starts here`
+                    : "🌱 Your Milk Jug Gardening starts here"}
+                </div>
                 <div style={{ color:"#a5d6a7", fontSize:12, marginBottom:16, lineHeight:1.8 }}>
-                  Your friendly garden helper — never forget to water, always know what's sprouting next.
+                  Tell me what you're growing and I'll help you keep up with it 🌿
                 </div>
-                <div style={{ display:"flex", flexDirection:"column", gap:7, marginBottom:18 }}>
-                  {[
-                    ["💧","Know exactly when to water — no more guessing"],
-                    ["🌱","See when your sprouts are expected to pop up"],
-                    ["🪴","Get the nudge when it's time to transplant"],
-                  ].map(([icon,text]) => (
-                    <div key={text} style={{ background:"rgba(255,255,255,0.12)", borderRadius:10, padding:"9px 14px", fontSize:12, color:"#fff", display:"flex", alignItems:"center", gap:10, textAlign:"left" }}>
-                      <span style={{ fontSize:18 }}>{icon}</span>
-                      <span>{text}</span>
+
+                {/* Path-specific tips */}
+                {growingPaths.length > 0 ? (
+                  <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:18 }}>
+                    {growingPaths.slice(0,3).map(id => {
+                      const path = GROWING_PATHS.find(p => p.id === id);
+                      if (!path) return null;
+                      return (
+                        <div key={id} style={{ background:"rgba(255,255,255,0.12)", borderRadius:12, padding:"12px 14px", textAlign:"left" }}>
+                          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:5 }}>
+                            <span style={{ fontSize:22 }}>{path.emoji}</span>
+                            <span style={{ color:"#fff", fontWeight:900, fontSize:13 }}>{path.label}</span>
+                          </div>
+                          <div style={{ fontSize:11, color:"#c8e6c9", lineHeight:1.7 }}>{path.waterTip}</div>
+                        </div>
+                      );
+                    })}
+                    {/* Tap to change paths */}
+                    <button onClick={() => setShowPathsPicker(true)}
+                      style={{ background:"transparent", border:"1.5px solid rgba(255,255,255,0.25)", borderRadius:10, padding:"8px 12px", color:"rgba(255,255,255,0.6)", fontSize:10, fontWeight:700, cursor:"pointer", fontFamily:"inherit", textAlign:"center" }}>
+                      ✏️ change what I'm growing
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ marginBottom:18 }}>
+                    <div style={{ color:"rgba(255,255,255,0.7)", fontSize:11, marginBottom:10, fontWeight:700 }}>👉 What are you growing?</div>
+                    <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+                      {GROWING_PATHS.map(path => (
+                        <button key={path.id} onClick={() => { togglePath(path.id); }}
+                          style={{ background: growingPaths.includes(path.id) ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.10)", border: growingPaths.includes(path.id) ? "2px solid rgba(255,255,255,0.6)" : "1.5px solid rgba(255,255,255,0.2)", borderRadius:12, padding:"12px 14px", cursor:"pointer", fontFamily:"inherit", textAlign:"left", display:"flex", alignItems:"center", gap:12 }}>
+                          <span style={{ fontSize:24 }}>{path.emoji}</span>
+                          <div>
+                            <div style={{ color:"#fff", fontWeight:900, fontSize:13 }}>{path.label}</div>
+                            <div style={{ color:"#c8e6c9", fontSize:10, marginTop:2 }}>{path.waterTip}</div>
+                          </div>
+                          {growingPaths.includes(path.id) && <span style={{ marginLeft:"auto", color:"#fff", fontSize:16 }}>✓</span>}
+                        </button>
+                      ))}
                     </div>
-                  ))}
-                </div>
-                {!myZone && (
+                  </div>
+                )}
+                {!myZone && growingPaths.length > 0 && (
                   <button onClick={() => setShowZonePicker(true)}
                     style={{ background:"rgba(255,255,255,0.18)", border:"1.5px solid rgba(255,255,255,0.3)", borderRadius:12, padding:"10px 16px", color:"#fff", fontSize:11, fontWeight:800, cursor:"pointer", fontFamily:"inherit", marginBottom:10, display:"block", width:"100%" }}>
-                    🗺️ First: Set my growing zone
+                    🗺️ Also set my growing zone
                   </button>
                 )}
                 <button onClick={() => setShowAdd(true)}
                   style={{ background:"linear-gradient(135deg,#ff6f00,#ff8f00)", border:"3px solid rgba(255,255,255,0.3)", borderRadius:14, padding:"16px 16px", color:"#fff", fontSize:16, fontWeight:900, cursor:"pointer", fontFamily:"inherit", width:"100%", boxShadow:"0 6px 20px rgba(255,111,0,0.5)", letterSpacing:0.3, touchAction:"manipulation" }}>
-                  🌱 Add My First Plant
+                  🌱 Add a plant — it takes like 10 seconds
                 </button>
               </div>
             )}
@@ -1338,28 +1603,35 @@ export default function App() {
                 const sprouted = days > sproutMax;
                 const sproutingSoon = !sprouted && days >= sproutMin;
 
-                if (daysSince(p.lastWatered) >= p.waterEvery)
-                  tasks.push({ priority:1, icon:"💧", color:"#29b6f6", bg:"#e3f2fd", text:`Water ${p.name}`, plant:p });
+                if (daysSince(p.lastWatered) >= p.waterEvery) {
+                  const plantPath = p.growingMethod ? GROWING_PATHS.find(pp => pp.id === p.growingMethod) : GROWING_PATHS.find(pp => pp.id === growingPaths[0]);
+                  const waterText = plantPath?.id === "jugs"
+                    ? `Check your ${p.name} jug — might need water`
+                    : plantPath?.id === "indoor"
+                    ? `Your ${p.name} is thirsty — soil feels dry`
+                    : `Water your ${p.name} today`;
+                  tasks.push({ priority:1, icon:"💧", color:"#29b6f6", bg:"#e3f2fd", text:waterText, plant:p });
+                }
                 if (ts.urgency === "urgent")
-                  tasks.push({ priority:2, icon:"🚨", color:"#f44336", bg:"#ffebee", text:`Transplant ${p.name} NOW`, plant:p });
+                  tasks.push({ priority:2, icon:"🚨", color:"#f44336", bg:"#ffebee", text:`Move your ${p.name} — like now`, plant:p });
                 if (ts.urgency === "ready")
-                  tasks.push({ priority:3, icon:"🪴", color:"#ff9800", bg:"#fff3e0", text:`Transplant ${p.name}`, plant:p });
+                  tasks.push({ priority:3, icon:"🪴", color:"#ff9800", bg:"#fff3e0", text:`${p.name} is ready to transplant`, plant:p });
                 if (sproutingSoon)
-                  tasks.push({ priority:4, icon:"🌱", color:"#43a047", bg:"#e8f5e9", text:`Check ${p.name} for sprouts`, plant:p });
+                  tasks.push({ priority:4, icon:"🌱", color:"#43a047", bg:"#e8f5e9", text:`Check on your ${p.name} — any sprouts yet?`, plant:p });
                 if (ts.urgency === "watch")
-                  tasks.push({ priority:5, icon:"👀", color:"#8d6e63", bg:"#efebe9", text:`Watch ${p.name} for transplant signs`, plant:p });
+                  tasks.push({ priority:5, icon:"👀", color:"#8d6e63", bg:"#efebe9", text:`Keep an eye on your ${p.name}`, plant:p });
               });
               tasks.sort((a,b) => a.priority - b.priority);
               if (tasks.length === 0) return (
                 <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#f1f8e9)", border:"2px solid #a5d6a7", textAlign:"center", padding:"16px" }}>
                   <div style={{ fontSize:24, marginBottom:4 }}>✅</div>
-                  <div style={{ fontWeight:800, fontSize:13, color:"#2e7d32" }}>All caught up!</div>
-                  <div style={{ fontSize:10, color:"#888", marginTop:2 }}>Your garden is happy today 🌿</div>
+                  <div style={{ fontWeight:800, fontSize:13, color:"#2e7d32" }}>you're all caught up!</div>
+                  <div style={{ fontSize:10, color:"#888", marginTop:2 }}>garden's looking good today 🌿</div>
                 </div>
               );
               return (
                 <div style={{ marginBottom:12 }}>
-                  <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:7 }}>📋 Today's Garden Tasks</div>
+                  <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:7 }}>🌿 What needs to be done</div>
                   {tasks.map((t,i) => (
                     <button key={i} onClick={() => setSelectedPlant(t.plant)}
                       style={{ display:"flex", alignItems:"center", gap:10, background:t.bg, border:`1.5px solid ${t.color}30`, borderRadius:12, padding:"10px 12px", width:"100%", marginBottom:6, cursor:"pointer", fontFamily:"inherit", textAlign:"left" }}>
@@ -1401,7 +1673,7 @@ export default function App() {
               const nextWaterDate = new Date(plant.lastWatered);
               nextWaterDate.setDate(nextWaterDate.getDate() + plant.waterEvery);
               const daysUntilWater = Math.ceil((nextWaterDate - new Date(TODAY)) / 86400000);
-              const nextWaterLabel = thirsty ? "Water now!" : daysUntilWater <= 0 ? "Water today!" : daysUntilWater === 1 ? "Tomorrow" : nextWaterDate.toLocaleDateString("en-US",{month:"long",day:"numeric"});
+              const nextWaterLabel = thirsty ? "🔥 Water this today" : daysUntilWater <= 0 ? "🔥 Water this today" : daysUntilWater === 1 ? "Water this tomorrow" : nextWaterDate.toLocaleDateString("en-US",{month:"long",day:"numeric"});
               const lastWaterLabel = daysSince(plant.lastWatered) === 0 ? "Today" : new Date(plant.lastWatered+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric"});
 
               // Calc transplant window
@@ -1423,7 +1695,8 @@ export default function App() {
                         <div style={{ fontWeight:900, fontSize:15, color:"#1b5e20", lineHeight:1.2 }}>{plant.name}</div>
                         <div style={{ fontSize:10, color:"#888", marginTop:2 }}>
                           {plant.jugNumber ? <span style={{ fontWeight:700, color:"#2e7d32" }}>🥛 Jug #{plant.jugNumber} · </span> : null}
-                          {plant.container}{plant.indoor ? " · 🏠 Indoor" : ""}
+                          {plant.container}
+                          {plant.growingMethod === "indoor" ? " · 🏠 Indoor" : plant.growingMethod === "outdoor" ? " · 🌿 Outdoor" : ""}
                         </div>
                       </div>
                       <button onClick={ev => { ev.stopPropagation(); waterPlant(plant.id); }}
@@ -1440,6 +1713,17 @@ export default function App() {
                         </div>
                         <span style={{ fontSize:10, color:"#777" }}>Last: {lastWaterLabel}</span>
                       </div>
+                      {/* Path-specific watering tip */}
+                      {growingPaths.length > 0 && (() => {
+                        const plantPath = plant.growingMethod ? GROWING_PATHS.find(p => p.id === plant.growingMethod) : GROWING_PATHS.find(p => p.id === growingPaths[0]);
+                        if (!plantPath) return null;
+                        return (
+                          <div style={{ background:"rgba(255,255,255,0.7)", borderRadius:7, padding:"4px 9px", fontSize:10, color:"#555", lineHeight:1.4, display:"flex", gap:5, alignItems:"flex-start" }}>
+                            <span style={{ flexShrink:0 }}>{plantPath.emoji}</span>
+                            <span>{plantPath.waterTip}</span>
+                          </div>
+                        );
+                      })()}
 
                       {/* Sprout */}
                       {plant.sproutedDate ? (
@@ -1475,7 +1759,7 @@ export default function App() {
                     </div>
 
                     {/* Tap hint */}
-                    <div style={{ fontSize:10, color:"#999", marginTop:7, textAlign:"right" }}>Tap for full details →</div>
+                    <div style={{ fontSize:10, color:"#999", marginTop:7, textAlign:"right" }}>tap for more →</div>
                   </div>
                 </div>
               );
@@ -1490,7 +1774,7 @@ export default function App() {
                   onClick={ev => ev.stopPropagation()}>
                   {/* Sticky header — always visible, never scrolls */}
                   <div style={{ padding:"14px 16px 12px", borderBottom:"1.5px solid #f0f0f0", display:"flex", justifyContent:"space-between", alignItems:"center", flexShrink:0, background:"#fff", borderRadius:"22px 22px 0 0" }}>
-                    <div style={{ fontWeight:900, fontSize:16, color:"#2e7d32" }}>🌱 Add New Plant</div>
+                    <div style={{ fontWeight:900, fontSize:16, color:"#2e7d32" }}>🌱 Add a plant</div>
                     <button onClick={() => setShowAdd(false)}
                       style={{ background:"#ffebee", border:"none", borderRadius:20, padding:"10px 18px", fontSize:14, fontWeight:800, color:"#c62828", cursor:"pointer", fontFamily:"inherit", minHeight:44, minWidth:90, touchAction:"manipulation" }}>
                       ✕ Cancel
@@ -1524,6 +1808,25 @@ export default function App() {
                   </div>
                   {/* Jug number */}
                   <div style={{ marginBottom:12 }}>
+                    {/* Growing method selector — only shows if user has multiple paths */}
+                    {growingPaths.length > 1 && (
+                      <div style={{ marginBottom:12 }}>
+                        <div style={{ fontSize:10, fontWeight:700, color:"#2e7d32", marginBottom:6 }}>🌿 Growing Method</div>
+                        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:6 }}>
+                          {GROWING_PATHS.filter(p => growingPaths.includes(p.id)).map(path => (
+                            <button key={path.id} onClick={() => setNewPlant(p => ({ ...p, growingMethod:path.id, container:path.defaultContainer }))}
+                              style={{ background:newPlant.growingMethod===path.id?path.color:"#f9f9f9", border:newPlant.growingMethod===path.id?`2px solid ${path.accent}`:"2px solid #e0e0e0", borderRadius:10, padding:"9px 10px", cursor:"pointer", fontFamily:"inherit", textAlign:"left", display:"flex", alignItems:"center", gap:8 }}>
+                              <span style={{ fontSize:20 }}>{path.emoji}</span>
+                              <div>
+                                <div style={{ fontWeight:800, fontSize:11, color:path.tc }}>{path.label}</div>
+                                <div style={{ fontSize:9, color:"#777" }}>{path.subtitle}</div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <div style={{ fontSize:10, fontWeight:700, color:"#2e7d32", marginBottom:4 }}>🥛 Jug / Container Label <span style={{ color:"#777", fontWeight:500 }}>(optional)</span></div>
                     <div style={{ display:"flex", gap:8, alignItems:"center" }}>
                       <div style={{ background:"#e8f5e9", borderRadius:8, padding:"10px 12px", fontWeight:900, fontSize:13, color:"#2e7d32", whiteSpace:"nowrap" }}>Jug #</div>
@@ -1580,19 +1883,27 @@ export default function App() {
                       style={{ width:"100%", accentColor:"#29b6f6" }} />
                   </div>
                   <div style={{ marginBottom:14 }}>
-                    <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:6 }}>🏠 Where are you growing?</div>
+                    <div style={{ fontSize:10, fontWeight:700, color:"#666", marginBottom:6 }}>🌱 how are you growing this?</div>
                     <div style={{ display:"flex", gap:7 }}>
-                      {[[false,"🌿","Outdoor"],[ true,"🏠","Indoor"]].map(([val,icon,label]) => (
-                        <button key={label} onClick={() => setNewPlant(p => ({ ...p, indoor:val,
-                          container: val && p.container==="Milk Jug" ? "Mason Jar" : p.container }))}
-                          style={{ flex:1, background:newPlant.indoor===val?"linear-gradient(135deg,#43a047,#66bb6a)":"#f5f5f5", color:newPlant.indoor===val?"#fff":"#666", border:newPlant.indoor===val?"2px solid #2e7d32":"2px solid #e0e0e0", borderRadius:10, padding:"9px 4px", cursor:"pointer", fontFamily:"inherit", fontWeight:800, fontSize:13 }}>
-                          {icon} {label}
+                      {[
+                        ["outdoor","🥛","Outdoor\njug / winter sow"],
+                        ["indoor","🏠","Indoor\nwindowsill / grow light"],
+                      ].map(([val,icon,label]) => (
+                        <button key={val} onClick={() => setNewPlant(p => ({ ...p, growingMethod:val,
+                          container: val==="indoor" && p.container==="Milk Jug" ? "Mason Jar" : p.container }))}
+                          style={{ flex:1, background:newPlant.growingMethod===val?"linear-gradient(135deg,#43a047,#66bb6a)":"#f5f5f5", color:newPlant.growingMethod===val?"#fff":"#666", border:newPlant.growingMethod===val?"2px solid #2e7d32":"2px solid #e0e0e0", borderRadius:10, padding:"9px 6px", cursor:"pointer", fontFamily:"inherit", fontWeight:800, fontSize:11, lineHeight:1.4, whiteSpace:"pre-line", textAlign:"center" }}>
+                          <span style={{ fontSize:18, display:"block", marginBottom:2 }}>{icon}</span>{label}
                         </button>
                       ))}
                     </div>
-                    {newPlant.indoor && (
+                    {newPlant.growingMethod==="indoor" && (
                       <div style={{ background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", borderRadius:9, padding:"7px 10px", marginTop:7, fontSize:10, color:"#333" }}>
-                        🤧 <b>Allergy season tip:</b> Indoor herbs are low-pollen and safe to grow year-round! Mason jars, coffee cans, and yogurt containers work great on a windowsill.
+                        🤧 great for allergy season too — indoor herbs are low pollen and easy on a windowsill!
+                      </div>
+                    )}
+                    {newPlant.growingMethod==="outdoor" && (
+                      <div style={{ background:"#f1f8e9", borderRadius:9, padding:"7px 10px", marginTop:7, fontSize:10, color:"#333" }}>
+                        🥛 milk jugs and winter sowing go here! check the ❄️ Winter guide if you need help getting started.
                       </div>
                     )}
                   </div>
@@ -1632,7 +1943,7 @@ export default function App() {
                   })()}
                   <button onClick={addPlant}
                     style={{ background:"linear-gradient(135deg,#ff6f00,#ff8f00)", border:"none", borderRadius:14, padding:"16px", color:"#fff", fontWeight:900, fontSize:15, cursor:"pointer", fontFamily:"inherit", width:"100%", boxShadow:"0 4px 14px rgba(255,111,0,0.4)", touchAction:"manipulation" }}>
-                    🌱 Let's grow this!
+                    👉 Add it to my garden
                   </button>
                 </div>
                 </div>
@@ -1680,7 +1991,7 @@ export default function App() {
                       🌅 Today — {todayDate.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}
                     </div>
                     {todayEvents.length === 0 ? (
-                      <div style={{ color:"rgba(255,255,255,0.6)", fontSize:11 }}>Nothing scheduled — enjoy the break! 🌿</div>
+                      <div style={{ color:"rgba(255,255,255,0.6)", fontSize:11 }}>Nothing on the schedule — enjoy the chill 🌿</div>
                     ) : (
                       <div style={{ display:"flex", flexDirection:"column", gap:5 }}>
                         {todayWater.length > 0 && (
@@ -1780,7 +2091,7 @@ export default function App() {
                   {selectedEvents.length === 0 ? (
                     <div style={{ textAlign:"center", padding:"14px 0" }}>
                       <div style={{ fontSize:28, marginBottom:6 }}>🌿</div>
-                      <div style={{ fontSize:11, color:"#777" }}>Nothing scheduled — free day!</div>
+                      <div style={{ fontSize:11, color:"#777" }}>All good today — nothing to do 🌱</div>
                     </div>
                   ) : (
                     selectedEvents.map((ev, i) => (
@@ -1939,19 +2250,24 @@ export default function App() {
             {guidesTab === "indoor" && (
               <div>
                 <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", border:"2px solid #a5d6a7" }}>
-                  <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:6 }}>🏠 Indoor & Allergy-Season Gardening</div>
-                  <div style={{ fontSize:11, color:"#333", lineHeight:1.6, marginBottom:10 }}>Can't be outside due to allergies? You can still grow! Indoor herbs are low-pollen, easy, and smell amazing. Most need just a sunny windowsill or a simple grow light.</div>
-                  <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20", marginBottom:6 }}>🤧 Allergy-Safe Tips</div>
+                  <div style={{ fontWeight:900, fontSize:14, color:"#1b5e20", marginBottom:6 }}>
+                    Got allergies 🤧 but still want to garden?
+                  </div>
+                  <div style={{ fontWeight:700, fontSize:12, color:"#2e7d32", marginBottom:8 }}>Plant this instead 👇</div>
+                  <div style={{ fontSize:11, color:"#333", lineHeight:1.7, marginBottom:12 }}>
+                    Can't go outside? You're still good. Grow herbs inside — low pollen, easy, and they smell good too. All you really need is a sunny window (or a cheap grow light).
+                  </div>
+                  <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20", marginBottom:8 }}>🤧 allergy tips</div>
                   {ALLERGY_TIPS.map((t,i) => (
-                    <div key={i} style={{ display:"flex", gap:8, background:"rgba(255,255,255,0.6)", borderRadius:8, padding:"6px 8px", marginBottom:5, fontSize:10, color:"#333" }}>
-                      <span>{t.icon}</span><span>{t.tip}</span>
+                    <div key={i} style={{ display:"flex", gap:8, background:"rgba(255,255,255,0.7)", borderRadius:8, padding:"8px 10px", marginBottom:6, fontSize:11, color:"#333", lineHeight:1.5 }}>
+                      <span style={{ flexShrink:0 }}>{t.icon}</span><span>{t.tip}</span>
                     </div>
                   ))}
                 </div>
-                <div style={{ fontWeight:900, fontSize:13, color:"#2e7d32", margin:"12px 0 8px" }}>🌿 Best Indoor Herbs</div>
+                <div style={{ fontWeight:900, fontSize:13, color:"#2e7d32", margin:"12px 0 8px" }}>🌿 grow these inside — they won't mess with your allergies</div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
                   {INDOOR_GUIDES.map(g => (
-                    <button key={g.name} onClick={() => setSelectedGuide({ ...g, indoor:true })}
+                    <button key={g.name} onClick={() => setSelectedGuide({ ...g, growingMethod:"indoor" })}
                       style={{ background:"#fff", border:`2px solid ${g.allergySafe?"#a5d6a7":"#ffe0b2"}`, borderRadius:14, padding:"11px 7px", textAlign:"center", cursor:"pointer", fontFamily:"inherit", position:"relative", boxShadow:"0 2px 8px #0001" }}>
                       <div style={{ position:"absolute", top:4, right:4, ...badge(g.allergySafe?"#e8f5e9":"#fff3e0", g.allergySafe?"#2e7d32":"#e65100"), fontSize:8 }}>
                         {g.allergySafe ? "✅ Allergy safe" : "⚠️ Check first"}
@@ -1971,45 +2287,48 @@ export default function App() {
                 <div style={{ background:"linear-gradient(135deg,#0d47a1,#1565c0)", borderRadius:18, padding:"18px 16px", marginBottom:12, boxShadow:"0 4px 20px #0d47a140" }}>
                   <div style={{ color:"#fff", fontWeight:900, fontSize:20, marginBottom:4 }}>❄️ Winter Sowing</div>
                   <div style={{ color:"#bbdefb", fontSize:11, lineHeight:1.7 }}>
-                    Start seeds in milk jugs outdoors during winter. Nature does the cold stratification work for you — and seeds sprout when conditions are just right in spring!
+                    Start seeds in milk jugs outdoors during winter or early spring. Nature handles the cold exposure, and seeds sprout when conditions are right.
                   </div>
                 </div>
 
                 {/* What is winter sowing */}
                 <div style={{ ...card, marginBottom:10 }}>
                   <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>🥛 What is Winter Sowing?</div>
-                  <div style={{ fontSize:11, color:"#333", lineHeight:1.7, marginBottom:10 }}>
-                    Winter sowing is planting seeds in milk jugs or other containers and leaving them outside all winter. The jugs act as mini greenhouses — cold temps break seed dormancy naturally, and seeds sprout on their own schedule when spring arrives.
+                  <div style={{ fontSize:11, color:"#333", lineHeight:1.7, marginBottom:12 }}>
+                    Winter sowing is a method where you plant seeds in covered containers (like milk jugs) and leave them outside. The containers act like mini greenhouses, protecting seeds while natural temperature changes help them germinate when spring arrives.
                   </div>
                   <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
-                    {[
-                      { emoji:"✅", title:"What you need", items:["Gallon milk jugs","Potting mix","Seeds","Tape & marker","A drill or knife"] },
-                      { emoji:"🌟", title:"Why it works", items:["No grow lights needed","No indoor space needed","Seeds self-regulate","Stronger seedlings","Basically free!"] },
-                    ].map(s => (
-                      <div key={s.title} style={{ background:"#f9fbe7", borderRadius:10, padding:"10px" }}>
-                        <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20", marginBottom:6 }}>{s.emoji} {s.title}</div>
-                        {s.items.map((item,i) => (
-                          <div key={i} style={{ fontSize:10, color:"#333", marginBottom:3, display:"flex", gap:5 }}>
-                            <span style={{ color:"#43a047" }}>•</span>{item}
-                          </div>
-                        ))}
-                      </div>
-                    ))}
+                    <div style={{ background:"#e8f5e9", borderRadius:10, padding:"11px 10px" }}>
+                      <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20", marginBottom:7 }}>✅ What You Need</div>
+                      {["Milk jugs (or clear containers)","Potting mix","Seeds","Tape + marker","Drill, knife, or something to poke holes"].map((item,i) => (
+                        <div key={i} style={{ fontSize:10, color:"#333", marginBottom:4, display:"flex", gap:6 }}>
+                          <span style={{ color:"#43a047", flexShrink:0 }}>•</span>{item}
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ background:"#e3f2fd", borderRadius:10, padding:"11px 10px" }}>
+                      <div style={{ fontWeight:800, fontSize:11, color:"#1565c0", marginBottom:7 }}>🌟 Why It Works</div>
+                      {["No grow lights needed","No indoor space required","Natural temperature cycles trigger germination","Strong, hardened seedlings","Very low cost"].map((item,i) => (
+                        <div key={i} style={{ fontSize:10, color:"#333", marginBottom:4, display:"flex", gap:6 }}>
+                          <span style={{ color:"#1565c0", flexShrink:0 }}>•</span>{item}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
                 {/* Step by step */}
-                <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>📋 How to Set Up a Winter Sowing Jug</div>
+                <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>📋 How to Set Up a Milk Jug</div>
                 {[
-                  { n:"1", icon:"✂️", title:"Prepare the jug", desc:"Cut the jug almost in half horizontally, leaving a 1–2\" hinge on the handle side so the top flips open. Remove the cap — this is your ventilation!" },
-                  { n:"2", icon:"🕳️", title:"Add drainage holes", desc:"Poke 4–6 holes in the bottom with a drill, nail, or hot skewer. Good drainage is essential — sitting water will rot your seeds." },
-                  { n:"3", icon:"🪨", title:"Add soil", desc:"Fill the bottom half with 3–4\" of moistened potting mix. Don't use garden soil — it compacts and doesn't drain well in containers." },
-                  { n:"4", icon:"🌱", title:"Sow your seeds", desc:"Scatter seeds on the surface and cover lightly per packet directions. Label the outside of the jug with the plant name, variety, and date!" },
-                  { n:"5", icon:"🔒", title:"Close and seal", desc:"Tape the two halves shut with duct tape. Leave the cap off for ventilation and rain to get in." },
-                  { n:"6", icon:"🌨️", title:"Set outside and wait", desc:"Place jugs in a spot that gets some sun and will collect rain/snow. Face them south if possible. Now just... wait! Check monthly." },
-                  { n:"7", icon:"🌱", title:"Watch for sprouts", desc:"When you see sprouts, start cracking the lid open during warm days and close at night. Harden off for 1–2 weeks before fully removing the top." },
+                  { n:"1", icon:"✂️", title:"Prep the jug", desc:"Cut around the middle, leaving a small hinge near the handle so it opens like a clamshell. Remove the cap for ventilation." },
+                  { n:"2", icon:"🕳️", title:"Add drainage", desc:"Poke 4–6 holes in the bottom so excess water can escape." },
+                  { n:"3", icon:"🪴", title:"Add soil", desc:"Fill with 3–4 inches of moist potting mix. Don't use garden soil — it compacts too easily." },
+                  { n:"4", icon:"🌱", title:"Plant seeds", desc:"Sprinkle seeds on top and cover lightly according to packet instructions. Label the jug clearly." },
+                  { n:"5", icon:"🔒", title:"Seal it up", desc:"Tape the jug closed securely, leaving the top open (where the cap was) for airflow and rain." },
+                  { n:"6", icon:"🌤️", title:"Place outside", desc:"Set in a sunny but natural outdoor spot. Rain and weather do the rest." },
+                  { n:"7", icon:"🌱", title:"Wait + watch", desc:"When sprouts appear, open the top on warm days and gradually expose them to outdoor conditions before transplanting." },
                 ].map(step => (
-                  <div key={step.n} style={{ display:"flex", gap:10, background:"#fff", borderRadius:12, padding:"10px 12px", marginBottom:8, border:"1.5px solid #e8f5e9", boxShadow:"0 1px 4px #0001" }}>
+                  <div key={step.n} style={{ display:"flex", gap:10, background:"#fff", borderRadius:12, padding:"11px 12px", marginBottom:8, border:"1.5px solid #e8f5e9", boxShadow:"0 1px 4px #0001" }}>
                     <div style={{ background:"linear-gradient(135deg,#1565c0,#1976d2)", borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:"#fff", fontWeight:900, fontSize:13 }}>{step.n}</div>
                     <div>
                       <div style={{ fontWeight:800, fontSize:12, color:"#1b5e20", marginBottom:3 }}>{step.icon} {step.title}</div>
@@ -2022,80 +2341,103 @@ export default function App() {
                 <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8, marginTop:4 }}>🗺️ When to Start by Zone</div>
                 <div style={{ ...card, marginBottom:10 }}>
                   {[
-                    { zones:"3–4", when:"November–December", note:"Coldest zones — start early so seeds get enough cold stratification" },
-                    { zones:"5–6", when:"December–January", note:"Sweet spot for winter sowing — most seeds do great" },
-                    { zones:"7–8", when:"January–February", note:"Mild winters mean less cold stratification but still works well" },
-                    { zones:"8b–9", when:"November–January", note:"Use the cooler months — avoid sowing when temps stay above 50°F at night" },
-                    { zones:"9–10", when:"October–December", note:"Winter IS your growing season — skip stratification-needing seeds" },
+                    { zones:"3–4",  when:"November–December", note:"Very cold climates — start early for enough cold stratification" },
+                    { zones:"5–6",  when:"December–January",  note:"Best overall timing for winter sowing" },
+                    { zones:"7–8",  when:"January–February",  note:"Mild winters — still works great" },
+                    { zones:"8b–9", when:"November–January",  note:"Use the cooler months only" },
+                    { zones:"9–10", when:"October–December",  note:"Winter IS your growing season" },
                   ].map((r,i) => (
-                    <div key={i} style={{ display:"flex", gap:10, padding:"8px 0", borderBottom: i < 4 ? "1px solid #f0f0f0" : "none" }}>
-                      <div style={{ background:"#e3f2fd", borderRadius:7, padding:"3px 8px", fontSize:10, fontWeight:800, color:"#1565c0", flexShrink:0, alignSelf:"flex-start" }}>Zone {r.zones}</div>
+                    <div key={i} style={{ display:"flex", gap:10, padding:"9px 0", borderBottom: i < 4 ? "1px solid #f0f0f0" : "none" }}>
+                      <div style={{ background:"#e3f2fd", borderRadius:7, padding:"3px 9px", fontSize:10, fontWeight:800, color:"#1565c0", flexShrink:0, alignSelf:"flex-start" }}>Zone {r.zones}</div>
                       <div>
                         <div style={{ fontWeight:800, fontSize:11, color:"#1b5e20" }}>{r.when}</div>
-                        <div style={{ fontSize:10, color:"#888", marginTop:1 }}>{r.note}</div>
+                        <div style={{ fontSize:10, color:"#777", marginTop:1 }}>{r.note}</div>
                       </div>
                     </div>
                   ))}
                   {myZone && (
-                    <div style={{ background:`linear-gradient(135deg,${myZone.color},white)`, borderRadius:9, padding:"8px 10px", marginTop:8, fontSize:11, color:myZone.tc, fontWeight:700 }}>
-                      {myZone.emoji} You're in Zone {myZone.zone} — best window: {
-                        parseFloat(myZone.zone) <= 4 ? "November–December" :
-                        parseFloat(myZone.zone) <= 6 ? "December–January" :
-                        parseFloat(myZone.zone) <= 8 ? "January–February" :
-                        "October–December"
-                      }
+                    <div style={{ background:`linear-gradient(135deg,${myZone.color},white)`, borderRadius:10, padding:"10px 12px", marginTop:10, border:`1.5px solid ${myZone.tc}20` }}>
+                      <div style={{ fontWeight:900, fontSize:12, color:myZone.tc, marginBottom:2 }}>
+                        {myZone.emoji} You're in Zone {myZone.zone}
+                      </div>
+                      <div style={{ fontSize:11, color:myZone.tc, fontWeight:700 }}>
+                        Best window: {
+                          parseFloat(myZone.zone) <= 4 ? "November–December" :
+                          parseFloat(myZone.zone) <= 6 ? "December–January"  :
+                          parseFloat(myZone.zone) <= 8 ? "January–February"  :
+                          "October–December"
+                        }
+                      </div>
                     </div>
                   )}
                 </div>
 
-                {/* Best plants for winter sowing */}
+                {/* Best plants */}
                 <div style={{ fontWeight:900, fontSize:13, color:"#1b5e20", marginBottom:8 }}>🌿 Best Plants for Winter Sowing</div>
-                <div style={{ ...card, marginBottom:10 }}>
+                <div style={{ ...card, marginBottom:12 }}>
                   {[
-                    { emoji:"✅", label:"Easy — perfect for beginners", plants:["Tomatoes","Peppers","Kale","Lettuce","Spinach","Broccoli","Cabbage","Marigolds","Zinnias"] },
-                    { emoji:"🌸", label:"Flowers that love cold stratification", plants:["Coneflower","Black-eyed Susan","Columbine","Lavender","Yarrow","Foxglove","Snapdragons"] },
-                    { emoji:"🌿", label:"Herbs that winter sow well", plants:["Parsley","Chives","Dill","Cilantro","Chamomile","Lemon balm","Thyme"] },
-                    { emoji:"⚠️", label:"Skip these — need warm starts only", plants:["Basil","Cucumbers","Squash","Melons","Sweet potatoes"] },
+                    { emoji:"✅", label:"Easy starters",                  color:"#e8f5e9", tc:"#2e7d32", plants:["Tomatoes","Peppers","Kale","Lettuce","Spinach","Broccoli","Cabbage","Marigolds","Zinnias"] },
+                    { emoji:"🌸", label:"Cold-stratification flowers",     color:"#fce4ec", tc:"#880e4f", plants:["Coneflower","Black-eyed Susan","Columbine","Lavender","Yarrow","Foxglove","Snapdragons"] },
+                    { emoji:"🌿", label:"Herbs",                           color:"#f1f8e9", tc:"#33691e", plants:["Parsley","Chives","Dill","Cilantro","Chamomile","Lemon balm","Thyme"] },
+                    { emoji:"⚠️", label:"Skip — need warm starts only",    color:"#fff3e0", tc:"#e65100", plants:["Basil","Cucumbers","Squash","Melons","Sweet potatoes"] },
                   ].map((g,i) => (
-                    <div key={i} style={{ marginBottom: i < 3 ? 10 : 0 }}>
-                      <div style={{ fontWeight:700, fontSize:10, color: i===3?"#e65100":"#2e7d32", marginBottom:5 }}>{g.emoji} {g.label}</div>
-                      <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
+                    <div key={i} style={{ marginBottom: i < 3 ? 12 : 0 }}>
+                      <div style={{ background:g.color, borderRadius:8, padding:"5px 9px", display:"inline-block", fontWeight:800, fontSize:10, color:g.tc, marginBottom:6 }}>{g.emoji} {g.label}</div>
+                      <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>
                         {g.plants.map(p => (
-                          <span key={p} style={{ background: i===3?"#fff3e0":"#e8f5e9", color: i===3?"#e65100":"#2e7d32", borderRadius:6, padding:"2px 7px", fontSize:10 }}>{p}</span>
+                          <span key={p} style={{ background:g.color, color:g.tc, borderRadius:6, padding:"3px 8px", fontSize:10, fontWeight:600 }}>{p}</span>
                         ))}
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Jug tracker tip */}
+                {/* Plant Tracker link */}
                 <div style={{ ...card, background:"linear-gradient(135deg,#e8f5e9,#e3f2fd)", border:"1.5px solid #a5d6a7" }}>
-                  <div style={{ fontWeight:800, fontSize:12, color:"#1b5e20", marginBottom:6 }}>🌿 Use the Plant Tracker for your jugs!</div>
-                  <div style={{ fontSize:11, color:"#333", lineHeight:1.7 }}>
-                    Label each jug with a number on tape, then add it to the Plant Tracker tab with that number. You'll always know what's in Jug #1, Jug #2, and so on — even when they all look the same in February! Tap the Tracker tab to get started.
+                  <div style={{ fontWeight:800, fontSize:12, color:"#1b5e20", marginBottom:6 }}>🌿 Track your jugs in the Plant Tracker!</div>
+                  <div style={{ fontSize:11, color:"#333", lineHeight:1.7, marginBottom:10 }}>
+                    Label each jug with a number on tape, then add it in the Plant Tracker tab. You'll always know what's in Jug #1 vs Jug #2 — even in February when they all look the same!
                   </div>
                   <button onClick={() => setTab("tracker")}
-                    style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), marginTop:10, fontSize:11, width:"100%" }}>
+                    style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), fontSize:11, width:"100%" }}>
                     🌿 Go to Plant Tracker →
                   </button>
                 </div>
               </div>
             )}
 
-            {guidesTab === "watering" && WATERING_METHODS.map(m => (
-              <button key={m.id} onClick={() => setSelectedWatering(m)}
-                style={{ ...card, width:"100%", textAlign:"left", cursor:"pointer", display:"flex", gap:11, alignItems:"center" }}>
-                <span style={{ fontSize:32 }}>{m.emoji}</span>
-                <div style={{ flex:1 }}>
-                  <div style={{ display:"flex", gap:5, alignItems:"center", flexWrap:"wrap" }}>
-                    <span style={{ fontWeight:900, fontSize:13, color:"#1b5e20" }}>{m.title}</span>
-                    <span style={{ ...badge(m.badgeColor,"#fff"), fontSize:9 }}>{m.badge}</span>
-                  </div>
-                  <div style={{ fontSize:10, color:"#888", marginTop:2 }}>{m.desc.slice(0,55)}…</div>
+            {guidesTab === "watering" && (
+              <div>
+                {/* Method toggle on list page too */}
+                <div style={{ display:"flex", gap:7, marginBottom:12 }}>
+                  {[["outdoor","🌿 Outdoor / milk jug"],["indoor","🏠 Indoor / windowsill"]].map(([val,label]) => (
+                    <button key={val} onClick={() => setGuideMethod(val)}
+                      style={{ flex:1, background:guideMethod===val?"linear-gradient(135deg,#43a047,#66bb6a)":"#f5f5f5", color:guideMethod===val?"#fff":"#666", border:guideMethod===val?"2px solid #2e7d32":"1.5px solid #e0e0e0", borderRadius:10, padding:"8px 4px", cursor:"pointer", fontFamily:"inherit", fontWeight:800, fontSize:10, textAlign:"center" }}>
+                      {label}
+                    </button>
+                  ))}
                 </div>
-                <span style={{ fontSize:16, color:"#999" }}>›</span>
-              </button>
-            ))}
+                {WATERING_METHODS
+                  .filter(m => {
+                    if (guideMethod === "indoor") return m.id !== "closedjug" && m.id !== "wintersow";
+                    return true;
+                  })
+                  .map(m => (
+                  <button key={m.id} onClick={() => setSelectedWatering(m)}
+                    style={{ ...card, width:"100%", textAlign:"left", cursor:"pointer", display:"flex", gap:11, alignItems:"center" }}>
+                    <span style={{ fontSize:32 }}>{m.emoji}</span>
+                    <div style={{ flex:1 }}>
+                      <div style={{ display:"flex", gap:5, alignItems:"center", flexWrap:"wrap" }}>
+                        <span style={{ fontWeight:900, fontSize:13, color:"#1b5e20" }}>{m.title}</span>
+                        <span style={{ ...badge(m.badgeColor,"#fff"), fontSize:9 }}>{m.badge}</span>
+                      </div>
+                      <div style={{ fontSize:10, color:"#888", marginTop:2 }}>{m.desc.slice(0,60)}…</div>
+                    </div>
+                    <span style={{ fontSize:16, color:"#999" }}>›</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -2143,7 +2485,7 @@ export default function App() {
                 </div>
               )}
               <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:10, padding:10, marginTop:10 }}>
-                <div style={{ fontWeight:800, color:"#f57f17", fontSize:11, marginBottom:2 }}>{selectedGuide.indoor ? "💡 Indoor Tip" : "💡 Milk Jug Tip"}</div>
+                <div style={{ fontWeight:800, color:"#f57f17", fontSize:11, marginBottom:2 }}>{selectedGuide.indoor ? "💡 indoor tip" : "💡 milk jug tip"}</div>
                 <div style={{ fontSize:11, color:"#333", lineHeight:1.5 }}>{selectedGuide.tip}</div>
               </div>
               {(() => {
@@ -2183,25 +2525,67 @@ export default function App() {
 
         {tab === "guides" && selectedWatering && (
           <div>
-            <button onClick={() => setSelectedWatering(null)} style={{ ...btn("#e3f2fd","#1565c0"), marginBottom:10 }}>← Back</button>
+            <button onClick={() => setSelectedWatering(null)} style={{ ...btn("#e3f2fd","#1565c0"), marginBottom:10 }}>← back</button>
+
+            {/* Method toggle */}
+            <div style={{ display:"flex", gap:7, marginBottom:12 }}>
+              {[["outdoor","🌿 Outdoor / milk jug"],["indoor","🏠 Indoor / windowsill"]].map(([val,label]) => (
+                <button key={val} onClick={() => setGuideMethod(val)}
+                  style={{ flex:1, background:guideMethod===val?"linear-gradient(135deg,#43a047,#66bb6a)":"#f5f5f5", color:guideMethod===val?"#fff":"#666", border:guideMethod===val?"2px solid #2e7d32":"1.5px solid #e0e0e0", borderRadius:10, padding:"8px 4px", cursor:"pointer", fontFamily:"inherit", fontWeight:800, fontSize:10, textAlign:"center" }}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
             <div style={card}>
               <div style={{ textAlign:"center", fontSize:44 }}>{selectedWatering.emoji}</div>
               <div style={{ textAlign:"center", fontWeight:900, fontSize:17, color:"#1b5e20", marginTop:5 }}>{selectedWatering.title}</div>
               <div style={{ textAlign:"center", marginTop:5 }}><span style={badge(selectedWatering.badgeColor,"#fff")}>{selectedWatering.badge}</span></div>
-              <div style={{ background:"#f9fbe7", borderRadius:9, padding:9, marginTop:10, fontSize:11, color:"#333", lineHeight:1.5 }}>{selectedWatering.desc}</div>
-              <div style={{ fontWeight:800, fontSize:12, color:"#2e7d32", marginTop:12, marginBottom:6 }}>📋 Steps</div>
+
+              {/* Common description */}
+              <div style={{ background:"#f9fbe7", borderRadius:9, padding:9, marginTop:10, fontSize:11, color:"#333", lineHeight:1.6 }}>{selectedWatering.desc}</div>
+
+              {/* Steps — always shown */}
+              <div style={{ fontWeight:800, fontSize:12, color:"#2e7d32", marginTop:12, marginBottom:6 }}>📋 what to do</div>
               {selectedWatering.steps.map((s,i) => (
                 <div key={i} style={{ display:"flex", gap:7, background:"#f5f5f5", borderRadius:9, padding:"7px 9px", marginBottom:5 }}>
                   <span style={{ fontWeight:900, color:"#43a047", flexShrink:0 }}>{i+1}.</span>
                   <span style={{ fontSize:11, color:"#333" }}>{s}</span>
                 </div>
               ))}
-              <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:9, padding:9, marginTop:9 }}>
-                <div style={{ fontWeight:800, color:"#f57f17", fontSize:11, marginBottom:2 }}>💡 Pro Tip</div>
+
+              {/* Indoor-only section */}
+              {guideMethod === "indoor" && selectedWatering.indoorTips && (
+                <div style={{ background:"linear-gradient(135deg,#e3f2fd,#e8f5e9)", borderRadius:10, padding:"10px 12px", marginTop:12, border:"1.5px solid #90caf9" }}>
+                  <div style={{ fontWeight:800, fontSize:11, color:"#1565c0", marginBottom:7 }}>🏠 since you're growing indoors</div>
+                  {selectedWatering.indoorTips.map((t,i) => (
+                    <div key={i} style={{ display:"flex", gap:7, fontSize:11, color:"#333", marginBottom:5 }}>
+                      <span style={{ flexShrink:0 }}>{t.icon}</span><span>{t.text}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Outdoor-only section */}
+              {guideMethod === "outdoor" && selectedWatering.outdoorTips && (
+                <div style={{ background:"linear-gradient(135deg,#e8f5e9,#f1f8e9)", borderRadius:10, padding:"10px 12px", marginTop:12, border:"1.5px solid #a5d6a7" }}>
+                  <div style={{ fontWeight:800, fontSize:11, color:"#2e7d32", marginBottom:7 }}>🌿 since you're growing outside / in a jug</div>
+                  {selectedWatering.outdoorTips.map((t,i) => (
+                    <div key={i} style={{ display:"flex", gap:7, fontSize:11, color:"#333", marginBottom:5 }}>
+                      <span style={{ flexShrink:0 }}>{t.icon}</span><span>{t.text}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Tip */}
+              <div style={{ background:"linear-gradient(135deg,#fffde7,#fff9c4)", borderRadius:9, padding:9, marginTop:12 }}>
+                <div style={{ fontWeight:800, color:"#f57f17", fontSize:11, marginBottom:2 }}>💡 heads up</div>
                 <div style={{ fontSize:11, color:"#333" }}>{selectedWatering.tip}</div>
               </div>
+
               <div style={{ marginTop:9 }}>
-                <div style={{ fontSize:10, fontWeight:700, color:"#333", marginBottom:4 }}>Best for:</div>
+                <div style={{ fontSize:10, fontWeight:700, color:"#333", marginBottom:4 }}>works well for:</div>
                 <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>{selectedWatering.bestFor.map(c => <span key={c} style={badge("#e3f2fd","#1565c0")}>{c}</span>)}</div>
               </div>
             </div>
@@ -2461,11 +2845,11 @@ export default function App() {
             {plants.length === 0 ? (
               <div style={{ textAlign:"center", padding:"36px 0", color:"#777" }}>
                 <div style={{ fontSize:44 }}>🌿</div>
-                <div style={{ fontWeight:800, marginTop:8, fontSize:13 }}>No plants tracked yet!</div>
-                <div style={{ fontSize:11, marginTop:4 }}>Add a plant with a container label to see it here.</div>
+                <div style={{ fontWeight:800, marginTop:8, fontSize:13 }}>nothing here yet!</div>
+                <div style={{ fontSize:11, marginTop:4 }}>add a plant and give it a container number — then you'll see it here 👇</div>
                 <button onClick={() => { setTab("garden"); setShowAdd(true); }}
                   style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), marginTop:14, fontSize:12 }}>
-                  + Add Your First Plant
+                  + Add a plant first
                 </button>
               </div>
             ) : (
@@ -2518,7 +2902,7 @@ export default function App() {
                                   <span style={{ fontSize:18 }}>{plant.emoji}</span>
                                   <span style={{ fontWeight:900, fontSize:13, color:"#1b5e20" }}>{plant.name}</span>
                                 </div>
-                                <div style={{ fontSize:10, color:"#777", marginBottom:5 }}>Day {days} · {plant.container}{plant.indoor?" · 🏠":""}</div>
+                                <div style={{ fontSize:10, color:"#777", marginBottom:5 }}>Day {days} · {plant.container}{plant.growingMethod==="indoor" ? " · 🏠" : plant.growingMethod==="outdoor" ? " · 🌿" : ""}</div>
 
                                 {/* Live status row */}
                                 <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
@@ -2744,7 +3128,7 @@ export default function App() {
                         setShowAdd(true);
                       }}
                       style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", fontSize:12 }}>
-                      🌱 Add this plant to My Garden
+                      👉 add it to my garden
                     </button>
                   </>
                 )}
@@ -2772,7 +3156,7 @@ export default function App() {
                 <div>
                   <div style={{ color:"#fff", fontWeight:900, fontSize:17 }}>{p.name}</div>
                   <div style={{ color:"#c8e6c9", fontSize:10 }}>
-                    {p.jugNumber ? `🥛 Jug #${p.jugNumber} · ` : ""}📦 {p.container} · 🗓 {days} days old
+                    {p.jugNumber ? `🥛 Jug #${p.jugNumber} · ` : ""}{p.growingMethod==="indoor"?"🏠 Indoor":"🌿 Outdoor"} · {p.container} · Day {days}
                   </div>
                 </div>
               </div>
@@ -2789,10 +3173,10 @@ export default function App() {
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:9, marginBottom:10 }}>
                 <div style={{ ...card, background:thirsty?"linear-gradient(135deg,#fff3e0,#ffe0b2)":"#fff", border:thirsty?"2px solid #ff9800":"2px solid #e3f2fd" }}>
                   <div style={{ fontSize:20 }}>💧</div>
-                  <div style={{ fontWeight:900, fontSize:11, color:thirsty?"#e65100":"#1565c0", marginTop:4 }}>{thirsty?"Needs water!":"Watered"}</div>
-                  <div style={{ fontSize:10, color:"#666" }}>{daysSince(p.lastWatered)}d ago</div>
-                  <div style={{ fontSize:10, color:"#888", marginTop:2 }}>Schedule: {wLabel(wr)}</div>
-                  <button onClick={() => waterPlant(p.id)} style={{ ...btn("linear-gradient(135deg,#29b6f6,#4dd0e1)"), marginTop:7, padding:"4px 9px", fontSize:10 }}>💧 Water now</button>
+                  <div style={{ fontWeight:900, fontSize:11, color:thirsty?"#e65100":"#1565c0", marginTop:4 }}>{thirsty?"🔥 Needs water!":"✅ Just watered"}</div>
+                  <div style={{ fontSize:10, color:"#666" }}>{daysSince(p.lastWatered) === 0 ? "like just now" : `${daysSince(p.lastWatered)}d ago`}</div>
+                  <div style={{ fontSize:10, color:"#888", marginTop:2 }}>water {wLabel(wr)}</div>
+                  <button onClick={() => waterPlant(p.id)} style={{ ...btn("linear-gradient(135deg,#29b6f6,#4dd0e1)"), marginTop:7, padding:"4px 9px", fontSize:10 }}>👉 Just watered</button>
                 </div>
                 <div style={card}>
                   <div style={{ fontSize:20 }}>🗓</div>
@@ -2808,8 +3192,8 @@ export default function App() {
                   style={{ width:"100%", background:"linear-gradient(135deg,#43a047,#66bb6a)", border:"none", borderRadius:14, padding:"14px", marginBottom:10, cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:10, boxShadow:"0 4px 14px #43a04740" }}>
                   <span style={{ fontSize:28 }}>🌱</span>
                   <div style={{ textAlign:"left" }}>
-                    <div style={{ color:"#fff", fontWeight:900, fontSize:15 }}>Sprouted!</div>
-                    <div style={{ color:"#c8e6c9", fontSize:10 }}>Tap when you see the first sprout</div>
+                    <div style={{ color:"#fff", fontWeight:900, fontSize:15 }}>It sprouted! 🌱</div>
+                    <div style={{ color:"#c8e6c9", fontSize:10 }}>tap it when you spot the first one 👀</div>
                   </div>
                 </button>
               ) : (
@@ -2899,10 +3283,18 @@ export default function App() {
                 )}
                 {ts.urgency === "growing" && (
                   <div style={{ background:"rgba(255,255,255,0.6)", borderRadius:9, padding:"7px 10px", marginTop:6, fontSize:10, color:"#888" }}>
-                    🌱 Keep growing! Check back when you see <b>2 sets of true leaves</b> — that's your green light.
+                    🌱 keep growing! check back when you see <b>2 sets of true leaves</b> — that's your green light.
                   </div>
                 )}
-                <button onClick={() => markTransplanted(p.id)} style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", marginTop:10 }}>✅ Mark as Transplanted</button>
+                {/* Growing method tip */}
+                {(ts.urgency === "ready" || ts.urgency === "urgent") && (
+                  <div style={{ background:"rgba(255,255,255,0.7)", borderRadius:9, padding:"7px 10px", marginTop:6, fontSize:10, color:"#555" }}>
+                    {p.growingMethod === "indoor"
+                      ? "🏠 since this is indoors — move it to a bigger container, or harden it off outside if you're ready for that step"
+                      : "🌿 time to move it to a bigger container outside — it's ready!"}
+                  </div>
+                )}
+                <button onClick={() => markTransplanted(p.id)} style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", marginTop:10 }}>🪴 Yep, I transplanted it</button>
               </div>
 
               {/* Transplant Pro Teaser */}
@@ -2997,7 +3389,7 @@ export default function App() {
                 ].sort((a,b) => a.date.localeCompare(b.date));
                 return (
                   <div style={{ ...card, marginBottom:9 }}>
-                    <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20", marginBottom:12 }}>🌱 Plant Timeline</div>
+                    <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20", marginBottom:12 }}>🌿 What's been happening</div>
                     {!p.sproutedDate && !sprouted && (
                       <div style={{ background:"#e8f5e9", borderRadius:8, padding:"6px 10px", marginBottom:10, fontSize:10, color:"#2e7d32", fontWeight:700 }}>
                         🌱 Sprout expected: Day {sproutMin}–{sproutMax} · {daysSince(p.planted) < sproutMin ? `${sproutMin - daysSince(p.planted)} days to go` : "Check daily!"}
@@ -3045,7 +3437,7 @@ export default function App() {
                 return (
                   <div style={{ ...card, marginBottom:9 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
-                      <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20" }}>📸 Progress Timeline</div>
+                      <div style={{ fontWeight:900, fontSize:12, color:"#1b5e20" }}>📸 Plant updates</div>
                       <button onClick={() => setShowProgressForm(v => !v)}
                         style={{ ...btn(showProgressForm?"#f5f5f5":"linear-gradient(135deg,#43a047,#66bb6a)", showProgressForm?"#888":"#fff"), padding:"5px 11px", fontSize:10 }}>
                         {showProgressForm ? "✕ Cancel" : "+ Add Update"}
@@ -3055,7 +3447,7 @@ export default function App() {
                     {/* Add note form */}
                     {showProgressForm && (
                       <div style={{ background:"#f9fbe7", borderRadius:12, padding:"12px", marginBottom:12, border:"1.5px solid #c8e6c9" }}>
-                        <div style={{ fontSize:10, fontWeight:700, color:"#333", marginBottom:6 }}>How's your plant doing?</div>
+                        <div style={{ fontSize:10, fontWeight:700, color:"#333", marginBottom:6 }}>how's it going? 🌱</div>
                         {/* Mood picker */}
                         <div style={{ display:"flex", gap:6, marginBottom:8, flexWrap:"wrap" }}>
                           {MOODS.map(m => (
@@ -3075,7 +3467,7 @@ export default function App() {
                         <button
                           onClick={() => addProgressNote(p.id, newProgressNote, newProgressMood)}
                           style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", marginTop:8, fontSize:12 }}>
-                          ✅ Save Update
+                          ✅ save it
                         </button>
                       </div>
                     )}
@@ -3084,8 +3476,8 @@ export default function App() {
                     {log.length === 0 ? (
                       <div style={{ textAlign:"center", padding:"20px 0", color:"#888" }}>
                         <div style={{ fontSize:32, marginBottom:6 }}>📸</div>
-                        <div style={{ fontSize:11, fontWeight:700 }}>No updates yet</div>
-                        <div style={{ fontSize:10, marginTop:3 }}>Tap "+ Add Update" to log your first progress note!</div>
+                        <div style={{ fontSize:11, fontWeight:700 }}>nothing logged yet</div>
+                        <div style={{ fontSize:10, marginTop:3 }}>add your first update up there 👆</div>
                       </div>
                     ) : (
                       <div style={{ position:"relative", paddingLeft:16 }}>
@@ -3136,7 +3528,7 @@ export default function App() {
               ) : null}
               <button onClick={() => deletePlant(p.id)}
                 style={{ ...btn("#ffebee","#c62828"), width:"100%", marginTop:4, border:"2px solid #ffcdd2" }}>
-                🗑️ Remove Plant
+                🗑️ Remove this plant
               </button>
             </div>
           </div>
@@ -3168,9 +3560,9 @@ export default function App() {
               <span className="confetti-4">✨</span>
               <span className="confetti-5">🌼</span>
               <div className="sprout-emoji" style={{ fontSize:64, marginBottom:10 }}>🌱</div>
-              <div style={{ color:"#fff", fontWeight:900, fontSize:22, marginBottom:6 }}>It sprouted!!</div>
+              <div style={{ color:"#fff", fontWeight:900, fontSize:22, marginBottom:6 }}>IT SPROUTED!! 🎉</div>
               <div style={{ color:"#a5d6a7", fontSize:13 }}>
-                {sproutCelebration.emoji} <b style={{ color:"#fff" }}>{sproutCelebration.name}</b> has its first sprout!
+                {sproutCelebration.emoji} <b style={{ color:"#fff" }}>{sproutCelebration.name}</b> just sprouted! look at you growing stuff 👏
               </div>
             </div>
 
@@ -3178,21 +3570,21 @@ export default function App() {
               {/* Stats */}
               <div style={{ background:"#e8f5e9", borderRadius:12, padding:"12px 14px", marginBottom:14, textAlign:"center" }}>
                 <div style={{ fontWeight:900, fontSize:13, color:"#2e7d32", marginBottom:4 }}>
-                  🗓 Day {daysSince(sproutCelebration.planted)} after planting
+                  🗓 day {daysSince(sproutCelebration.planted)} after planting — not bad!
                 </div>
                 <div style={{ fontSize:11, color:"#333" }}>
-                  Sprouted on {new Date(TODAY+"T12:00:00").toLocaleDateString("en-US",{ weekday:"long", month:"long", day:"numeric" })}
+                  {new Date(TODAY+"T12:00:00").toLocaleDateString("en-US",{ weekday:"long", month:"long", day:"numeric" })}
                 </div>
               </div>
 
-              {/* What to watch for next */}
+              {/* What to do next */}
               <div style={{ background:"#fffde7", borderRadius:12, padding:"12px 14px", marginBottom:14, border:"1.5px solid #f9a825" }}>
-                <div style={{ fontWeight:800, fontSize:12, color:"#f57f17", marginBottom:8 }}>🌿 What happens next</div>
+                <div style={{ fontWeight:800, fontSize:12, color:"#f57f17", marginBottom:8 }}>🌿 okay here's what to do now</div>
                 {[
-                  "Keep soil moist but not soaked — sprouts are fragile",
-                  "Make sure it's getting light — leggy sprouts need more sun",
-                  "Look for true leaves in the next 1–2 weeks",
-                  "True leaves = almost transplant time! 🪴",
+                  "Keep the soil moist but don't drown it — sprouts are delicate",
+                  "Make sure it's getting light — if it's stretching out it needs more sun",
+                  "Watch for true leaves in the next 1–2 weeks",
+                  "True leaves = almost time to transplant! 🪴",
                 ].map((t,i) => (
                   <div key={i} style={{ display:"flex", gap:7, fontSize:11, color:"#333", marginBottom:5 }}>
                     <span style={{ color:"#f57f17", flexShrink:0 }}>•</span>{t}
@@ -3202,12 +3594,12 @@ export default function App() {
 
               {/* Note logged */}
               <div style={{ background:"#f5f5f5", borderRadius:10, padding:"9px 12px", marginBottom:14, fontSize:10, color:"#888" }}>
-                ✅ Progress note logged automatically to your timeline!
+                📸 we added this to your plant updates automatically
               </div>
 
               <button onClick={() => setSproutCelebration(null)}
                 style={{ ...btn("linear-gradient(135deg,#43a047,#66bb6a)"), width:"100%", fontSize:13, padding:13 }}>
-                🌱 Woohoo! Back to my garden
+                🌱 okay i'm excited, back to my garden
               </button>
             </div>
           </div>
@@ -3225,22 +3617,22 @@ export default function App() {
             <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", padding:"24px 20px 20px", textAlign:"center" }}>
               <div style={{ fontSize:52, marginBottom:8 }}>🎉</div>
               <div style={{ color:"#fff", fontWeight:900, fontSize:20, marginBottom:4 }}>
-                You transplanted {congratsPlant.emoji} {congratsPlant.name}!
+                you moved your {congratsPlant.emoji} {congratsPlant.name}!!
               </div>
               <div style={{ color:"#a5d6a7", fontSize:12, lineHeight:1.5 }}>
-                Amazing milestone — your plant just leveled up! 🌱
+                okay this is actually such a big deal 👏
               </div>
             </div>
 
             <div style={{ padding:"18px 20px" }}>
               {/* What just happened */}
               <div style={{ background:"#e8f5e9", borderRadius:12, padding:"12px 14px", marginBottom:14 }}>
-                <div style={{ fontWeight:900, fontSize:12, color:"#2e7d32", marginBottom:6 }}>✅ What was updated</div>
+                <div style={{ fontWeight:900, fontSize:12, color:"#2e7d32", marginBottom:6 }}>here's what we updated</div>
                 <div style={{ fontSize:11, color:"#333", lineHeight:1.7 }}>
-                  • Planting date reset to today<br/>
-                  • Transplant signs cleared<br/>
-                  • Health +10 boost applied<br/>
-                  • Timeline restarted from Day 1
+                  • planting date reset to today<br/>
+                  • transplant checklist cleared<br/>
+                  • health got a little boost<br/>
+                  • timeline starts fresh from Day 1
                 </div>
               </div>
 
@@ -3251,15 +3643,15 @@ export default function App() {
                 );
                 return (
                   <div style={{ background:"#fff9c4", borderRadius:12, padding:"12px 14px", marginBottom:14, border:"1.5px solid #f9a825" }}>
-                    <div style={{ fontWeight:900, fontSize:12, color:"#f57f17", marginBottom:5 }}>💡 Free aftercare tip</div>
+                    <div style={{ fontWeight:900, fontSize:12, color:"#f57f17", marginBottom:5 }}>💡 free tip before you go</div>
                     {guide ? (
                       <>
                         <div style={{ fontSize:11, color:"#333", lineHeight:1.6, marginBottom:6 }}>{guide.aftercare[0]}</div>
-                        <div style={{ fontSize:10, color:"#888" }}>+ {guide.aftercare.length - 1} more aftercare tips in Transplant Pro →</div>
+                        <div style={{ fontSize:10, color:"#888" }}>+ {guide.aftercare.length - 1} more tips in Transplant Pro if you want them →</div>
                       </>
                     ) : (
                       <div style={{ fontSize:11, color:"#333", lineHeight:1.6 }}>
-                        Keep out of direct sun for 2–3 days and water gently. Your plant needs time to settle in its new home!
+                        keep it out of direct sun for a couple days and water gently — it needs a minute to adjust 🌱
                       </div>
                     )}
                   </div>
@@ -3268,25 +3660,25 @@ export default function App() {
 
               {/* Pro upsell */}
               <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:12, padding:"14px", marginBottom:14 }}>
-                <div style={{ color:"#fff", fontWeight:900, fontSize:13, marginBottom:4 }}>🌱 What happens next?</div>
+                <div style={{ color:"#fff", fontWeight:900, fontSize:13, marginBottom:4 }}>🌱 what do i do now though?</div>
                 <div style={{ color:"#a5d6a7", fontSize:11, lineHeight:1.6, marginBottom:10 }}>
-                  Get the full step-by-step aftercare guide — what to do on Day 1, Day 3, Day 7, and beyond. Plus common mistakes to avoid right after transplanting.
+                  the Transplant Pro guide walks you through exactly what to do on Day 1, Day 3, Day 7 and beyond — plus the mistakes most beginners make after moving a plant.
                 </div>
                 <div style={{ display:"flex", gap:5, flexWrap:"wrap", marginBottom:12 }}>
-                  {["🌿 Full aftercare plan","⚠️ Common mistakes","💧 Watering adjustments","🌡️ Recovery signs"].map(f => (
+                  {["🌿 aftercare plan","⚠️ common mistakes","💧 watering tips","🌡️ recovery signs"].map(f => (
                     <span key={f} style={{ background:"rgba(255,255,255,0.15)", borderRadius:6, padding:"3px 8px", fontSize:10, color:"#c8e6c9" }}>{f}</span>
                   ))}
                 </div>
                 <button
                   onClick={() => { setCongratsPlant(null); setShowTransplantPro(true); }}
                   style={{ width:"100%", background:"linear-gradient(135deg,#ff9800,#ff6f00)", border:"none", borderRadius:10, padding:"12px", color:"#fff", fontWeight:900, fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>
-                  🔓 Unlock Transplant Pro Guide
+                  🔓 unlock the transplant guide
                 </button>
               </div>
 
               <button onClick={() => setCongratsPlant(null)}
                 style={{ width:"100%", background:"#f5f5f5", border:"none", borderRadius:10, padding:"11px", color:"#888", fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
-                I'm good for now — back to my garden
+                nah i'm good, back to my garden
               </button>
             </div>
           </div>
@@ -3354,7 +3746,7 @@ export default function App() {
       {/* ── INSTALL BANNER ── */}
       {showInstallBanner && (
         <div style={{ position:"fixed", bottom:80, left:"50%", transform:"translateX(-50%)", width:"calc(100% - 32px)", maxWidth:448, zIndex:350, background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:16, padding:"12px 14px", boxShadow:"0 8px 32px rgba(0,0,0,0.25)", display:"flex", alignItems:"center", gap:10 }}>
-          <img src="/icon-192.png" style={{ width:36, height:36, borderRadius:"50%", flexShrink:0 }} alt="Lazy Sprout" />
+          <img src="/icon-192.png" onError={ev=>{ev.target.style.display='none'}} style={{ width:36, height:36, borderRadius:"50%", flexShrink:0 }} alt="Lazy Sprout" />
           <div style={{ flex:1 }}>
             <div style={{ color:"#fff", fontWeight:900, fontSize:12 }}>Add Lazy Sprout to your home screen!</div>
             <div style={{ color:"#a5d6a7", fontSize:10, marginTop:1 }}>Get the full app experience 🌱</div>
@@ -3365,6 +3757,53 @@ export default function App() {
           </button>
           <button onClick={() => setShowInstallBanner(false)}
             style={{ background:"none", border:"none", color:"rgba(255,255,255,0.5)", fontSize:16, cursor:"pointer", padding:"0 4px", flexShrink:0 }}>✕</button>
+        </div>
+      )}
+
+      {/* ── PATHS PICKER SHEET ── */}
+      {showPathsPicker && (
+        <div style={{ position:"fixed", inset:0, background:"#000a", zIndex:400, display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+          onClick={() => setShowPathsPicker(false)}>
+          <div style={{ background:"#fff", borderRadius:"22px 22px 0 0", width:"100%", maxWidth:480, maxHeight:"88vh", overflowY:"auto", paddingBottom:30 }}
+            onClick={ev => ev.stopPropagation()}>
+            <div style={{ background:"linear-gradient(135deg,#1b5e20,#2e7d32)", borderRadius:"22px 22px 0 0", padding:"20px 18px 18px" }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                <div>
+                  <div style={{ color:"#fff", fontWeight:900, fontSize:18 }}>🌿 My Growing Paths</div>
+                  <div style={{ color:"#a5d6a7", fontSize:11, marginTop:3 }}>Update how you're growing — pick all that apply</div>
+                </div>
+                <button onClick={() => setShowPathsPicker(false)}
+                  style={{ background:"rgba(255,255,255,0.2)", border:"none", borderRadius:8, padding:"4px 10px", color:"#fff", cursor:"pointer", fontFamily:"inherit", fontWeight:700, fontSize:12 }}>✕</button>
+              </div>
+            </div>
+            <div style={{ padding:"16px 18px" }}>
+              <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:16 }}>
+                {GROWING_PATHS.map(path => {
+                  const selected = growingPaths.includes(path.id);
+                  return (
+                    <button key={path.id} onClick={() => togglePath(path.id)}
+                      style={{ background:selected?path.color:"#fafafa", border:selected?`2.5px solid ${path.accent}`:"2px solid #e0e0e0", borderRadius:14, padding:"13px 14px", cursor:"pointer", fontFamily:"inherit", textAlign:"left", display:"flex", alignItems:"center", gap:12 }}>
+                      <span style={{ fontSize:28, flexShrink:0 }}>{path.emoji}</span>
+                      <div style={{ flex:1 }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:2 }}>
+                          <span style={{ fontWeight:900, fontSize:14, color:path.tc }}>{path.label}</span>
+                          <span style={{ fontSize:10, color:path.accent, fontWeight:600 }}>{path.subtitle}</span>
+                        </div>
+                        <div style={{ fontSize:11, color:"#555", lineHeight:1.4 }}>{path.desc}</div>
+                      </div>
+                      <div style={{ width:24, height:24, borderRadius:"50%", border:selected?"none":`2px solid #ccc`, background:selected?path.accent:"transparent", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:"#fff", fontSize:14, fontWeight:900 }}>
+                        {selected && "✓"}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              <button onClick={() => setShowPathsPicker(false)}
+                style={{ width:"100%", background:"linear-gradient(135deg,#43a047,#66bb6a)", border:"none", borderRadius:12, padding:"13px", color:"#fff", fontWeight:900, fontSize:14, cursor:"pointer", fontFamily:"inherit" }}>
+                ✅ Save my paths
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
