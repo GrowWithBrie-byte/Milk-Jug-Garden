@@ -2296,7 +2296,7 @@ export default function App() {
                   { n:"4", icon:"🌱", title:"Plant seeds", desc:"Sprinkle seeds on top and cover lightly according to packet instructions. Label the jug clearly." },
                   { n:"5", icon:"🔒", title:"Seal it up", desc:"Tape the jug closed securely, leaving the top open (where the cap was) for airflow and rain." },
                   { n:"6", icon:"🌤️", title:"Place outside", desc:"Set in a sunny but natural outdoor spot. Rain and weather do the rest." },
-                  { n:"7", icon:"🌱", title:"Wait + watch", desc:"When sprouts appear, open the top on warm days and gradually expose them to outdoor conditions before transplanting." },
+                  { n:"7", icon:"🌱", title:"Wait + watch", desc:"When sprouts appear, remove the tape and crack the jug open on warm days and gradually expose them to outdoor conditions before transplanting." },
                 ].map(step => (
                   <div key={step.n} style={{ display:"flex", gap:10, background:"#fff", borderRadius:12, padding:"11px 12px", marginBottom:8, border:"1.5px solid #e8f5e9", boxShadow:"0 1px 4px #0001" }}>
                     <div style={{ background:"linear-gradient(135deg,#1565c0,#1976d2)", borderRadius:8, width:32, height:32, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, color:"#fff", fontWeight:900, fontSize:13 }}>{step.n}</div>
